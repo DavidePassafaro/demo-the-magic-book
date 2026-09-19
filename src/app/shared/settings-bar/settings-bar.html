@@ -1,0 +1,29 @@
+<div class="bar">
+  <fieldset class="languages">
+    <legend class="visually-hidden">{{ t().languageLegend }}</legend>
+    @for (option of locales; track option.id) {
+      <button
+        type="button"
+        class="lang"
+        [class.on]="currentLocale() === option.id"
+        [attr.aria-pressed]="currentLocale() === option.id"
+        (click)="selectLocale(option.id)"
+      >
+        {{ option.label }}
+      </button>
+    }
+  </fieldset>
+
+  <div class="model">
+    <label class="visually-hidden" for="model-select">{{ t().modelLegend }}</label>
+    <select id="model-select" aria-describedby="model-note" (change)="selectModel($event)">
+      @for (model of models; track model.id) {
+        <option [value]="model.id" [selected]="model.id === currentModel()">
+          {{ modelLabel(model.id, model.label, model.approxSizeMb) }}
+        </option>
+      }
+    </select>
+
+    <p class="note" id="model-note">{{ note() }}</p>
+  </div>
+</div>

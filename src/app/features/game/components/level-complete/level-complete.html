@@ -1,0 +1,22 @@
+<div class="backdrop">
+  <section class="popup" role="dialog" aria-modal="true" aria-labelledby="complete-title">
+    <h2 id="complete-title">{{ t().completeTitle }}</h2>
+    <p class="sub">{{ t().completeSubtitle(title()) }}</p>
+
+    <ol class="pages">
+      @for (npc of npcs(); track npc.config.id) {
+        <li>
+          <span class="object">{{ progress()[npc.config.id]?.object }}</span>
+          <span class="for">{{ t().forWhom(npc.config.name) }}</span>
+        </li>
+      }
+    </ol>
+
+    <div class="actions">
+      <button type="button" class="again" (click)="replayed.emit()">{{ replayLabel() }}</button>
+      <button type="button" class="back" #backButton (click)="dismissed.emit()">
+        {{ t().backToMenu }}
+      </button>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,53 @@
+{
+  "id": "level-03",
+  "title": {
+    "en": "The Winter Road",
+    "it": "La strada d’inverno"
+  },
+  "theme": "winter",
+  "seed": 1120451,
+  "width": 26,
+  "height": 20,
+  "npcs": [
+    {
+      "id": "brann",
+      "name": "Brann",
+      "temper": "Blunt and impatient, with a temper that flares and passes in the same breath. Swears about objects rather than people.",
+      "problem": {
+        "en": "My cart wheel cracked clean through on the frozen ruts, and the load is four hundredweight of grain. I cannot carry it and I cannot leave it.",
+        "it": "La ruota del carro si è spaccata di netto sui solchi ghiacciati, e sopra ci sono duecento chili di grano. Non posso portarlo a braccia e non posso lasciarlo qui."
+      },
+      "solutionHint": "Anything that moves a heavy load on a frozen road without that wheel: a new or spare wheel, a sledge or sled, runners, a wheelbarrow, a second cart, a strong animal that can drag the load, a raft dragged over ice, magic that lightens or carries the grain. A hammer, nails, rope or a repair kit alone does not work, because the wheel is split through. Neither does help carrying it by hand."
+    },
+    {
+      "id": "enid",
+      "name": "Enid",
+      "temper": "Gentle and unhurried, speaks about her bees as if they were elderly relatives. Quietly stubborn when she disagrees.",
+      "problem": {
+        "en": "The frost came a month early and my hives will not last until spring. They need to keep their warmth without me opening them.",
+        "it": "Il gelo è arrivato con un mese d'anticipo e i miei alveari non arriveranno alla primavera. Devono riuscire a tenersi caldi, e senza che io li apra."
+      },
+      "solutionHint": "Anything that keeps beehives warm through a hard winter: straw or wool wrapping, insulation, a windbreak, a shed or cellar to move them into, a warm stone, a gentle heated blanket, a blanket of snow packed properly, magic that holds warmth. An open flame, a bonfire or a hot coal next to the hives does not work and would be dangerous. More honey, more bees, or a bigger hive does not work either."
+    },
+    {
+      "id": "mattea",
+      "name": "Mattea",
+      "temper": "Brisk and businesslike, thinks out loud, interrupts herself with better ideas. Treats every problem as a machine.",
+      "problem": {
+        "en": "The stream that drives my mill wheel has frozen solid, and the whole valley brings me their grain in winter. I need that wheel turning again.",
+        "it": "Il ruscello che fa girare la ruota del mulino è gelato del tutto, e d'inverno tutta la valle mi porta il grano da macinare. Devo rimettere in moto quella ruota."
+      },
+      "solutionHint": "Anything that turns a mill wheel, or grinds grain, without a flowing stream: a horse or ox on a capstan, windmill sails, a treadmill, a hand quern, a warm spring or anything that thaws and keeps the water running, a hot stone in the channel, a spirit or creature strong enough to turn it, magic that drives the wheel. A bigger wheel, a sharper millstone, or more grain does not work. Breaking the ice once does not work either, because it refreezes overnight."
+    },
+    {
+      "id": "pell",
+      "name": "Old Pell",
+      "temper": "Rambling and fond of digressions about the old days, but lands on something sharp and true at the end of every speech.",
+      "problem": {
+        "en": "The snow buries my markers by the second week, and after that travellers walk off the road and into the bog without ever knowing. I need them to be able to follow it blind.",
+        "it": "Entro la seconda settimana la neve copre tutti i miei segnali, e da lì in poi i viandanti escono dalla strada e finiscono nella palude senza accorgersene. Devono poter seguire la strada anche quando non la vedono."
+      },
+      "solutionHint": "Anything that marks a road route above deep snow or guides someone along it without sight: tall poles or stakes that stand above the snowline, lanterns on posts, glowing stones, a rope handline running the length of the road, bells at intervals, a trained dog that knows the way, cairns tall enough to show, a magical path that shines. A map, a compass alone, a shovel, or clearer instructions do not work, because the road itself is invisible and the traveller has nothing to measure against."
+    }
+  ]
+}

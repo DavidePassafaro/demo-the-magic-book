@@ -1,0 +1,25 @@
+<main class="menu">
+  <h1>The Magic Book</h1>
+  <p class="tagline">{{ t().tagline }}</p>
+
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  } @else if (levels() === null) {
+    <p class="loading">{{ t().levelsLoading }}</p>
+  } @else {
+    <nav aria-label="Levels">
+      <ul>
+        @for (level of titles(); track level.id) {
+          <li>
+            <a class="entry" [routerLink]="['/play', level.id]">{{ level.title }}</a>
+          </li>
+        }
+        <li class="raindom-row">
+          <a class="entry raindom" [routerLink]="['/play', randomId]">{{ t().raindomMode }}</a>
+        </li>
+      </ul>
+    </nav>
+  }
+
+  <mb-settings-bar />
+</main>

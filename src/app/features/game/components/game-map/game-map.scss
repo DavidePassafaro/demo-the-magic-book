@@ -1,0 +1,158 @@
+/* Village: wooded, green, a few ponds. The default. */
+:host {
+  display: block;
+  flex: 0 0 auto;
+
+  --t-ground: #3f6b3c;
+  --t-path: #8c7a52;
+  --t-water: #2f5486;
+  --t-tree: #24451f;
+  --t-tree-inset: 6px;
+  --t-tree-radius: 50%;
+  --t-rock: #5a5766;
+  --t-rock-inset: 9px;
+  --t-rock-radius: 6px;
+  --t-edge: #4b3c6b;
+  --t-backdrop: #0d0a13;
+}
+
+/* Harbour: stone quay, wooden boards, mooring posts and crates. */
+:host([data-theme='harbour']) {
+  --t-ground: #6f6a5d;
+  --t-path: #96713f;
+  --t-water: #1d4a76;
+  --t-tree: #3c2a19;
+  --t-tree-inset: 12px;
+  --t-tree-radius: 50%;
+  --t-rock: #8a6a3f;
+  --t-rock-inset: 7px;
+  --t-rock-radius: 2px;
+  --t-edge: #55503f;
+  --t-backdrop: #0c1119;
+}
+
+/* Winter: snow, trodden tracks, frozen ponds, dark pines. */
+:host([data-theme='winter']) {
+  --t-ground: #cfd8e6;
+  --t-path: #a8b8cd;
+  --t-water: #93b7d6;
+  --t-tree: #2e4a38;
+  --t-tree-inset: 6px;
+  --t-tree-radius: 50%;
+  --t-rock: #8b93a3;
+  --t-rock-inset: 9px;
+  --t-rock-radius: 6px;
+  --t-edge: #6c7b91;
+  --t-backdrop: #10151f;
+}
+
+/* Indoors: carpet, corridor tiles, solid walls, furniture. */
+:host([data-theme='indoor']) {
+  --t-ground: #5c5470;
+  --t-path: #8b8399;
+  --t-water: #3a5f7a;
+  --t-tree: #191426;
+  --t-tree-inset: 20px;
+  --t-tree-radius: 0;
+  --t-rock: #a2743f;
+  --t-rock-inset: 8px;
+  --t-rock-radius: 3px;
+  --t-edge: #3d3550;
+  --t-backdrop: #15111d;
+}
+
+.viewport {
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+  border: 3px solid var(--t-edge);
+  border-radius: 4px;
+  background: var(--t-backdrop);
+  max-width: 100%;
+}
+
+.world {
+  position: absolute;
+  inset: 0;
+  transition: transform 140ms linear;
+}
+
+.tile {
+  position: absolute;
+}
+
+.tile-grass {
+  background: var(--t-ground);
+}
+
+.tile-path {
+  background: var(--t-path);
+}
+
+.tile-water {
+  background: var(--t-water);
+}
+
+.tile-tree {
+  background: var(--t-ground);
+  box-shadow: inset 0 0 0 var(--t-tree-inset) var(--t-tree);
+  border-radius: var(--t-tree-radius);
+}
+
+.tile-rock {
+  background: var(--t-ground);
+  box-shadow: inset 0 0 0 var(--t-rock-inset) var(--t-rock);
+  border-radius: var(--t-rock-radius);
+}
+
+.npc {
+  position: absolute;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background: var(--ember);
+  color: #2a1206;
+  border: 2px solid #2a1206;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.npc.solved {
+  background: var(--good);
+}
+
+.player {
+  position: absolute;
+  background: var(--gold);
+  border: 2px solid #3a2a05;
+  border-radius: 6px;
+  transition:
+    left 140ms linear,
+    top 140ms linear;
+}
+
+.player::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #3a2a05;
+  border-radius: 50%;
+}
+
+.facing-up::after {
+  top: 4px;
+  left: calc(50% - 4px);
+}
+.facing-down::after {
+  bottom: 4px;
+  left: calc(50% - 4px);
+}
+.facing-left::after {
+  left: 4px;
+  top: calc(50% - 4px);
+}
+.facing-right::after {
+  right: 4px;
+  top: calc(50% - 4px);
+}

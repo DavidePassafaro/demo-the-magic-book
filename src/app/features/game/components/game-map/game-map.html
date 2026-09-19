@@ -1,0 +1,45 @@
+<div
+  class="viewport"
+  role="group"
+  aria-label="Village map"
+  [style.width.px]="viewWidth"
+  [style.height.px]="viewHeight"
+>
+  <div class="world" [style.transform]="worldTransform()">
+    @for (kind of map().tiles; track $index) {
+      <div
+        class="tile"
+        [class]="'tile-' + kind"
+        [style.left.px]="($index % map().width) * tileSize"
+        [style.top.px]="floor($index / map().width) * tileSize"
+        [style.width.px]="tileSize"
+        [style.height.px]="tileSize"
+      ></div>
+    }
+
+    @for (npc of map().npcs; track npc.config.id) {
+      <button
+        type="button"
+        class="npc"
+        [class.solved]="progress()[npc.config.id]?.solved"
+        [style.left.px]="npc.x * tileSize"
+        [style.top.px]="npc.y * tileSize"
+        [style.width.px]="tileSize"
+        [style.height.px]="tileSize"
+        [attr.aria-label]="npcLabel(npc.config.id, npc.config.name)"
+        (click)="talk.emit(npc.config.id)"
+      >
+        <span aria-hidden="true">{{ progress()[npc.config.id]?.solved ? '☺' : '!' }}</span>
+      </button>
+    }
+
+    <div
+      class="player"
+      [class]="'facing-' + facing()"
+      [style.left.px]="playerX() * tileSize"
+      [style.top.px]="playerY() * tileSize"
+      [style.width.px]="tileSize"
+      [style.height.px]="tileSize"
+    ></div>
+  </div>
+</div>

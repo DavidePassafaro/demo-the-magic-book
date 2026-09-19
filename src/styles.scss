@@ -1,1 +1,102 @@
-/* You can add global styles to this file, and also import other style files */
+/* The Magic Book — global theme. Everything is drawn in CSS; there are no image assets. */
+
+:root {
+  --night: #17121f;
+  --panel: #241c33;
+  --panel-edge: #4b3c6b;
+  --ink: #f5ecd7;
+  --ink-dim: #c3b4d2;
+  --gold: #ffcf5c;
+  --ember: #ff8b5e;
+  --good: #7fdca4;
+  --bad: #ff9aa2;
+
+  --tile-grass: #3f6b3c;
+  --tile-path: #8c7a52;
+  --tile-tree: #24451f;
+  --tile-rock: #5a5766;
+  --tile-water: #2f5486;
+
+  --tile-size: 40px;
+
+  --font: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: var(--night);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 0.5rem;
+  letter-spacing: 0.04em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+button {
+  font: inherit;
+  color: var(--ink);
+  background: var(--panel);
+  border: 2px solid var(--panel-edge);
+  border-radius: 4px;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  color: var(--ink-dim);
+  opacity: 0.65;
+}
+
+input[type='text'] {
+  font: inherit;
+  color: var(--ink);
+  background: #120e1a;
+  border: 2px solid var(--panel-edge);
+  border-radius: 4px;
+  padding: 0.6rem 0.75rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

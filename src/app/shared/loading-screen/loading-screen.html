@@ -1,0 +1,17 @@
+<section class="screen">
+  <h2>{{ title() }}</h2>
+  <p class="status" role="status">{{ text() }}</p>
+
+  <div
+    class="bar"
+    role="progressbar"
+    aria-label="Model download"
+    [attr.aria-valuenow]="percent()"
+    aria-valuemin="0"
+    aria-valuemax="100"
+  >
+    <div class="fill" [style.width.%]="percent()"></div>
+  </div>
+
+  <p class="percent">{{ percent() }}%</p>
+</section>

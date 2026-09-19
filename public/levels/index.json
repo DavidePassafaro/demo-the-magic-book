@@ -1,0 +1,35 @@
+[
+  {
+    "id": "level-01",
+    "title": {
+      "en": "The Village of Emberbrook",
+      "it": "Il villaggio di Emberbrook"
+    },
+    "file": "level-01.json"
+  },
+  {
+    "id": "level-02",
+    "title": {
+      "en": "The Harbour at Low Tide",
+      "it": "Il porto con la bassa marea"
+    },
+    "file": "level-02.json"
+  },
+  {
+    "id": "level-03",
+    "title": {
+      "en": "The Winter Road",
+      "it": "La strada d’inverno"
+    },
+    "file": "level-03.json"
+  },
+  {
+    "id": "ctc-2026",
+    "title": {
+      "en": "Pignola - CTC 2026",
+      "it": "Pignola - CTC 2026"
+    },
+    "file": "ctc-2026.json",
+    "enabled": true
+  }
+]

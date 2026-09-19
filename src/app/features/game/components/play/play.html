@@ -1,0 +1,86 @@
+@if (levelError(); as message) {
+  <section class="notice">
+    <h2>{{ t().levelFailedTitle }}</h2>
+    <p role="alert">{{ message }}</p>
+    <a routerLink="/">{{ t().backToMenu }}</a>
+  </section>
+} @else if (llm.status() === 'unsupported') {
+  <section class="notice">
+    <h2>{{ t().unsupportedTitle }}</h2>
+    <p>{{ t().unsupportedBody }}</p>
+    <a routerLink="/">{{ t().backToMenu }}</a>
+  </section>
+} @else if (generator.phase() === 'failed') {
+  <section class="notice">
+    <h2>{{ t().inventingFailed }}</h2>
+    <p role="alert">{{ generator.error() }}</p>
+    <button type="button" (click)="start()">{{ t().tryAgain }}</button>
+    <a routerLink="/">{{ t().backToMenu }}</a>
+  </section>
+} @else if (llm.status() === 'error') {
+  <section class="notice">
+    <h2>{{ t().openFailedTitle }}</h2>
+    <p role="alert">{{ llm.error() }}</p>
+    <button type="button" (click)="start()">{{ t().tryAgain }}</button>
+    <a routerLink="/">{{ t().backToMenu }}</a>
+  </section>
+} @else if (activeMap(); as map) {
+  <main class="stage" #stage tabindex="-1" [attr.data-theme]="game.level()?.theme">
+    <header class="hud">
+      <a routerLink="/">{{ t().leave }}</a>
+      <h1>{{ levelTitle() }}</h1>
+      <p class="count">{{ t().helpedCount(game.solvedCount(), map.npcs.length) }}</p>
+      <mb-settings-bar />
+    </header>
+
+    <div class="layout">
+      <mb-game-map
+        [map]="map"
+        [playerX]="game.playerX()"
+        [playerY]="game.playerY()"
+        [facing]="game.facing()"
+        [progress]="game.progress()"
+        (talk)="game.openEncounter($event)"
+      />
+
+      <mb-npc-panel
+        [npcs]="map.npcs"
+        [progress]="game.progress()"
+        (talk)="game.openEncounter($event)"
+      />
+    </div>
+
+    @if (game.activeNpc(); as npc) {
+      <mb-dialogue-box
+        [npc]="npc"
+        [attempt]="game.lastAttempt()"
+        [thinking]="game.thinking()"
+        [solved]="game.progressFor(npc.id).solved"
+        [solvedObject]="game.progressFor(npc.id).object"
+        [solvedReply]="game.progressFor(npc.id).reply"
+        [error]="game.encounterError()"
+        (wished)="game.wish($event)"
+        (closed)="leaveEncounter()"
+      />
+    }
+
+    @if (showComplete()) {
+      <mb-level-complete
+        [title]="levelTitle()"
+        [npcs]="map.npcs"
+        [progress]="game.progress()"
+        [replayLabel]="replayLabel()"
+        (replayed)="start()"
+        (dismissed)="goHome()"
+      />
+    }
+
+    <p class="visually-hidden" aria-live="polite">{{ game.surroundings() }}</p>
+  </main>
+} @else {
+  <mb-loading-screen
+    [title]="loadingTitle()"
+    [text]="loadingText()"
+    [progress]="loadingProgress()"
+  />
+}

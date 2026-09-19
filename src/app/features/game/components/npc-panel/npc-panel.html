@@ -1,0 +1,20 @@
+<section class="panel" aria-labelledby="who-is-here">
+  <h2 id="who-is-here">{{ t().whoIsHere }}</h2>
+  <ul>
+    @for (npc of npcs(); track npc.config.id) {
+      <li>
+        <button type="button" (click)="talk.emit(npc.config.id)">
+          <span class="name">{{ npc.config.name }}</span>
+          @if (progress()[npc.config.id]?.solved) {
+            <span class="state solved">
+              {{ t().helpedWith(progress()[npc.config.id]?.object ?? '') }}
+            </span>
+          } @else {
+            <span class="state">{{ t().stillStuck }}</span>
+          }
+        </button>
+      </li>
+    }
+  </ul>
+  <p class="hint">{{ t().controlsHint }}</p>
+</section>

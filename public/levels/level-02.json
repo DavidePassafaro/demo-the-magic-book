@@ -1,0 +1,43 @@
+{
+  "id": "level-02",
+  "title": {
+    "en": "The Harbour at Low Tide",
+    "it": "Il porto con la bassa marea"
+  },
+  "theme": "harbour",
+  "seed": 4417802,
+  "width": 24,
+  "height": 18,
+  "npcs": [
+    {
+      "id": "nuno",
+      "name": "Nuno",
+      "temper": "Weather-beaten and unhurried. Speaks slowly, in short practical sentences, with long pauses where a younger man would hurry.",
+      "problem": {
+        "en": "The rope that pulled my ferry across snapped in the storm, and the current here is far too strong to row against. People have been stuck on the wrong bank for three days.",
+        "it": "La fune che tirava il mio traghetto da una riva all'altra si è spezzata nella tempesta, e qui la corrente è troppo forte per attraversare a remi. Da tre giorni la gente resta bloccata dalla parte sbagliata del fiume."
+      },
+      "solutionHint": "Anything that gets people across a fast, wide channel: a new rope or chain strung across, a bridge, a boat with a sail or an engine strong enough for the current, a raft on a cable, a creature large enough to carry people over, a ford, stepping stones, a way to calm or divert the current. Oars, paddles, a stronger man, or a smaller boat do not work, because the current is the problem. A swimming lesson does not work either."
+    },
+    {
+      "id": "ilva",
+      "name": "Ilva",
+      "temper": "Loud, cheerful and completely without a filter. Jokes at her own expense, laughs at her own jokes, shouts slightly even when close.",
+      "problem": {
+        "en": "The gulls take the fish straight off my stall before I can sell a single one. Bold as magistrates, they are. I cannot watch the whole table at once.",
+        "it": "I gabbiani mi portano via il pesce dal banco prima che riesca a venderne uno. Hanno una faccia tosta incredibile, e io non riesco a sorvegliare tutto il banco insieme."
+      },
+      "solutionHint": "Anything that keeps birds off an open market stall: a net, a mesh cover, a lid, a glass or wooden case, a cat or a dog that guards it, a hawk, a scarecrow, something that frightens gulls, an awning that closes. A bigger stall, more fish, a bell, or a louder voice does not work. Killing the gulls is not needed and should not count as the intended solution."
+    },
+    {
+      "id": "osso",
+      "name": "Osso",
+      "temper": "Formal and precise, like a man reading from a ledger. Uses full sentences and exact numbers. Rarely shows feeling, and it means a great deal when he does.",
+      "problem": {
+        "en": "The autumn fog sits on this coast for weeks, and ships find the rocks before they find the channel. I need something that warns them off in weather where nothing can be seen at all.",
+        "it": "La nebbia d'autunno resta su questa costa per settimane, e le navi trovano gli scogli prima del canale. Mi serve qualcosa che le avverta del pericolo anche quando non si vede assolutamente nulla."
+      },
+      "solutionHint": "Anything that warns ships away from rocks when visibility is nil: a lighthouse, a beacon, a bell buoy, a foghorn, a loud bell or horn on the headland, a drum, a whistle, marker buoys, a magical sound or signal, a creature that calls out, a light bright enough to cut fog. A map, a chart, a telescope, a spyglass, better lookouts or clearer instructions do not work, because nothing can be seen. Clearing the fog itself is acceptable."
+    }
+  ]
+}

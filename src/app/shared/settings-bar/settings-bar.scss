@@ -1,0 +1,87 @@
+/* The bar measures itself, not the window: it sits in a wide header on one page
+   and in a narrow column on the other, and only its own width decides how it
+   should behave. */
+:host {
+  display: block;
+  container-type: inline-size;
+}
+
+.bar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Room for both: the language on one side, the model on the other. Below this
+   they stack, and a stacked bar is centred. */
+@container (min-width: 36rem) {
+  .bar {
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+}
+
+.languages {
+  display: flex;
+  gap: 0;
+  border: 2px solid var(--panel-edge);
+  border-radius: 4px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.lang {
+  border: none;
+  border-radius: 0;
+  background: var(--panel);
+  color: var(--ink-dim);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.lang.on {
+  background: var(--gold);
+  color: #2a2005;
+}
+
+.lang:hover:not(.on) {
+  color: var(--ink);
+}
+
+/* The note sits under its dropdown rather than beside it, so the dropdown is
+   still a narrow thing: narrow enough to sit next to the language switch when
+   there is room, and to land squarely under it, centred, when there is not. */
+.model {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  max-width: 100%;
+}
+
+select {
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--ink);
+  background: var(--panel);
+  border: 2px solid var(--panel-edge);
+  border-radius: 4px;
+  padding: 0.35rem 0.5rem;
+  max-width: 100%;
+  min-width: 0;
+}
+
+select:hover {
+  border-color: var(--gold);
+}
+
+.note {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--ink-dim);
+  max-width: 24rem;
+  text-align: center;
+}

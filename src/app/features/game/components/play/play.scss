@@ -1,0 +1,76 @@
+.stage {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 6rem;
+}
+
+/* A breath of the level's own weather behind the map. */
+.stage[data-theme='harbour'] {
+  background: radial-gradient(60% 45% at 50% 22%, rgba(31, 90, 140, 0.22), transparent 70%);
+}
+
+.stage[data-theme='winter'] {
+  background: radial-gradient(60% 45% at 50% 22%, rgba(168, 196, 224, 0.2), transparent 70%);
+}
+
+.stage[data-theme='indoor'] {
+  background: radial-gradient(60% 45% at 50% 22%, rgba(196, 148, 74, 0.16), transparent 70%);
+}
+
+.stage:focus {
+  outline: none;
+}
+
+.hud {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.hud a {
+  color: var(--ink-dim);
+}
+
+h1 {
+  font-size: 1.1rem;
+  color: var(--gold);
+  margin: 0;
+}
+
+.count {
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: 0.85rem;
+}
+
+.hud mb-settings-bar {
+  flex: 1 1 100%;
+}
+
+.layout {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.notice {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 5rem 1.5rem;
+  text-align: center;
+}
+
+.notice h2 {
+  color: var(--gold);
+}
+
+.notice a {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: var(--ink-dim);
+}

@@ -1,0 +1,42 @@
+<section class="box" aria-labelledby="npc-name">
+  <h2 id="npc-name">{{ npc().name }}</h2>
+
+  <div class="speech">
+    <!-- The riddle never leaves the screen, solved or not. -->
+    <p class="line problem">{{ problem() }}</p>
+
+    <div class="exchange" aria-live="polite">
+      @if (shownObject(); as object) {
+        <p class="object" [class.worked]="objectWorked()">{{ object }}</p>
+        <p class="line">{{ shownReply() }}</p>
+      }
+
+      @if (thinking()) {
+        <p class="thinking">{{ t().thinking }}</p>
+      }
+
+      @if (error()) {
+        <p class="error" role="alert">{{ error() }}</p>
+      }
+    </div>
+  </div>
+
+  @if (!solved()) {
+    <form (submit)="submit($event)">
+      <label for="wish">{{ t().writeIntoBook }}</label>
+      <div class="row">
+        <input
+          id="wish"
+          #wishInput
+          type="text"
+          autocomplete="off"
+          [placeholder]="t().placeholder"
+          [formField]="wishForm.wish"
+        />
+        <button type="submit" [disabled]="thinking() || wishForm.wish().invalid()">
+          {{ t().conjure }}
+        </button>
+      </div>
+    </form>
+  }
+</section>
