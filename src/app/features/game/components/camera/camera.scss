@@ -1,0 +1,63 @@
+.camera {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+}
+
+.error {
+  margin: 0;
+  color: var(--bad);
+}
+
+.frame {
+  position: relative;
+  align-self: center;
+  width: min(20rem, 100%);
+  aspect-ratio: 4 / 3;
+  background: #0d0a12;
+  border: 2px solid var(--panel-edge);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.frame.hidden {
+  display: none;
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* A mirror, which is what people expect of a camera pointed at themselves. */
+  transform: scaleX(-1);
+}
+
+/* What is actually sent: the centred 3:2 cut of the frame. */
+.square {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  aspect-ratio: 3 / 2;
+  transform: translateY(-50%);
+  border: 2px dashed var(--gold);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.secondary {
+  background: transparent;
+  color: var(--ink-dim);
+}

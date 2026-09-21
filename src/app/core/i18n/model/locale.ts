@@ -55,6 +55,13 @@ export interface UiStrings {
   readonly thinking: string;
   readonly placeholder: string;
   readonly inkRanDry: string;
+  readonly showObject: string;
+  readonly cameraHint: string;
+  readonly capture: string;
+  readonly cancel: string;
+  readonly cameraUnavailable: string;
+  readonly openingEye: (percent: number) => string;
+  readonly looking: string;
   readonly playAgain: string;
   readonly inventAnother: string;
   readonly completeTitle: string;

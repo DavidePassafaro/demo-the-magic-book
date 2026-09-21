@@ -1,0 +1,22 @@
+<div class="camera">
+  @if (unavailable()) {
+    <p class="error" role="alert">{{ t().cameraUnavailable }}</p>
+  } @else {
+    <p class="hint">{{ t().cameraHint }}</p>
+  }
+
+  <!-- Always in the DOM, so the stream has somewhere to go the moment it arrives. -->
+  <div class="frame" [class.hidden]="unavailable()">
+    <video #video muted playsinline></video>
+    <span class="square" aria-hidden="true"></span>
+  </div>
+
+  <div class="row">
+    <button type="button" #shutter [disabled]="!live()" (click)="capture()">
+      {{ t().capture }}
+    </button>
+    <button type="button" class="secondary" (click)="cancelled.emit()">
+      {{ t().cancel }}
+    </button>
+  </div>
+</div>

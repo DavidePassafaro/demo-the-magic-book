@@ -2,6 +2,7 @@ import { Service, inject } from '@angular/core';
 import { LANGUAGE_NAMES, WRITE_IN_LANGUAGE, type Locale } from '@core/i18n/model/locale';
 import { LocaleService } from '@core/i18n/locale.service';
 import { WebLlmService } from '@core/webllm/web-llm.service';
+import { log } from '@core/logger/logger';
 import { text, type NpcConfig } from '@features/game/engine/model/level';
 import type { Referee, Verdict } from '@features/game/engine/model/contracts';
 import type { ChatCompletionMessageParam } from '@mlc-ai/web-llm';
@@ -111,15 +112,23 @@ export class JudgeService implements Referee {
     const messages = judgePrompt(npc, object, this.locale.locale());
     let lastError: unknown = null;
 
-    for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
+    for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
       try {
         const raw = await this.llm.queryModel(messages, {
           schema: VERDICT_SCHEMA,
           maxTokens: 220,
+          purpose: `judge "${object}" for ${npc.name}`,
         });
-        return parseVerdict(raw);
+        const { verdict, reasoning } = parseVerdict(raw);
+        logVerdict(npc, object, verdict, reasoning, attempt);
+        return verdict;
       } catch (cause) {
         lastError = cause;
+        log.warn(
+          'judge',
+          `attempt ${attempt} of ${ATTEMPTS} for ${npc.name} gave no usable verdict`,
+          cause instanceof Error ? cause.message : cause,
+        );
       }
     }
 
@@ -128,12 +137,49 @@ export class JudgeService implements Referee {
 }
 
 /**
+ * The verdict as the room should see it: the model's private reasoning — which
+ * the player never reads — beside the rule it was meant to follow. This is
+ * where a wrong answer shows whether the model misread the hint or ignored it.
+ */
+function logVerdict(
+  npc: NpcConfig,
+  object: string,
+  verdict: Verdict,
+  reasoning: string,
+  attempt: number,
+): void {
+  const outcome = verdict.solved ? 'SOLVED' : 'rejected';
+  log.group(
+    'judge',
+    `${npc.name} · "${object}" → ${outcome}`,
+    () => {
+      console.log(
+        '%creasoning (hidden from the player)%c\n' + (reasoning || '(none)'),
+        'font-weight:700',
+        'color:inherit',
+      );
+      console.log(
+        '%csolution hint it was given%c\n' + npc.solutionHint,
+        'font-weight:700',
+        'color:inherit',
+      );
+      console.log('%cthe villager says%c\n' + verdict.npcReply, 'font-weight:700', 'color:inherit');
+      console.log('temper', npc.temper);
+      if (attempt > 1) {
+        console.log(`needed ${attempt} attempts`);
+      }
+    },
+    true,
+  );
+}
+
+/**
  * Reads the verdict out of whatever the model wrote, which is JSON by
  * construction but occasionally wrapped in a sentence.
  *
  * @throws When there is no object to read, or the villager said nothing.
  */
-function parseVerdict(raw: string): Verdict {
+function parseVerdict(raw: string): { verdict: Verdict; reasoning: string } {
   const start = raw.indexOf('{');
   const end = raw.lastIndexOf('}');
 
@@ -156,5 +202,6 @@ function parseVerdict(raw: string): Verdict {
     throw new Error('The villager said nothing.');
   }
 
-  return { solved: record['solved'] === true, npcReply: reply };
+  const reasoning = typeof record['reasoning'] === 'string' ? record['reasoning'].trim() : '';
+  return { verdict: { solved: record['solved'] === true, npcReply: reply }, reasoning };
 }

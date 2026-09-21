@@ -40,3 +40,28 @@ export interface LevelInventor {
 }
 
 export const LEVEL_INVENTOR = new InjectionToken<LevelInventor>('LevelInventor');
+
+/** `loading` is the first time only: the eye is a separate, larger model. */
+export type RecognitionPhase = 'idle' | 'loading' | 'looking';
+
+/** Names what the player holds up to the camera, so it can be written into the book. */
+export interface ObjectRecognizer {
+  readonly phase: Signal<RecognitionPhase>;
+  /** How far the eye has loaded, 0 to 1, while `phase` is `loading`. */
+  readonly progress: Signal<number>;
+
+  /**
+   * Starts waking the eye without waiting for it, so that the download runs
+   * while the player is still framing the object rather than after.
+   */
+  prepare(): void;
+
+  /**
+   * @param image A photo, as a `data:image/...` URL.
+   * @returns The object's name, in one or two words.
+   * @throws When there is nothing in the photo the eye can name.
+   */
+  recognize(image: string): Promise<string>;
+}
+
+export const OBJECT_RECOGNIZER = new InjectionToken<ObjectRecognizer>('ObjectRecognizer');

@@ -11,6 +11,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { WebLlmService } from '@core/webllm/web-llm.service';
 import { findModel } from '@core/webllm/data/llm-models';
 import { LocaleService } from '@core/i18n/locale.service';
+import { log } from '@core/logger/logger';
 import { GameService, type Facing } from '@features/game/engine/game.service';
 import { LEVEL_INVENTOR } from '@features/game/engine/model/contracts';
 import { LevelService } from '@features/game/engine/level.service';
@@ -114,6 +115,7 @@ export class Play {
      */
     effect(() => {
       if (this.llm.status() === 'ready' && this.llm.loadedModelId() !== this.llm.modelId()) {
+        log.info('game', 'another model was chosen: restarting the level on it');
         this.start();
       }
     });
@@ -150,6 +152,7 @@ export class Play {
       })
       .catch((cause: unknown) => {
         if (this.generator.phase() !== 'failed') {
+          log.error('game', 'the level could not start', cause);
           this.levelError.set(cause instanceof Error ? cause.message : 'Unknown error.');
         }
       });
@@ -202,6 +205,14 @@ export class Play {
     }
 
     const target = event.target as HTMLElement | null;
+
+    // Framing a shot is not walking. Asked of the page, not of the focus: a
+    // click on the preview leaves focus nowhere useful, and the player is
+    // still holding something up.
+    if (inEncounter && this.stage()?.nativeElement.querySelector('mb-camera')) {
+      return;
+    }
+
     const isField = target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA';
     const midSentence = isField && (target as HTMLInputElement).value.trim() !== '';
 

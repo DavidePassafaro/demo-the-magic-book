@@ -1,6 +1,7 @@
 import { Service, computed, inject, signal } from '@angular/core';
 import { LANGUAGE_NAMES, LOCALES, WRITE_IN_LANGUAGE, type Locale } from '@core/i18n/model/locale';
 import { WebLlmService } from '@core/webllm/web-llm.service';
+import { elapsed, log } from '@core/logger/logger';
 import {
   RANDOM_LEVEL_ID,
   THEMES,
@@ -193,11 +194,19 @@ export class LevelGeneratorService implements LevelInventor {
     this.steps.set(0);
     this.error.set(null);
 
+    const started = performance.now();
+
     try {
       const seed = Math.floor(Math.random() * 2_000_000_000);
       const theme = THEMES[Math.floor(Math.random() * THEMES.length)] as Theme;
       const topics = [...VILLAGER_TOPICS].sort(() => Math.random() - 0.5).slice(0, VILLAGERS);
       const npcs: NpcConfig[] = [];
+
+      log.info(
+        'inventor',
+        `inventing a village · ${VILLAGERS} villagers × ${STEPS_PER_VILLAGER} calls`,
+        { seed, theme, topics },
+      );
 
       for (const [index, topic] of topics.entries()) {
         const villager = await this.inventVillager(topic, index, npcs);
@@ -206,9 +215,28 @@ export class LevelGeneratorService implements LevelInventor {
       }
 
       this.phase.set('idle');
+      log.group(
+        'inventor',
+        `village invented in ${elapsed(started)}`,
+        () => {
+          console.table(
+            npcs.map((npc) => ({
+              name: npc.name,
+              problem: npc.problem.en,
+              translated:
+                Object.keys(npc.problem)
+                  .filter((key) => key !== 'en')
+                  .join(', ') || '—',
+              hint: npc.solutionHint,
+            })),
+          );
+        },
+        true,
+      );
 
       return { id: RANDOM_LEVEL_ID, title, theme, seed, width: 24, height: 18, npcs };
     } catch (cause) {
+      log.error('inventor', `the village could not be invented after ${elapsed(started)}`, cause);
       this.phase.set('failed');
       this.error.set(cause instanceof Error ? cause.message : String(cause));
       throw cause;
@@ -234,19 +262,40 @@ export class LevelGeneratorService implements LevelInventor {
 
     let lastError: unknown = null;
 
-    for (let attempt = 0; attempt < ATTEMPTS_PER_VILLAGER; attempt++) {
+    for (let attempt = 1; attempt <= ATTEMPTS_PER_VILLAGER; attempt++) {
       try {
         const raw = await this.llm.queryModel(messages, {
           schema: VILLAGER_SCHEMA,
           maxTokens: 420,
+          purpose: `invent villager ${index + 1} of ${VILLAGERS} (${topic})`,
           // Inventing wants variety, so this is the one call that is not at zero.
           temperature: 0.7,
         });
         const villager = parseVillager(raw, index);
         this.steps.update((step) => step + 1);
+        log.group(
+          'inventor',
+          `villager ${index + 1}: ${villager.name}`,
+          () => {
+            console.log('%cproblem%c\n' + villager.problem.en, 'font-weight:700', 'color:inherit');
+            console.log('%ctemper%c\n' + villager.temper, 'font-weight:700', 'color:inherit');
+            // The marking scheme the same model will later be held to.
+            console.log(
+              '%csolution hint (written by the model itself)%c\n' + villager.solutionHint,
+              'font-weight:700',
+              'color:inherit',
+            );
+          },
+          true,
+        );
         return villager;
       } catch (cause) {
         lastError = cause;
+        log.warn(
+          'inventor',
+          `villager ${index + 1}, attempt ${attempt} of ${ATTEMPTS_PER_VILLAGER} failed`,
+          cause instanceof Error ? cause.message : cause,
+        );
       }
     }
 
@@ -273,10 +322,17 @@ export class LevelGeneratorService implements LevelInventor {
           schema: TRANSLATION_SCHEMA,
           maxTokens: 260,
           temperature: 0,
+          purpose: `translate ${npc.name} → ${locale}`,
         });
         said[locale] = field(parseObject(raw), 'translation');
-      } catch {
-        // Left in English on purpose: see above.
+        log.info('inventor', `${npc.name} in ${locale}: ${said[locale]}`);
+      } catch (cause) {
+        // Left in English on purpose: see above. Said out loud, though.
+        log.warn(
+          'inventor',
+          `${npc.name} stays in English: the ${locale} translation failed`,
+          cause instanceof Error ? cause.message : cause,
+        );
       }
 
       this.steps.update((step) => step + 1);

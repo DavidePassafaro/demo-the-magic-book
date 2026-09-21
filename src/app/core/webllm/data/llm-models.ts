@@ -57,6 +57,26 @@ export const MODEL_OPTIONS: readonly ModelOption[] = [
 
 export const DEFAULT_MODEL_ID = MODEL_OPTIONS[0].id;
 
+/**
+ * The one vision-language model WebLLM ships prebuilt. It is never in the
+ * dropdown: it loads only the first time the player holds something up to the
+ * camera, in an engine of its own, beside whichever model is judging.
+ */
+export const VISION_MODEL = {
+  id: 'Phi-3.5-vision-instruct-q4f16_1-MLC',
+  label: 'Phi-3.5 Vision',
+  approxSizeMb: 3952,
+  /**
+   * The photo's shape, and it is the shape that matters, not the size. WebLLM
+   * scales every image up to as many 336-pixel tiles as its aspect ratio allows,
+   * up to sixteen, and one image has to fit in a single prefill chunk — 2048
+   * tokens in this compiled model, and an image cannot be split. A square
+   * becomes 4×4 tiles, 2509 tokens, and is refused before the model sees it.
+   * At 3:2 it is 3×4 tiles, 1921 tokens, with room for the rules beside it.
+   */
+  frame: { width: 504, height: 336 },
+} as const;
+
 export function findModel(id: string): ModelOption {
   return MODEL_OPTIONS.find((model) => model.id === id) ?? MODEL_OPTIONS[0];
 }

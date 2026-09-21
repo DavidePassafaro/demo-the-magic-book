@@ -1,5 +1,6 @@
 import { Service, computed, inject, signal } from '@angular/core';
 import { LocaleService } from '@core/i18n/locale.service';
+import { log } from '@core/logger/logger';
 import { REFEREE } from '@features/game/engine/model/contracts';
 import {
   generateMap,
@@ -112,6 +113,22 @@ export class GameService {
 
   startLevel(level: Level): void {
     const map = generateMap(level);
+    log.group('game', `level "${level.title.en}" · ${level.npcs.length} villagers`, () => {
+      console.log({
+        id: level.id,
+        theme: level.theme,
+        seed: level.seed,
+        size: `${level.width}×${level.height}`,
+      });
+      console.table(
+        map.npcs.map((npc) => ({
+          name: npc.config.name,
+          x: npc.x,
+          y: npc.y,
+          hint: npc.config.solutionHint,
+        })),
+      );
+    });
     this.level.set(level);
     this.map.set(map);
     this.playerX.set(map.spawn.x);
@@ -180,6 +197,10 @@ export class GameService {
   }
 
   openEncounter(npcId: string): void {
+    if (this.activeNpcId() !== npcId) {
+      const name = this.map()?.npcs.find((npc) => npc.config.id === npcId)?.config.name;
+      log.info('game', `talking to ${name ?? npcId}`);
+    }
     this.activeNpcId.set(npcId);
     this.dismissed.set(null);
     this.lastAttempt.set(null);
@@ -224,8 +245,17 @@ export class GameService {
           ...current,
           [npc.id]: { solved: true, object: trimmed, reply: verdict.npcReply },
         }));
+        const total = this.map()?.npcs.length ?? 0;
+        log.info(
+          'game',
+          `${npc.name} helped with "${trimmed}" · ${this.solvedCount()} of ${total}`,
+        );
+        if (this.allSolved()) {
+          log.info('game', 'every villager helped: level complete');
+        }
       }
     } catch (cause) {
+      log.error('game', `no verdict for "${trimmed}" (${npc.name})`, cause);
       this.encounterError.set(cause instanceof Error ? cause.message : this.locale.t().inkRanDry);
     } finally {
       this.thinking.set(false);

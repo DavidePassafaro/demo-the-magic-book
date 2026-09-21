@@ -22,21 +22,41 @@
   </div>
 
   @if (!solved()) {
-    <form (submit)="submit($event)">
-      <label for="wish">{{ t().writeIntoBook }}</label>
-      <div class="row">
-        <input
-          id="wish"
-          #wishInput
-          type="text"
-          autocomplete="off"
-          [placeholder]="t().placeholder"
-          [formField]="wishForm.wish"
-        />
-        <button type="submit" [disabled]="thinking() || wishForm.wish().invalid()">
-          {{ t().conjure }}
-        </button>
-      </div>
-    </form>
+    @if (cameraOpen()) {
+      <mb-camera (captured)="show($event)" (cancelled)="closeCamera()" />
+    } @else {
+      <form (submit)="submit($event)">
+        <label for="wish">{{ t().writeIntoBook }}</label>
+        <div class="row">
+          <input
+            id="wish"
+            #wishInput
+            type="text"
+            autocomplete="off"
+            [placeholder]="t().placeholder"
+            [formField]="wishForm.wish"
+          />
+          <button type="submit" [disabled]="thinking() || seeing() || wishForm.wish().invalid()">
+            {{ t().conjure }}
+          </button>
+          <button
+            type="button"
+            class="secondary"
+            [disabled]="thinking() || seeing()"
+            (click)="openCamera()"
+          >
+            {{ t().showObject }}
+          </button>
+        </div>
+      </form>
+    }
+
+    @if (seeing()) {
+      <p class="thinking" aria-live="polite">{{ seeingText() }}</p>
+    }
+
+    @if (cameraError(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
   }
 </section>
