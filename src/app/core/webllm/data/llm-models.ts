@@ -18,12 +18,12 @@ export const MODEL_OPTIONS: readonly ModelOption[] = [
     },
   },
   {
-    id: 'Ministral-3-3B-Instruct-2512-BF16-q4f16_1-MLC',
-    label: 'Ministral 3 — 3B',
-    approxSizeMb: 2864,
+    id: 'gemma-2-2b-it-q4f16_1-MLC',
+    label: 'Gemma 2 — 2B',
+    approxSizeMb: 1895,
     note: {
-      en: 'The European one, and the biggest download.',
-      it: 'Il modello europeo, il download più pesante.',
+      en: 'Google’s, and widely multilingual.',
+      it: 'Di Google, addestrato su molte lingue.',
     },
   },
   {
