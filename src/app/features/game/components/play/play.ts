@@ -23,12 +23,20 @@ import { LoadingScreen } from '@shared/loading-screen/loading-screen';
 import { NpcPanel } from '@features/game/components/npc-panel/npc-panel';
 import { SettingsBar } from '@shared/settings-bar/settings-bar';
 
-/** Arrow keys only: letters belong to the book, not to the map. */
+/** Arrow keys (and WASD when not writing in the book) move the player on the map. */
 const MOVEMENT_KEYS: Record<string, Facing> = {
   ArrowUp: 'up',
   ArrowDown: 'down',
   ArrowLeft: 'left',
   ArrowRight: 'right',
+  w: 'up',
+  W: 'up',
+  s: 'down',
+  S: 'down',
+  a: 'left',
+  A: 'left',
+  d: 'right',
+  D: 'right',
 };
 
 @Component({
@@ -217,8 +225,9 @@ export class Play {
     const midSentence = isField && (target as HTMLInputElement).value.trim() !== '';
 
     if (inEncounter) {
-      // Walking away is how you end a conversation — unless you are mid-wish.
-      if (direction && !midSentence && !this.game.thinking()) {
+      // Walking away with arrow keys ends a conversation — unless you are mid-wish.
+      const isArrow = event.key.startsWith('Arrow');
+      if (direction && isArrow && !midSentence && !this.game.thinking()) {
         // Pressing towards the person you are speaking to is not walking away.
         if (this.game.npcInDirection(direction)?.config.id === this.game.activeNpcId()) {
           event.preventDefault();
@@ -246,5 +255,18 @@ export class Play {
       event.preventDefault();
       this.game.interact();
     }
+  }
+
+  protected onDpadMove(direction: Facing): void {
+    if (this.showComplete() || !this.ready() || this.game.thinking()) {
+      return;
+    }
+    if (this.game.activeNpcId() !== null) {
+      if (this.game.npcInDirection(direction)?.config.id === this.game.activeNpcId()) {
+        return;
+      }
+      this.leaveEncounter();
+    }
+    this.game.move(direction);
   }
 }

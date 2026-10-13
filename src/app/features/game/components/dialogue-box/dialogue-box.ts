@@ -15,6 +15,7 @@ import { Camera } from '@features/game/components/camera/camera';
 import type { Attempt } from '@features/game/engine/game.service';
 import { OBJECT_RECOGNIZER } from '@features/game/engine/model/contracts';
 import { text, type NpcConfig } from '@features/game/engine/model/level';
+import { drawNpcSprite, getNpcAppearance } from '@features/game/engine/pixel-sprites';
 
 @Component({
   selector: 'mb-dialogue-box',
@@ -37,6 +38,7 @@ export class DialogueBox {
   private readonly locale = inject(LocaleService);
   private readonly recognizer = inject(OBJECT_RECOGNIZER);
   private readonly wishInput = viewChild<ElementRef<HTMLInputElement>>('wishInput');
+  private readonly portraitCanvas = viewChild<ElementRef<HTMLCanvasElement>>('portraitCanvas');
   private readonly draft = signal({ wish: '' });
 
   protected readonly t = this.locale.t;
@@ -73,9 +75,22 @@ export class DialogueBox {
     // This runs after render because the field is disabled while the book is
     // writing, and focusing it before the template re-enables it does nothing.
     afterRenderEffect(() => {
-      this.npc();
+      const currentNpc = this.npc();
+      const isSolved = this.objectWorked();
       this.attempt();
       this.error();
+
+      // Render pixel-art NPC portrait in the dialogue box
+      const canvas = this.portraitCanvas()?.nativeElement;
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.imageSmoothingEnabled = false;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const appearance = getNpcAppearance(currentNpc.id, currentNpc.name);
+          drawNpcSprite(ctx, 4, 4, appearance, 0, isSolved, 3);
+        }
+      }
 
       // Closing the camera, or the eye naming the object, hands the cursor back
       // to the field — with the name already in it, one Enter from being judged.

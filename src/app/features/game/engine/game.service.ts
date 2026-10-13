@@ -2,6 +2,7 @@ import { Service, computed, inject, signal } from '@angular/core';
 import { LocaleService } from '@core/i18n/locale.service';
 import { log } from '@core/logger/logger';
 import { REFEREE } from '@features/game/engine/model/contracts';
+import { RetroAudioService } from '@features/game/engine/retro-audio.service';
 import {
   generateMap,
   isWalkable,
@@ -43,12 +44,15 @@ const STEPS: Record<Facing, { dx: number; dy: number }> = {
 export class GameService {
   private readonly referee = inject(REFEREE);
   private readonly locale = inject(LocaleService);
+  readonly audio = inject(RetroAudioService);
 
   readonly level = signal<Level | null>(null);
   readonly map = signal<GameMap | null>(null);
   readonly playerX = signal(0);
   readonly playerY = signal(0);
   readonly facing = signal<Facing>('down');
+  readonly stepCounter = signal(0);
+  readonly bumpCounter = signal(0);
   readonly progress = signal<Record<string, NpcProgress>>({});
 
   readonly activeNpcId = signal<string | null>(null);
@@ -134,6 +138,8 @@ export class GameService {
     this.playerX.set(map.spawn.x);
     this.playerY.set(map.spawn.y);
     this.facing.set('down');
+    this.stepCounter.set(0);
+    this.bumpCounter.set(0);
     this.progress.set(
       Object.fromEntries(
         map.npcs.map((npc) => [
@@ -164,6 +170,12 @@ export class GameService {
     if (isWalkable(map, nextX, nextY)) {
       this.playerX.set(nextX);
       this.playerY.set(nextY);
+      const nextStep = this.stepCounter() + 1;
+      this.stepCounter.set(nextStep);
+      this.audio.playStep(nextStep % 2 === 0);
+    } else if (!npcAt(map, nextX, nextY)) {
+      this.bumpCounter.update((c) => c + 1);
+      this.audio.playBump();
     }
 
     const ahead = this.facingNpc();
@@ -200,6 +212,7 @@ export class GameService {
     if (this.activeNpcId() !== npcId) {
       const name = this.map()?.npcs.find((npc) => npc.config.id === npcId)?.config.name;
       log.info('game', `talking to ${name ?? npcId}`);
+      this.audio.playGreet();
     }
     this.activeNpcId.set(npcId);
     this.dismissed.set(null);
@@ -234,6 +247,7 @@ export class GameService {
 
     this.thinking.set(true);
     this.encounterError.set(null);
+    this.audio.playConjure();
 
     try {
       const verdict = await this.referee.judge(npc, trimmed);
@@ -241,6 +255,7 @@ export class GameService {
       this.lastAttempt.set({ object: trimmed, reply: verdict.npcReply, solved: verdict.solved });
 
       if (verdict.solved) {
+        this.audio.playSolved();
         this.progress.update((current) => ({
           ...current,
           [npc.id]: { solved: true, object: trimmed, reply: verdict.npcReply },
@@ -253,6 +268,8 @@ export class GameService {
         if (this.allSolved()) {
           log.info('game', 'every villager helped: level complete');
         }
+      } else {
+        this.audio.playFail();
       }
     } catch (cause) {
       log.error('game', `no verdict for "${trimmed}" (${npc.name})`, cause);

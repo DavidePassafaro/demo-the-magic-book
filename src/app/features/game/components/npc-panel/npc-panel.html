@@ -1,17 +1,32 @@
 <section class="panel" aria-labelledby="who-is-here">
-  <h2 id="who-is-here">{{ t().whoIsHere }}</h2>
+  <h2 id="who-is-here">📜 {{ t().whoIsHere }}</h2>
   <ul>
     @for (npc of npcs(); track npc.config.id) {
+      @let solved = progress()[npc.config.id]?.solved;
       <li>
-        <button type="button" (click)="talk.emit(npc.config.id)">
-          <span class="name">{{ npc.config.name }}</span>
-          @if (progress()[npc.config.id]?.solved) {
-            <span class="state solved">
-              {{ t().helpedWith(progress()[npc.config.id]?.object ?? '') }}
-            </span>
-          } @else {
-            <span class="state">{{ t().stillStuck }}</span>
-          }
+        <button
+          type="button"
+          [class.solved-card]="solved"
+          [class.active-card]="activeNpcId() === npc.config.id"
+          (click)="talk.emit(npc.config.id)"
+        >
+          <span
+            class="avatar-pip"
+            [style.background]="badgeColor(npc.config.id, npc.config.name)"
+            aria-hidden="true"
+          >
+            {{ solved ? '★' : isDog(npc.config.id, npc.config.name) ? '🐾' : '!' }}
+          </span>
+          <span class="info">
+            <span class="name">{{ npc.config.name }}</span>
+            @if (solved) {
+              <span class="state solved">
+                {{ t().helpedWith(progress()[npc.config.id]?.object ?? '') }}
+              </span>
+            } @else {
+              <span class="state">{{ t().stillStuck }}</span>
+            }
+          </span>
         </button>
       </li>
     }

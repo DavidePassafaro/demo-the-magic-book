@@ -1,45 +1,95 @@
-<div
-  class="viewport"
-  role="group"
-  aria-label="Village map"
-  [style.width.px]="viewWidth"
-  [style.height.px]="viewHeight"
->
-  <div class="world" [style.transform]="worldTransform()">
-    @for (kind of map().tiles; track $index) {
-      <div
-        class="tile"
-        [class]="'tile-' + kind"
-        [style.left.px]="($index % map().width) * tileSize"
-        [style.top.px]="floor($index / map().width) * tileSize"
-        [style.width.px]="tileSize"
-        [style.height.px]="tileSize"
-      ></div>
-    }
-
-    @for (npc of map().npcs; track npc.config.id) {
-      <button
-        type="button"
-        class="npc"
-        [class.solved]="progress()[npc.config.id]?.solved"
-        [style.left.px]="npc.x * tileSize"
-        [style.top.px]="npc.y * tileSize"
-        [style.width.px]="tileSize"
-        [style.height.px]="tileSize"
-        [attr.aria-label]="npcLabel(npc.config.id, npc.config.name)"
-        (click)="talk.emit(npc.config.id)"
-      >
-        <span aria-hidden="true">{{ progress()[npc.config.id]?.solved ? '☺' : '!' }}</span>
-      </button>
-    }
+<div class="console-shell">
+  <div class="bezel">
+    <div class="bezel-top">
+      <span class="power-led" aria-hidden="true"></span>
+      <span class="bezel-brand">MAGIC BOY COLOR</span>
+    </div>
 
     <div
-      class="player"
-      [class]="'facing-' + facing()"
-      [style.left.px]="playerX() * tileSize"
-      [style.top.px]="playerY() * tileSize"
-      [style.width.px]="tileSize"
-      [style.height.px]="tileSize"
-    ></div>
+      class="viewport"
+      role="group"
+      aria-label="Village map"
+      [style.width.px]="viewWidth"
+      [style.height.px]="viewHeight"
+    >
+      <canvas
+        #worldCanvas
+        class="pixel-canvas"
+        [width]="viewWidth"
+        [height]="viewHeight"
+        aria-hidden="true"
+      ></canvas>
+
+      <div class="crt-overlay" aria-hidden="true"></div>
+
+      <!-- Accessible & clickable NPC hotspot layer synced with world position -->
+      <div class="world-hotspots" [style.transform]="worldTransform()">
+        @for (npc of map().npcs; track npc.config.id) {
+          <button
+            type="button"
+            class="npc-hotspot"
+            [class.solved]="progress()[npc.config.id]?.solved"
+            [style.left.px]="npc.x * tileSize"
+            [style.top.px]="npc.y * tileSize"
+            [style.width.px]="tileSize"
+            [style.height.px]="tileSize"
+            [attr.aria-label]="npcLabel(npc.config.id, npc.config.name)"
+            (click)="talk.emit(npc.config.id)"
+          >
+            <span class="npc-tag" aria-hidden="true">{{ npc.config.name }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- On-screen handheld controls (D-Pad + A button) for mouse & touch play -->
+    <div class="handheld-controls" aria-label="Game controls">
+      <div class="dpad" role="group" aria-label="Directional pad">
+        <button
+          type="button"
+          class="dpad-btn up"
+          aria-label="Move up"
+          (click)="moveStep.emit('up')"
+        >
+          ▲
+        </button>
+        <button
+          type="button"
+          class="dpad-btn left"
+          aria-label="Move left"
+          (click)="moveStep.emit('left')"
+        >
+          ◀
+        </button>
+        <div class="dpad-center" aria-hidden="true"></div>
+        <button
+          type="button"
+          class="dpad-btn right"
+          aria-label="Move right"
+          (click)="moveStep.emit('right')"
+        >
+          ▶
+        </button>
+        <button
+          type="button"
+          class="dpad-btn down"
+          aria-label="Move down"
+          (click)="moveStep.emit('down')"
+        >
+          ▼
+        </button>
+      </div>
+
+      <div class="action-buttons">
+        <button
+          type="button"
+          class="btn-a"
+          aria-label="Talk or interact"
+          (click)="interactAction.emit()"
+        >
+          A
+        </button>
+      </div>
+    </div>
   </div>
 </div>

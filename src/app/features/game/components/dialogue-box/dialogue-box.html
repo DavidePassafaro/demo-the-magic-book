@@ -1,18 +1,40 @@
 <section class="box" aria-labelledby="npc-name">
-  <h2 id="npc-name">{{ npc().name }}</h2>
+  <div class="box-header">
+    <div class="portrait-frame" [class.solved]="objectWorked()" aria-hidden="true">
+      <canvas #portraitCanvas width="56" height="56"></canvas>
+    </div>
+    <div class="header-body">
+      <div class="title-row">
+        <h2 id="npc-name">{{ npc().name }}</h2>
+        <button
+          type="button"
+          class="close-btn"
+          [attr.aria-label]="t().cancel"
+          (click)="closed.emit()"
+        >
+          ✕
+        </button>
+      </div>
+      <!-- The riddle never leaves the screen, solved or not. -->
+      <p class="line problem">{{ problem() }}</p>
+    </div>
+  </div>
 
   <div class="speech">
-    <!-- The riddle never leaves the screen, solved or not. -->
-    <p class="line problem">{{ problem() }}</p>
-
     <div class="exchange" aria-live="polite">
       @if (shownObject(); as object) {
-        <p class="object" [class.worked]="objectWorked()">{{ object }}</p>
-        <p class="line">{{ shownReply() }}</p>
+        <div class="wish-badge" [class.worked]="objectWorked()">
+          <span class="wish-icon" aria-hidden="true">{{ objectWorked() ? '★' : '✦' }}</span>
+          <span class="object" [class.worked]="objectWorked()">{{ object }}</span>
+        </div>
+        <p class="line reply">{{ shownReply() }}</p>
       }
 
       @if (thinking()) {
-        <p class="thinking">{{ t().thinking }}</p>
+        <p class="thinking">
+          <span class="quill" aria-hidden="true">✎</span>
+          {{ t().thinking }}
+        </p>
       }
 
       @if (error()) {
@@ -25,8 +47,10 @@
     @if (cameraOpen()) {
       <mb-camera (captured)="show($event)" (cancelled)="closeCamera()" />
     } @else {
-      <form (submit)="submit($event)">
-        <label for="wish">{{ t().writeIntoBook }}</label>
+      <form class="book-form" (submit)="submit($event)">
+        <label for="wish">
+          <span aria-hidden="true">📖</span> {{ t().writeIntoBook }}
+        </label>
         <div class="row">
           <input
             id="wish"
@@ -36,7 +60,11 @@
             [placeholder]="t().placeholder"
             [formField]="wishForm.wish"
           />
-          <button type="submit" [disabled]="thinking() || seeing() || wishForm.wish().invalid()">
+          <button
+            type="submit"
+            class="conjure-btn"
+            [disabled]="thinking() || seeing() || wishForm.wish().invalid()"
+          >
             {{ t().conjure }}
           </button>
           <button
@@ -45,7 +73,7 @@
             [disabled]="thinking() || seeing()"
             (click)="openCamera()"
           >
-            {{ t().showObject }}
+            📷 {{ t().showObject }}
           </button>
         </div>
       </form>

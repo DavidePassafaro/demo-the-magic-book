@@ -29,7 +29,18 @@
     <header class="hud">
       <a routerLink="/">{{ t().leave }}</a>
       <h1>{{ levelTitle() }}</h1>
-      <p class="count">{{ t().helpedCount(game.solvedCount(), map.npcs.length) }}</p>
+      <div class="hud-right">
+        <p class="count">{{ t().helpedCount(game.solvedCount(), map.npcs.length) }}</p>
+        <button
+          type="button"
+          class="sound-toggle"
+          [attr.aria-label]="game.audio.muted() ? 'Unmute sound' : 'Mute sound'"
+          [attr.aria-pressed]="!game.audio.muted()"
+          (click)="game.audio.toggleMute()"
+        >
+          {{ game.audio.muted() ? '🔇' : '🔊' }}
+        </button>
+      </div>
       <mb-settings-bar />
     </header>
 
@@ -40,12 +51,18 @@
         [playerY]="game.playerY()"
         [facing]="game.facing()"
         [progress]="game.progress()"
+        [stepCounter]="game.stepCounter()"
+        [bumpCounter]="game.bumpCounter()"
+        [activeNpcId]="game.activeNpcId()"
         (talk)="game.openEncounter($event)"
+        (moveStep)="onDpadMove($event)"
+        (interactAction)="game.interact()"
       />
 
       <mb-npc-panel
         [npcs]="map.npcs"
         [progress]="game.progress()"
+        [activeNpcId]="game.activeNpcId()"
         (talk)="game.openEncounter($event)"
       />
     </div>

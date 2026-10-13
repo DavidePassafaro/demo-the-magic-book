@@ -1,158 +1,242 @@
-/* Village: wooded, green, a few ponds. The default. */
 :host {
   display: block;
   flex: 0 0 auto;
+  max-width: 100%;
 
-  --t-ground: #3f6b3c;
-  --t-path: #8c7a52;
-  --t-water: #2f5486;
-  --t-tree: #24451f;
-  --t-tree-inset: 6px;
-  --t-tree-radius: 50%;
-  --t-rock: #5a5766;
-  --t-rock-inset: 9px;
-  --t-rock-radius: 6px;
-  --t-edge: #4b3c6b;
-  --t-backdrop: #0d0a13;
+  --bezel-bg: #2a243a;
+  --bezel-edge: #524570;
+  --bezel-shadow: #14101f;
+  --led-color: #ff4455;
 }
 
-/* Harbour: stone quay, wooden boards, mooring posts and crates. */
 :host([data-theme='harbour']) {
-  --t-ground: #6f6a5d;
-  --t-path: #96713f;
-  --t-water: #1d4a76;
-  --t-tree: #3c2a19;
-  --t-tree-inset: 12px;
-  --t-tree-radius: 50%;
-  --t-rock: #8a6a3f;
-  --t-rock-inset: 7px;
-  --t-rock-radius: 2px;
-  --t-edge: #55503f;
-  --t-backdrop: #0c1119;
+  --bezel-bg: #1e2d3d;
+  --bezel-edge: #3e5b78;
 }
 
-/* Winter: snow, trodden tracks, frozen ponds, dark pines. */
 :host([data-theme='winter']) {
-  --t-ground: #cfd8e6;
-  --t-path: #a8b8cd;
-  --t-water: #93b7d6;
-  --t-tree: #2e4a38;
-  --t-tree-inset: 6px;
-  --t-tree-radius: 50%;
-  --t-rock: #8b93a3;
-  --t-rock-inset: 9px;
-  --t-rock-radius: 6px;
-  --t-edge: #6c7b91;
-  --t-backdrop: #10151f;
+  --bezel-bg: #2a3446;
+  --bezel-edge: #5a6e8c;
 }
 
-/* Indoors: carpet, corridor tiles, solid walls, furniture. */
 :host([data-theme='indoor']) {
-  --t-ground: #5c5470;
-  --t-path: #8b8399;
-  --t-water: #3a5f7a;
-  --t-tree: #191426;
-  --t-tree-inset: 20px;
-  --t-tree-radius: 0;
-  --t-rock: #a2743f;
-  --t-rock-inset: 8px;
-  --t-rock-radius: 3px;
-  --t-edge: #3d3550;
-  --t-backdrop: #15111d;
+  --bezel-bg: #332238;
+  --bezel-edge: #684973;
+}
+
+.console-shell {
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
+}
+
+.bezel {
+  background: linear-gradient(160deg, var(--bezel-bg), #191524);
+  border: 4px solid var(--bezel-edge);
+  border-radius: 14px 14px 28px 14px;
+  padding: 0.65rem 0.9rem 0.9rem;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.65),
+    inset 0 2px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -4px 0 var(--bezel-shadow);
+  max-width: 100%;
+}
+
+.bezel-top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+  padding: 0 0.25rem;
+}
+
+.power-led {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--led-color);
+  box-shadow: 0 0 8px var(--led-color);
+}
+
+.bezel-brand {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--ink-dim);
+  opacity: 0.85;
 }
 
 .viewport {
   position: relative;
   overflow: hidden;
   margin: 0 auto;
-  border: 3px solid var(--t-edge);
-  border-radius: 4px;
-  background: var(--t-backdrop);
+  border: 4px solid #120e1a;
+  border-radius: 6px;
+  background: #0d0a13;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.85);
   max-width: 100%;
+  aspect-ratio: 15 / 11;
+  height: auto !important;
 }
 
-.world {
+.pixel-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Subtle Game Boy LCD grid / scanline & vignette overlay */
+.crt-overlay {
   position: absolute;
   inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.14) 50%),
+    radial-gradient(circle at center, transparent 62%, rgba(0, 0, 0, 0.38) 100%);
+  background-size:
+    100% 4px,
+    100% 100%;
+}
+
+.world-hotspots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   transition: transform 140ms linear;
 }
 
-.tile {
+.npc-hotspot {
   position: absolute;
+  padding: 0;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
-.tile-grass {
-  background: var(--t-ground);
+.npc-hotspot:hover,
+.npc-hotspot:focus-visible {
+  border-color: var(--gold);
+  background: rgba(255, 207, 92, 0.15);
 }
 
-.tile-path {
-  background: var(--t-path);
-}
-
-.tile-water {
-  background: var(--t-water);
-}
-
-.tile-tree {
-  background: var(--t-ground);
-  box-shadow: inset 0 0 0 var(--t-tree-inset) var(--t-tree);
-  border-radius: var(--t-tree-radius);
-}
-
-.tile-rock {
-  background: var(--t-ground);
-  box-shadow: inset 0 0 0 var(--t-rock-inset) var(--t-rock);
-  border-radius: var(--t-rock-radius);
-}
-
-.npc {
+.npc-tag {
   position: absolute;
+  bottom: calc(100% + 18px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #14101c;
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.6);
+}
+
+.npc-hotspot:hover .npc-tag,
+.npc-hotspot:focus-visible .npc-tag {
+  opacity: 1;
+}
+
+/* Handheld D-Pad & Action Buttons */
+.handheld-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+  padding: 0.25rem 0.75rem 0;
+}
+
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 30px);
+  grid-template-rows: repeat(3, 30px);
+  gap: 2px;
+}
+
+.dpad-btn {
   padding: 0;
   display: grid;
   place-items: center;
-  background: var(--ember);
-  color: #2a1206;
-  border: 2px solid #2a1206;
-  border-radius: 6px;
-  font-weight: 700;
+  background: #1a1626;
+  color: var(--ink);
+  border: 2px solid #43375e;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  line-height: 1;
+  box-shadow: 0 3px 0 #0d0a14;
+  user-select: none;
 }
 
-.npc.solved {
-  background: var(--good);
+.dpad-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #0d0a14;
 }
 
-.player {
-  position: absolute;
-  background: var(--gold);
-  border: 2px solid #3a2a05;
-  border-radius: 6px;
-  transition:
-    left 140ms linear,
-    top 140ms linear;
+.dpad-btn.up {
+  grid-column: 2;
+  grid-row: 1;
 }
 
-.player::after {
-  content: '';
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: #3a2a05;
+.dpad-btn.left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.dpad-center {
+  grid-column: 2;
+  grid-row: 2;
+  background: #161220;
   border-radius: 50%;
+  margin: 4px;
 }
 
-.facing-up::after {
-  top: 4px;
-  left: calc(50% - 4px);
+.dpad-btn.right {
+  grid-column: 3;
+  grid-row: 2;
 }
-.facing-down::after {
-  bottom: 4px;
-  left: calc(50% - 4px);
+
+.dpad-btn.down {
+  grid-column: 2;
+  grid-row: 3;
 }
-.facing-left::after {
-  left: 4px;
-  top: calc(50% - 4px);
+
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
 }
-.facing-right::after {
-  right: 4px;
-  top: calc(50% - 4px);
+
+.btn-a {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  padding: 0;
+  font-weight: 800;
+  font-size: 1rem;
+  background: #b82848;
+  color: #fff6e8;
+  border: 3px solid #ff6888;
+  box-shadow: 0 4px 0 #581020;
+  user-select: none;
+}
+
+.btn-a:hover:not(:disabled) {
+  background: #d03054;
+  color: #ffffff;
+  border-color: var(--gold);
+}
+
+.btn-a:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #581020;
 }

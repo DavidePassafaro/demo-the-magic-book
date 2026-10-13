@@ -1,4 +1,4 @@
-/* Pinned to the bottom edge, over the map, the way the old games do it. */
+/* Pinned to the bottom edge, over the map, the way classic Pokémon & Zelda GBC games do it. */
 :host {
   position: fixed;
   inset: auto 0 0 0;
@@ -10,47 +10,123 @@
 
 .box {
   pointer-events: auto;
-  max-height: 70vh;
+  max-height: 75vh;
   overflow-y: auto;
-  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.55);
-  background: var(--panel);
-  border: 3px solid var(--panel-edge);
+  background: #1a1426;
+  border: 4px solid var(--gold);
+  outline: 4px solid #0e0a16;
+  box-shadow:
+    inset 0 0 0 3px #4b3c6b,
+    0 -14px 44px rgba(0, 0, 0, 0.78);
   border-radius: 6px;
   padding: 1rem 1.25rem;
   max-width: 44rem;
   margin: 0 auto;
 }
 
+.box-header {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.portrait-frame {
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  background: #120e1a;
+  border: 3px solid var(--ember);
+  box-shadow: inset 0 0 0 2px #2a1820;
+  border-radius: 6px;
+}
+
+.portrait-frame.solved {
+  border-color: var(--good);
+}
+
+.portrait-frame canvas {
+  display: block;
+  width: 56px;
+  height: 56px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.header-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
 h2 {
   color: var(--gold);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   margin: 0;
+  text-shadow: 0 2px 0 #0d0a14;
+}
+
+.close-btn {
+  padding: 0.15rem 0.45rem;
+  font-size: 0.85rem;
+  line-height: 1;
+  background: #120e1a;
+  color: var(--ink-dim);
+  border: 2px solid var(--panel-edge);
 }
 
 .speech {
-  margin: 0.75rem 0 1rem;
-}
-
-.exchange {
-  min-height: 3.5rem;
+  margin: 0.5rem 0 0.75rem;
 }
 
 .exchange:not(:empty) {
-  margin-top: 0.9rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--panel-edge);
+  margin-top: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  background: #120e1a;
+  border: 2px solid var(--panel-edge);
+  border-radius: 4px;
 }
 
 .line {
-  margin: 0 0 0.5rem;
+  margin: 0;
 }
 
 .problem {
-  color: var(--ink-dim);
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+
+.wish-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0.55rem;
+  margin-bottom: 0.4rem;
+  background: rgba(255, 154, 162, 0.12);
+  border: 1px solid var(--bad);
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.wish-badge.worked {
+  background: rgba(127, 220, 164, 0.14);
+  border-color: var(--good);
+}
+
+.wish-icon {
+  color: var(--gold);
 }
 
 .object {
-  margin: 0 0 0.35rem;
+  margin: 0;
   color: var(--bad);
 }
 
@@ -58,9 +134,30 @@ h2 {
   color: var(--good);
 }
 
+.reply {
+  color: var(--ink-dim);
+}
+
 .thinking {
   color: var(--gold);
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.quill {
+  display: inline-block;
+  animation: bob 0.6s infinite alternate ease-in-out;
+}
+
+@keyframes bob {
+  from {
+    transform: translateY(0) rotate(-8deg);
+  }
+  to {
+    transform: translateY(-3px) rotate(8deg);
+  }
 }
 
 .error {
@@ -68,21 +165,42 @@ h2 {
   margin: 0;
 }
 
+.book-form {
+  background: #241934;
+  border: 2px dashed #6b5396;
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
 label {
   display: block;
-  font-size: 0.85rem;
-  color: var(--ink-dim);
-  margin-bottom: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 0.4rem;
 }
 
 .row {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .row input {
-  flex: 1 1 auto;
+  flex: 1 1 12rem;
   min-width: 0;
+}
+
+.conjure-btn {
+  background: #3a2810;
+  border-color: var(--gold);
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.conjure-btn:hover:not(:disabled) {
+  background: var(--gold);
+  color: #1a1204;
 }
 
 .secondary {

@@ -15,12 +15,27 @@ export interface PlacedNpc extends Point {
   readonly config: NpcConfig;
 }
 
+export type TileDeco =
+  | 'none'
+  | 'flower'
+  | 'tuft'
+  | 'pebble'
+  | 'mushroom'
+  | 'house'
+  | 'well'
+  | 'signpost'
+  | 'crate'
+  | 'chest'
+  | 'bridge';
+
 export interface GameMap {
   readonly width: number;
   readonly height: number;
   readonly theme: Theme;
   /** Row-major, length width * height. */
   readonly tiles: readonly TileKind[];
+  /** Deterministic visual variations per tile (length width * height). */
+  readonly decos: readonly TileDeco[];
   readonly spawn: Point;
   readonly npcs: readonly PlacedNpc[];
 }
@@ -41,6 +56,13 @@ export function tileAt(map: GameMap, x: number, y: number): TileKind {
     return 'tree';
   }
   return map.tiles[y * map.width + x];
+}
+
+export function decoAt(map: GameMap, x: number, y: number): TileDeco {
+  if (x < 0 || y < 0 || x >= map.width || y >= map.height) {
+    return 'none';
+  }
+  return map.decos?.[y * map.width + x] ?? 'none';
 }
 
 export function npcAt(map: GameMap, x: number, y: number): PlacedNpc | null {
@@ -227,8 +249,90 @@ function generateOutdoor(level: Level, random: () => number): GameMap {
 
   const reachable = [...reachableFrom(tiles, width, height, spawn)];
   const npcs = placeNpcs(level, tiles, width, spawn, reachable, random);
+  const decos = buildDecorations(tiles, width, height, theme, spawn, npcs, random);
 
-  return { width, height, theme, tiles, spawn, npcs };
+  return { width, height, theme, tiles, decos, spawn, npcs };
+}
+
+function buildDecorations(
+  tiles: readonly TileKind[],
+  width: number,
+  height: number,
+  theme: Theme,
+  spawn: Point,
+  npcs: readonly PlacedNpc[],
+  random: () => number,
+): TileDeco[] {
+  const decos = new Array<TileDeco>(width * height).fill('none');
+  let placedWell = false;
+  let placedSign = false;
+
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      const idx = y * width + x;
+      const kind = tiles[idx];
+      const r = random();
+
+      if (kind === 'grass') {
+        if (theme === 'indoor') {
+          if (r < 0.08) decos[idx] = 'pebble';
+        } else if (theme === 'harbour') {
+          if (r < 0.14) decos[idx] = 'pebble';
+          else if (r < 0.22) decos[idx] = 'tuft';
+        } else if (theme === 'winter') {
+          if (r < 0.12) decos[idx] = 'tuft';
+          else if (r < 0.18) decos[idx] = 'flower';
+          else if (r < 0.24) decos[idx] = 'pebble';
+        } else {
+          // village
+          if (r < 0.14) decos[idx] = 'flower';
+          else if (r < 0.28) decos[idx] = 'tuft';
+          else if (r < 0.32) decos[idx] = 'mushroom';
+          else if (r < 0.36) decos[idx] = 'pebble';
+        }
+      } else if (kind === 'rock') {
+        if (theme === 'indoor') {
+          decos[idx] = r < 0.35 ? 'chest' : 'crate';
+        } else if (theme === 'harbour') {
+          decos[idx] = 'crate';
+        } else if (theme === 'village') {
+          if (!placedWell && Math.abs(x - spawn.x) + Math.abs(y - spawn.y) <= 7) {
+            decos[idx] = 'well';
+            placedWell = true;
+          } else if (!placedSign && r < 0.25) {
+            decos[idx] = 'signpost';
+            placedSign = true;
+          } else if (r < 0.35 && y < height - 3 && tiles[(y + 1) * width + x] !== 'water') {
+            decos[idx] = 'house';
+          }
+        } else if (theme === 'winter') {
+          if (!placedSign && r < 0.25) {
+            decos[idx] = 'signpost';
+            placedSign = true;
+          } else if (r < 0.28) {
+            decos[idx] = 'house';
+          }
+        }
+      } else if (kind === 'path') {
+        const nearWater =
+          tiles[y * width + (x - 1)] === 'water' ||
+          tiles[y * width + (x + 1)] === 'water' ||
+          tiles[(y - 1) * width + x] === 'water' ||
+          tiles[(y + 1) * width + x] === 'water';
+        if (nearWater && theme !== 'indoor') {
+          decos[idx] = 'bridge';
+        }
+      }
+    }
+  }
+
+  // Keep NPC tiles clean of tall grass clutter
+  for (const npc of npcs) {
+    decos[npc.y * width + npc.x] = 'none';
+  }
+  decos[spawn.y * width + spawn.x] = 'none';
+
+  return decos;
 }
 
 /**
@@ -302,8 +406,9 @@ function generateIndoor(level: Level, random: () => number): GameMap {
 
   const reachable = [...reachableFrom(tiles, width, height, spawn)];
   const npcs = placeNpcs(level, tiles, width, spawn, reachable, random);
+  const decos = buildDecorations(tiles, width, height, 'indoor', spawn, npcs, random);
 
-  return { width, height, theme: 'indoor', tiles, spawn, npcs };
+  return { width, height, theme: 'indoor', tiles, decos, spawn, npcs };
 }
 
 /** Builds the level's map from its seed and its theme. */
