@@ -66,13 +66,34 @@ function judgeRules(locale: Locale): string {
   ].join('\n');
 }
 
+const ENGLISH_OBJECT_SCHEMA = JSON.stringify({
+  type: 'object',
+  properties: { english: { type: 'string' } },
+  required: ['english'],
+});
+
+function translateObjectPrompt(object: string, locale: Locale): ChatCompletionMessageParam[] {
+  return [
+    {
+      role: 'system',
+      content: [
+        `You translate a short noun phrase from ${LANGUAGE_NAMES[locale]} into English. Answer with JSON only.`,
+        'Rules:',
+        '1. "english" is the plain English name of the object (e.g. "bastone" -> "a stick", "carrello" -> "a cart").',
+        '2. If the word is already in English, keep it as is.',
+      ].join('\n'),
+    },
+    { role: 'user', content: `OBJECT: ${object}` },
+  ];
+}
+
 /**
  * One wish, weighed against one villager's problem. The problem is handed over
  * in English whatever the player reads, because the reasoning is done in
  * English; only the villager's spoken line is asked for in their language.
  *
  * @param npc The villager being spoken to, temper and hidden hint included.
- * @param object Exactly what the player typed, trimmed.
+ * @param object The conjured object (in English, so it matches SOLUTION_HINT).
  * @param locale The language the villager must answer in.
  */
 function judgePrompt(npc: NpcConfig, object: string, locale: Locale): ChatCompletionMessageParam[] {
@@ -97,6 +118,32 @@ export class JudgeService implements Referee {
   private readonly llm = inject(WebLlmService);
   private readonly locale = inject(LocaleService);
 
+  private async toEnglishObject(object: string, locale: Locale): Promise<string> {
+    if (locale === 'en') {
+      return object;
+    }
+    try {
+      const raw = await this.llm.queryModel(translateObjectPrompt(object, locale), {
+        schema: ENGLISH_OBJECT_SCHEMA,
+        maxTokens: 40,
+        temperature: 0,
+        purpose: `translate wish "${object}" → en`,
+      });
+      const start = raw.indexOf('{');
+      const end = raw.lastIndexOf('}');
+      if (start !== -1 && end > start) {
+        const parsed = JSON.parse(raw.slice(start, end + 1)) as Record<string, unknown>;
+        const en = typeof parsed['english'] === 'string' ? parsed['english'].trim() : '';
+        if (en.length > 0) {
+          return `${en} (${object})`;
+        }
+      }
+    } catch {
+      // Fall back to the original object string if translation fails.
+    }
+    return object;
+  }
+
   /**
    * Weighs one conjured object against one villager's problem, at temperature
    * zero so that the same wish twice gets the same answer twice. The model sees
@@ -109,7 +156,9 @@ export class JudgeService implements Referee {
    * dialogue box turns that into "the book's ink ran dry" and offers a retry.
    */
   async judge(npc: NpcConfig, object: string): Promise<Verdict> {
-    const messages = judgePrompt(npc, object, this.locale.locale());
+    const locale = this.locale.locale();
+    const judgedObject = await this.toEnglishObject(object, locale);
+    const messages = judgePrompt(npc, judgedObject, locale);
     let lastError: unknown = null;
 
     for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {

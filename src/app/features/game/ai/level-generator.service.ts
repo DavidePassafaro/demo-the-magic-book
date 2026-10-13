@@ -89,6 +89,7 @@ function villagerRules(): string {
     '4. "solutionHint" is never shown to the player. Name four or five kinds of',
     '   object that would solve the problem, then two or three kinds that would obviously not,',
     '   and end with the words "Reject everything else."',
+    '   Example: "Anything that carries books: a basket, a backpack, a cart, a box, a crate. A hammer or a rope does not work. Reject everything else."',
     '5. The problem must have an obvious everyday solution. If you cannot name four kinds of',
     '   object that solve it, invent a simpler problem.',
     '6. Write every field in English.',
@@ -374,12 +375,19 @@ function parseObject(raw: string): Record<string, unknown> {
 /** One villager as the game holds them, with the problem still English-only. */
 function parseVillager(raw: string, index: number): NpcConfig {
   const record = parseObject(raw);
+  let solutionHint = field(record, 'solutionHint').replace(/[\[\]]/g, '');
+
+  // If a small model wrote a bare list without a leading verb phrase,
+  // prefix "Anything such as: " so the judge knows those items are valid solutions.
+  if (!/\b(accept|anything|solved|work|works)\b/i.test(solutionHint)) {
+    solutionHint = `Anything such as: ${solutionHint}`;
+  }
 
   return {
     id: `invented-${index}`,
     name: field(record, 'name'),
     temper: field(record, 'temper'),
     problem: { en: field(record, 'problem') },
-    solutionHint: field(record, 'solutionHint'),
+    solutionHint,
   };
 }
