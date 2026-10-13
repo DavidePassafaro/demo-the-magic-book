@@ -1,7 +1,10 @@
 import { Service, signal } from '@angular/core';
 import {
   CreateWebWorkerMLCEngine,
+  deleteModelAllInfoInCache,
   hasModelInCache,
+  prebuiltAppConfig,
+  type AppConfig,
   type ChatCompletionMessageParam,
   type InitProgressReport,
   type WebWorkerMLCEngine,
@@ -123,9 +126,22 @@ function readable(messages: readonly ChatCompletionMessageParam[]): Record<strin
 function startEngine(
   modelId: string,
   onProgress: (report: InitProgressReport) => void,
+  appConfig?: AppConfig,
 ): Promise<WebWorkerMLCEngine> {
   const worker = new Worker(new URL('./llm.worker', import.meta.url), { type: 'module' });
-  return CreateWebWorkerMLCEngine(worker, modelId, { initProgressCallback: onProgress });
+  return CreateWebWorkerMLCEngine(worker, modelId, {
+    initProgressCallback: onProgress,
+    ...(appConfig ? { appConfig } : {}),
+  });
+}
+
+function isCacheAddError(cause: unknown): boolean {
+  const message = cause instanceof Error ? cause.message : String(cause);
+  return (
+    message.includes("Failed to execute 'add' on 'Cache'") ||
+    message.includes('QuotaExceededError') ||
+    message.includes('ArtifactCache')
+  );
 }
 
 /**
@@ -291,6 +307,8 @@ export class WebLlmService {
   readonly error = signal<string | null>(null);
 
   private engine: WebWorkerMLCEngine | null = null;
+  private activeLoad: Promise<boolean> | null = null;
+  private appConfig: AppConfig = { ...prebuiltAppConfig };
   /** Where the current load's progress is narrated; replaced on every load. */
   private onReloadProgress: (report: InitProgressReport) => void = () => undefined;
 
@@ -324,8 +342,18 @@ export class WebLlmService {
    * @param id The model to ask about.
    * @returns False when the question itself fails: an unknown cache is an empty one.
    */
-  isCached(id: string): Promise<boolean> {
-    return hasModelInCache(id).catch(() => false);
+  async isCached(id: string): Promise<boolean> {
+    try {
+      if (await hasModelInCache(id, this.appConfig)) {
+        return true;
+      }
+      if (this.appConfig.cacheBackend !== 'indexeddb') {
+        return await hasModelInCache(id, { ...prebuiltAppConfig, cacheBackend: 'indexeddb' });
+      }
+      return false;
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -337,13 +365,33 @@ export class WebLlmService {
    * the download failed, which `status` then tells apart.
    */
   async loadModel(): Promise<boolean> {
+    if (this.activeLoad) {
+      await this.activeLoad;
+    }
     const wanted = this.modelId();
-
     if (this.engine && this.loadedModelId() === wanted) {
       this.status.set('ready');
       return true;
     }
 
+    const loadPromise = this.performLoadModel(wanted);
+    this.activeLoad = loadPromise;
+    try {
+      const ok = await loadPromise;
+      // If the user picked yet another model while this one was loading, switch to it now.
+      if (ok && this.modelId() !== wanted) {
+        this.activeLoad = null;
+        return await this.loadModel();
+      }
+      return ok;
+    } finally {
+      if (this.activeLoad === loadPromise) {
+        this.activeLoad = null;
+      }
+    }
+  }
+
+  private async performLoadModel(wanted: string): Promise<boolean> {
     this.status.set('checking');
     const support = await detectWebGpu();
     this.support.set(support);
@@ -369,15 +417,47 @@ export class WebLlmService {
     // later reload through it, so the narration is swapped in here, per load.
     this.onReloadProgress = narration.progress;
 
-    try {
+    const loadIntoEngine = async (config: AppConfig): Promise<void> => {
       if (this.engine) {
+        this.engine.setAppConfig(config);
         await this.engine.reload(wanted);
       } else {
-        this.engine = await startEngine(wanted, (report) => {
-          this.progress.set(report.progress);
-          this.progressText.set(report.text);
-          this.onReloadProgress(report);
-        });
+        this.engine = await startEngine(
+          wanted,
+          (report) => {
+            this.progress.set(report.progress);
+            this.progressText.set(report.text);
+            this.onReloadProgress(report);
+          },
+          config,
+        );
+      }
+    };
+
+    try {
+      try {
+        await loadIntoEngine(this.appConfig);
+      } catch (firstCause) {
+        if (!isCacheAddError(firstCause)) {
+          throw firstCause;
+        }
+
+        // Browser Cache Storage threw "Failed to execute 'add' on 'Cache': Request failed"
+        // (typically storage quota exhaustion when multiple models accumulate, or a corrupted partial entry).
+        log.warn(
+          'engine',
+          'Cache Storage failed during model download; clearing partial/previous cache and retrying with IndexedDB fallback',
+          firstCause,
+        );
+
+        await deleteModelAllInfoInCache(wanted, this.appConfig).catch(() => undefined);
+        if (previous && previous !== wanted) {
+          await deleteModelAllInfoInCache(previous, this.appConfig).catch(() => undefined);
+        }
+
+        this.appConfig = { ...prebuiltAppConfig, cacheBackend: 'indexeddb' };
+        this.progress.set(0);
+        await loadIntoEngine(this.appConfig);
       }
 
       narration.done();
