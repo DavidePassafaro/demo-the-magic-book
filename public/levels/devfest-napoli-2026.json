@@ -1,0 +1,43 @@
+{
+  "id": "4dev-2026",
+  "title": {
+    "en": "#4Dev 2026",
+    "it": "#4Dev 2026"
+  },
+  "theme": "indoor",
+  "seed": 20261014,
+  "width": 24,
+  "height": 18,
+  "npcs": [
+    {
+      "id": "cosmo",
+      "name": "Cosmo, Il Mordicchiatore di Mondi",
+      "temper": "A dog. Cosmo cannot speak and does not understand that anyone expects him to. npcReply must be barking and nothing else: 'Woff!', 'Woff woff!', 'WOFF WOFF WOFF!', possibly with a short action in brackets such as (scodinzola) or (inclina la testa). Never a word of Italian or English outside the brackets, never a sentence, never an explanation. Delighted, escalating barks when the object works; a single confused, deflating bark when it does not.",
+      "problem": {
+        "en": "Woff woff! (Cosmo circles you twice, drops a thoroughly destroyed sock at your feet, and stares.)",
+        "it": "Woff woff! (Cosmo ti gira intorno due volte, lascia cadere ai tuoi piedi un calzino ormai distrutto e ti fissa.)"
+      },
+      "solutionHint": "The object must be a plaything for a dog: something Cosmo can safely carry in his mouth, chew, chase or fetch. Accept a ball, a tennis ball, a bone, a chew toy, a squeaky toy, a rope toy, a frisbee, a stick, a plush toy, and obvious variants of those. Reject everything else. Reject in particular: tools, machines, vehicles and anything with a blade, a motor, a flame or sharp edges (a saw, a circular saw, a drill, a knife, an axe); anything heavy, hot, breakable or dangerous for an animal; care items such as a collar, a lead, a kennel, a bowl, water, a blanket, a brush, a bath, a vet, a walk, training or attention; and food or meals, the bone being the only exception because he can carry and chew it. If the object is not clearly a dog's toy, the answer is no."
+    },
+    {
+      "id": "ivano",
+      "name": "Ivano",
+      "temper": "An enthusiastic conference organiser running on espresso and sheer willpower. Warm, welcoming and practical, checking his badge and the room schedule every two seconds, speaking in brisk, energetic sentences.",
+      "problem": {
+        "en": "Every talk is overrunning and the hallway is packed with developers who cannot hear when the next session starts. I need something loud or visible enough to signal the end of a slot and call everyone back into the hall from across the venue, without losing my voice.",
+        "it": "Ogni talk sta sforando e il corridoio è pieno di sviluppatori che non sentono quando inizia la sessione successiva. Mi serve qualcosa che si faccia sentire o vedere in tutta la sala per segnalare la fine del tempo e richiamare tutti dentro senza perdere la voce."
+      },
+      "solutionHint": "Anything a conference organiser can use to signal time or gather a noisy crowd of attendees and alert speakers: a bell, a gong, a megaphone, a microphone with a speaker/PA system, a horn, a whistle, a loud buzzer, a countdown timer or large clock/screen visible to everyone, a flashing light or traffic light sign, a drum, a school bell. Reject anything that only works for one person up close (a normal wristwatch, a whisper, a sticky note), food/coffee, or cancelling the talks. Reject everything else."
+    },
+    {
+      "id": "davide",
+      "name": "Davide",
+      "temper": "A passionate tech speaker about to go on stage for a live demo, equal parts excited and mildly panicked, gesturing with his hands while looking back and forth between his laptop and the big projector screen.",
+      "problem": {
+        "en": "I am on stage in two minutes with a live AI demo on my laptop, and the projector at the podium only has an old HDMI cable that does not fit my USB-C port, plus I cannot advance my slides while walking around the stage. I need a way to get my screen onto that projector or control my presentation.",
+        "it": "Salgo sul palco tra due minuti con una demo live di AI sul mio laptop, e il proiettore sul podio ha solo un vecchio cavo HDMI che non entra nelle mie porte USB-C, e in più non riesco a mandare avanti le slide mentre cammino sul palco. Mi serve qualcosa per collegare il computer al proiettore o controllare la presentazione."
+      },
+      "solutionHint": "Anything that connects a modern laptop to a conference projector or lets a speaker run their slides/demo on stage: a USB-C to HDMI adapter, a dongle, a USB hub or docking station, a HDMI adapter/cable that fits, a wireless screen-casting receiver (like a Chromecast or AirPlay receiver), a presentation clicker / remote pointer, or a spare laptop already hooked up to the projector. Reject items that do not solve displaying or controlling the talk (a printed book, a whiteboard marker alone, a microphone, a cup of water, a chair). Reject everything else."
+    }
+  ]
+}

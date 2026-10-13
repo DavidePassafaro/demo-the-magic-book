@@ -26,10 +26,28 @@
   {
     "id": "ctc-2026",
     "title": {
-      "en": "Pignola - CTC 2026",
-      "it": "Pignola - CTC 2026"
+      "en": "ComeToCode 2026",
+      "it": "ComeToCode 2026"
     },
     "file": "ctc-2026.json",
+    "enabled": false
+  },
+  {
+    "id": "sharp4dev-2026",
+    "title": {
+      "en": "#4Dev 2026",
+      "it": "#4Dev 2026"
+    },
+    "file": "sharp4dev-2026.json",
     "enabled": true
+  },
+  {
+    "id": "devfest-napoli-2026",
+    "title": {
+      "en": "DevFest Napoli 2026",
+      "it": "DevFest Napoli 2026"
+    },
+    "file": "devfest-napoli-2026.json",
+    "enabled": false
   }
 ]
