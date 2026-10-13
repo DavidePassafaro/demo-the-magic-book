@@ -2,27 +2,35 @@
   <section class="notice">
     <h2>{{ t().levelFailedTitle }}</h2>
     <p role="alert">{{ message }}</p>
-    <a routerLink="/">{{ t().backToMenu }}</a>
+    <div class="notice-actions">
+      <a routerLink="/">{{ t().backToMenu }}</a>
+    </div>
   </section>
 } @else if (llm.status() === 'unsupported') {
   <section class="notice">
     <h2>{{ t().unsupportedTitle }}</h2>
     <p>{{ t().unsupportedBody }}</p>
-    <a routerLink="/">{{ t().backToMenu }}</a>
+    <div class="notice-actions">
+      <a routerLink="/">{{ t().backToMenu }}</a>
+    </div>
   </section>
 } @else if (generator.phase() === 'failed') {
   <section class="notice">
     <h2>{{ t().inventingFailed }}</h2>
     <p role="alert">{{ generator.error() }}</p>
-    <button type="button" (click)="start()">{{ t().tryAgain }}</button>
-    <a routerLink="/">{{ t().backToMenu }}</a>
+    <div class="notice-actions">
+      <button type="button" (click)="start()">{{ t().tryAgain }}</button>
+      <a routerLink="/">{{ t().backToMenu }}</a>
+    </div>
   </section>
 } @else if (llm.status() === 'error') {
   <section class="notice">
     <h2>{{ t().openFailedTitle }}</h2>
     <p role="alert">{{ llm.error() }}</p>
-    <button type="button" (click)="start()">{{ t().tryAgain }}</button>
-    <a routerLink="/">{{ t().backToMenu }}</a>
+    <div class="notice-actions">
+      <button type="button" (click)="start()">{{ t().tryAgain }}</button>
+      <a routerLink="/">{{ t().backToMenu }}</a>
+    </div>
   </section>
 } @else if (activeMap(); as map) {
   <main class="stage" #stage tabindex="-1" [attr.data-theme]="game.level()?.theme">

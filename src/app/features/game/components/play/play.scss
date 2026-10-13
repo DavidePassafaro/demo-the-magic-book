@@ -87,8 +87,16 @@ h1 {
   color: var(--gold);
 }
 
+.notice-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-top: 1.75rem;
+}
+
 .notice a {
   display: inline-block;
-  margin-top: 1.5rem;
   color: var(--ink-dim);
 }
