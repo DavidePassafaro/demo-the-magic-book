@@ -86,12 +86,12 @@ export function getNpcAppearance(id: string, name: string): NpcSpritePalette {
   const lowerName = name.toLowerCase();
   if (lowerId.includes('cosmo') || lowerName.includes('cosmo') || lowerName.includes('mordicchiatore')) {
     return {
-      outline: '#181008',
-      skin: '#e8a858',
-      hair: '#a86020',
-      tunic: '#f8e8c8',
-      tunicShade: '#c88038',
-      belt: '#d83020',
+      outline: '#08060c',
+      skin: '#22202a', // black coat
+      hair: '#383446', // dark charcoal fur highlight
+      tunic: '#22202a', // badge color
+      tunicShade: '#f8f8ff', // white chest patch
+      belt: '#e02828', // bright red collar
       isDog: true,
     };
   }
@@ -282,33 +282,36 @@ export function drawNpcSprite(
 
   if (appearance.isDog) {
     const pal: Record<string, string> = {
-      O: appearance.outline,
-      F: appearance.skin,
-      D: appearance.hair,
-      W: appearance.tunic,
-      C: appearance.belt,
-      E: '#101010',
+      O: appearance.outline, // black outline
+      F: appearance.skin, // black coat (#22202a)
+      D: appearance.hair, // dark fur highlight (#383446)
+      W: appearance.tunicShade, // pure white chest patch (#f8f8ff)
+      C: appearance.belt, // bright red collar (#e02828)
+      G: '#ffd040', // collar gold tag
+      E: '#ffffff', // bright eye shine against black fur
+      P: '#ff8898', // pink tongue when happy
     };
-    const tail = frame === 1 ? '............OO..' : '...........OO...';
+    const tailRow10 = frame === 1 ? '...OFFWWFFFO.OO.' : '...OFFWWFFFO....';
+    const tailRow11 = frame === 1 ? '..OFFWWWWFFFODO.' : '..OFFWWWWFFFO.OO';
     const grid = [
       '................',
       '................',
       '..OOO....OOO....',
       '.ODFDO..ODFDO...',
       '.ODFFOOOOFFDO...',
-      '..OFFWWWWFFO....',
-      '..OFEWWWWEEO....',
-      '..OFFWOOOWFO....',
-      '...OCCCCCCCO....',
-      '...OFFWWFFFO..O.',
-      '..OFFWWWWFFFOODO',
+      '..OFFFFFFFFO....',
+      '..OFEFFFFEFO....',
+      '..OFFFOOOFFO....',
+      '...OCCCGCcCO....',
+      tailRow10,
+      tailRow11,
       '..OFFWWWWFFFFDO.',
       '..OFFFFFFFFFDO..',
       '..OOFFOOOOFFOO..',
       '..OO..OO..OO....',
-      tail,
+      '................',
     ];
-    drawPixelGrid(ctx, ox, oy + bobY, grid, pal, scale);
+    drawPixelGrid(ctx, ox, oy + bobY, grid.map((r) => r.replace('c', 'C')), pal, scale);
     return;
   }
 
