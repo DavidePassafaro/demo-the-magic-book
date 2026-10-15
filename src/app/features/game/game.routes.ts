@@ -17,6 +17,7 @@ export const gameRoutes: Routes = [
     component: Play,
     providers: [
       GameService,
+      // 👇👇👇 Game - Contract → AI service
       { provide: REFEREE, useExisting: JudgeService },
       { provide: LEVEL_INVENTOR, useExisting: LevelGeneratorService },
       { provide: OBJECT_RECOGNIZER, useExisting: ObjectRecognizerService },

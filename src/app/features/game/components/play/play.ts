@@ -149,6 +149,7 @@ export class Play {
             return this.generator.invent(this.locale.inEveryLanguage((s) => s.raindomTitle));
           })
         : this.levels.loadLevel(levelId).then(async (level) => {
+            // 👇👇👇 Game - Load model on level start
             const ready = await this.llm.loadModel();
             return ready ? level : null;
           });

@@ -50,6 +50,7 @@ export function recognitionPrompt(image: string): ChatCompletionMessageParam[] {
     {
       role: 'user',
       content: [
+        // 👇👇👇 Prompt - Image + text
         { type: 'image_url', image_url: { url: image } },
         { type: 'text', text: recognitionRules() },
       ],

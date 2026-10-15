@@ -36,6 +36,7 @@ export class ObjectRecognizerService implements ObjectRecognizer {
 
     this.looking.set(true);
     try {
+      // 👇👇👇 Game - Ask the vision model
       const raw = await this.llm.queryVision(recognitionPrompt(image), {
         schema: OBJECT_SCHEMA,
         maxTokens: 100,

@@ -21,6 +21,7 @@ function readStoredModelId(): string {
  */
 @Service()
 export class WebLlmService {
+  // 👇👇👇 WebLLM - Two engines
   readonly chat = new LlmEngine('engine');
   readonly vision = new LlmEngine('vision');
 

@@ -104,6 +104,7 @@ export class DialogueBox {
     this.cameraError.set(null);
     this.cameraOpen.set(true);
     // The eye is some four gigabytes: start fetching it while the player frames the shot.
+    // 👇👇👇 Game - Lazy vision model
     this.recognizer.prepare();
   }
 

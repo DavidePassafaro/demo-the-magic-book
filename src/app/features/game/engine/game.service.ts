@@ -235,6 +235,7 @@ export class GameService {
     this.audio.playConjure();
 
     try {
+      // 👇👇👇 Game - Judge a wish
       const verdict = await this.referee.judge(npc, trimmed);
 
       this.lastAttempt.set({ object: trimmed, reply: verdict.npcReply, solved: verdict.solved });

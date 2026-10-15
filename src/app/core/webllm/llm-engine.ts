@@ -80,11 +80,13 @@ export class LlmEngine {
     const purpose = options.purpose ?? 'a question';
     const started = performance.now();
 
+    // 👇👇👇 WebLLM - Query
     const request = engine.chat.completions.create({
       messages: [...messages],
       stream: false,
       temperature: options.temperature ?? 0,
       max_tokens: options.maxTokens ?? 200,
+      // 👇👇👇 WebLLM - Structured output
       ...(options.schema
         ? { response_format: { type: 'json_object' as const, schema: options.schema } }
         : {}),
@@ -94,6 +96,7 @@ export class LlmEngine {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const timeout = new Promise<never>((_, reject) => {
       timer = setTimeout(() => {
+        // 👇👇👇 WebLLM - Interrupt
         engine.interruptGenerate();
         reject(new Error('The book took too long to answer.'));
       }, GENERATION_TIMEOUT_MS);
@@ -175,11 +178,14 @@ export class LlmEngine {
   private async startOrReload(modelId: string): Promise<void> {
     if (this.engine) {
       this.engine.setAppConfig(this.appConfig);
+      // 👇👇👇 WebLLM - Swap model
       await this.engine.reload(modelId);
       return;
     }
 
     const worker = new Worker(new URL('./llm.worker', import.meta.url), { type: 'module' });
+
+    // 👇👇👇 WebLLM - Load model
     this.engine = await CreateWebWorkerMLCEngine(worker, modelId, {
       appConfig: this.appConfig,
       initProgressCallback: (report) => {

@@ -90,6 +90,7 @@ export class LevelGeneratorService implements LevelInventor {
           maxTokens: 420,
           purpose: `invent villager ${index + 1} of ${VILLAGERS} (${topic})`,
           // The only non-zero temperature in the game: inventing wants variety.
+          // 👇👇👇 Game - Creative temperature
           temperature: 0.7,
         });
         const villager = parseVillager(raw, index);

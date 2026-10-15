@@ -6,6 +6,7 @@ import { text, type NpcConfig } from '@features/game/engine/model/level';
  * Field order matters: constrained decoding fills fields in order, so the model
  * reasons first, then decides, then speaks in line with its decision.
  */
+// 👇👇👇 Prompt - Schema (field order matters)
 export const VERDICT_SCHEMA = JSON.stringify({
   type: 'object',
   properties: {
@@ -20,6 +21,7 @@ export const VERDICT_SCHEMA = JSON.stringify({
  * The language instruction belongs here, among the rules: placed in the
  * `KEY: value` user block, small models copied it out as the villager's line.
  */
+// 👇👇👇 Prompt - System rules
 function judgeRules(locale: Locale): string {
   const language = LANGUAGE_NAMES[locale];
 
@@ -55,6 +57,7 @@ function judgeRules(locale: Locale): string {
  * One wish against one villager's problem. Everything is in English, where the
  * model reasons best; only the villager's reply is in the player's language.
  */
+// 👇👇👇 Prompt - User message
 export function judgePrompt(
   npc: NpcConfig,
   object: string,

@@ -29,6 +29,7 @@ export class JudgeService implements Referee {
 
     for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
       try {
+        // 👇👇👇 Game - Prompt meets model
         const raw = await this.llm.queryModel(messages, {
           schema: VERDICT_SCHEMA,
           maxTokens: 220,
