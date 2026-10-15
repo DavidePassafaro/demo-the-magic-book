@@ -1,11 +1,8 @@
 import type { ModelOption } from '@core/webllm/model/llm-model';
 
 /**
- * The models the settings bar offers, the largest first after the default.
- * The small ones are here on purpose: running the same wish through a 360M and
- * through a 3B, one after the other, is the quickest way to show how little a
- * small language model actually understands. Each note is one short line,
- * because it sits under the dropdown and must not push the bar about.
+ * The models offered in the settings bar. The small ones are there on purpose:
+ * the same wish judged by a 3B and by a 360M shows how much size matters.
  */
 export const MODEL_OPTIONS: readonly ModelOption[] = [
   {
@@ -57,26 +54,22 @@ export const MODEL_OPTIONS: readonly ModelOption[] = [
 
 export const DEFAULT_MODEL_ID = MODEL_OPTIONS[0].id;
 
-/**
- * The one vision-language model WebLLM ships prebuilt. It is never in the
- * dropdown: it loads only the first time the player holds something up to the
- * camera, in an engine of its own, beside whichever model is judging.
- */
+/** The vision model: never in the dropdown, loaded only when the camera is first used. */
 export const VISION_MODEL = {
   id: 'Phi-3.5-vision-instruct-q4f16_1-MLC',
   label: 'Phi-3.5 Vision',
   approxSizeMb: 3952,
   /**
-   * The photo's shape, and it is the shape that matters, not the size. WebLLM
-   * scales every image up to as many 336-pixel tiles as its aspect ratio allows,
-   * up to sixteen, and one image has to fit in a single prefill chunk — 2048
-   * tokens in this compiled model, and an image cannot be split. A square
-   * becomes 4×4 tiles, 2509 tokens, and is refused before the model sees it.
-   * At 3:2 it is 3×4 tiles, 1921 tokens, with room for the rules beside it.
+   * 3:2 on purpose: one image must fit in a 2048-token prefill chunk, and a
+   * square photo becomes 16 tiles (2509 tokens) while 3:2 becomes 12 (1921).
    */
   frame: { width: 504, height: 336 },
 } as const;
 
 export function findModel(id: string): ModelOption {
   return MODEL_OPTIONS.find((model) => model.id === id) ?? MODEL_OPTIONS[0];
+}
+
+export function modelLabel(id: string): string {
+  return id === VISION_MODEL.id ? VISION_MODEL.label : findModel(id).label;
 }

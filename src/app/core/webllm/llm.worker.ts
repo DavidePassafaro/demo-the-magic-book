@@ -1,10 +1,7 @@
 /// <reference lib="webworker" />
 import { WebWorkerMLCEngineHandler } from '@mlc-ai/web-llm';
 
-/**
- * Inference runs here so that token sampling never janks the map.
- * The handler does all the work; this file only forwards messages.
- */
+/** Inference runs here, off the main thread. The handler does all the work. */
 const handler = new WebWorkerMLCEngineHandler();
 
 self.onmessage = (event: MessageEvent): void => {

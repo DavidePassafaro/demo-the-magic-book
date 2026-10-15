@@ -117,22 +117,7 @@ export class GameService {
 
   startLevel(level: Level): void {
     const map = generateMap(level);
-    log.group('game', `level "${level.title.en}" · ${level.npcs.length} villagers`, () => {
-      console.log({
-        id: level.id,
-        theme: level.theme,
-        seed: level.seed,
-        size: `${level.width}×${level.height}`,
-      });
-      console.table(
-        map.npcs.map((npc) => ({
-          name: npc.config.name,
-          x: npc.x,
-          y: npc.y,
-          hint: npc.config.solutionHint,
-        })),
-      );
-    });
+    log.info('game', `level "${level.title.en}" · ${level.npcs.length} villagers`);
     this.level.set(level);
     this.map.set(map);
     this.playerX.set(map.spawn.x);

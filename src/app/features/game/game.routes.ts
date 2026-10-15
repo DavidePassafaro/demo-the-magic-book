@@ -7,9 +7,8 @@ import { LevelGeneratorService } from '@features/game/ai/level-generator.service
 import { ObjectRecognizerService } from '@features/game/ai/object-recognizer.service';
 
 /**
- * The game's composition root. It is the only file that names both a contract
- * and the class behind it, and it lives inside the lazy chunk so that opening the
- * menu never downloads a language model runtime.
+ * Composition root: the only place that binds each contract to its AI service.
+ * Lazy-loaded, so the menu never downloads the WebLLM runtime.
  */
 export const gameRoutes: Routes = [
   {

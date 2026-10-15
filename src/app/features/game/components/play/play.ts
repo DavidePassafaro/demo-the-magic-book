@@ -94,7 +94,7 @@ export class Play {
     if (this.generator.phase() === 'working') {
       return this.t().inventing;
     }
-    return this.llm.status() === 'loading'
+    return this.llm.chat.status() === 'loading'
       ? this.t().summoning(findModel(this.llm.modelId()).label)
       : this.t().opening;
   });
@@ -106,11 +106,11 @@ export class Play {
   protected readonly loadingText = computed(() =>
     this.generator.phase() === 'working'
       ? this.t().inventingStep(this.generator.done() + 1, this.generator.total())
-      : this.llm.progressText(),
+      : this.llm.chat.progressText(),
   );
 
   protected readonly loadingProgress = computed(() =>
-    this.generator.phase() === 'working' ? this.generator.progress() : this.llm.progress(),
+    this.generator.phase() === 'working' ? this.generator.progress() : this.llm.chat.progress(),
   );
 
   constructor() {
@@ -122,7 +122,10 @@ export class Play {
      * answering has just been put away.
      */
     effect(() => {
-      if (this.llm.status() === 'ready' && this.llm.loadedModelId() !== this.llm.modelId()) {
+      if (
+        this.llm.chat.status() === 'ready' &&
+        this.llm.chat.loadedModelId() !== this.llm.modelId()
+      ) {
         log.info('game', 'another model was chosen: restarting the level on it');
         this.start();
       }

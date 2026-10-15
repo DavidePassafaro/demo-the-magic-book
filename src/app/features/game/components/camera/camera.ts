@@ -115,12 +115,6 @@ export class Camera {
       await video.play();
 
       this.live.set(true);
-      const track = this.stream.getVideoTracks()[0];
-      const settings = track?.getSettings();
-      log.info(
-        'camera',
-        `on · ${track?.label || 'unnamed device'} · ${settings?.width}×${settings?.height}`,
-      );
     } catch (cause) {
       log.warn(
         'camera',
@@ -134,9 +128,6 @@ export class Camera {
   }
 
   private stop(): void {
-    if (this.stream) {
-      log.info('camera', 'off');
-    }
     this.stream?.getTracks().forEach((track) => track.stop());
     this.stream = null;
   }
