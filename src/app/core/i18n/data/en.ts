@@ -1,7 +1,7 @@
 import type { UiStrings } from '@core/i18n/model/locale';
 
 export const EN_STRINGS: UiStrings = {
-  tagline: 'A book that writes anything into being. The hard part is knowing what to ask for.',
+  tagline: 'A book that writes anything into being.\nThe hard part is knowing what to ask for.',
   levelsLoading: 'Turning to the first page…',
   raindomMode: 'rAIndom mode',
   raindomTitle: 'An invented village',

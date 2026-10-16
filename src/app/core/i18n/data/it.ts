@@ -1,7 +1,7 @@
 import type { UiStrings } from '@core/i18n/model/locale';
 
 export const IT_STRINGS: UiStrings = {
-  tagline: 'Un libro che scrive qualsiasi cosa. Il difficile è sapere cosa chiedere.',
+  tagline: 'Un libro che scrive qualsiasi cosa.\nIl difficile è sapere cosa chiedere.',
   levelsLoading: 'Apro la prima pagina…',
   raindomMode: 'Modalità rAIndom',
   raindomTitle: 'Un villaggio inventato',
