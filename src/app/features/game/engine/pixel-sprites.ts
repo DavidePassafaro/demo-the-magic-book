@@ -127,7 +127,7 @@ export function drawPixelGrid(
   }
 }
 
-/** Renders the player (Hero Mage with pointed hat/Link tunic and Magic Book). */
+/** Renders the player (bearded developer in a purple t-shirt with conference badge and Magic Book). */
 export function drawPlayerSprite(
   ctx: CanvasRenderingContext2D,
   ox: number,
@@ -138,14 +138,19 @@ export function drawPlayerSprite(
 ): void {
   const pal: Record<string, string> = {
     O: '#14101c', // dark outline
-    H: '#287848', // Link/mage emerald hat & tunic
-    h: '#48b068', // highlight green
-    d: '#185030', // shadow green
-    S: '#f8d0a0', // skin
-    s: '#d89868', // skin shadow
-    E: '#181420', // eyes
-    Y: '#f8c838', // golden hair / trim / magic emblem
-    B: '#784020', // boots / belt
+    K: '#2c1e16', // dark brown hair
+    k: '#4c3626', // hair highlight / eyebrows
+    S: '#f0c49c', // skin
+    s: '#cf9670', // skin shadow
+    E: '#1c1418', // eyes
+    Z: '#3a2618', // beard
+    z: '#20140c', // moustache shadow
+    T: '#9a48e0', // purple t-shirt
+    t: '#6428a8', // t-shirt shadow
+    N: '#f8f8ff', // conference lanyard
+    C: '#f8f8f8', // badge card
+    X: '#e82050', // badge band
+    B: '#3a2a20', // shoes
     R: '#c83038', // magic book cover
     P: '#f8f0d8', // magic book pages
   };
@@ -167,19 +172,19 @@ export function drawPlayerSprite(
           : '...BBBB..BBBB...';
     grid = [
       '.....OOOOOO.....',
-      '....OHhhhhHO....',
-      '...OHhHHHHhHO...',
-      '..OHHHHHHHHHHO..',
-      '..OYYYYYYYYYYO..',
-      '..OYSSEssESSYO..',
-      '..OYSSSSSSSSYO..',
-      '...OSSSSSSSSO...',
-      '..OOdHHHHHHdOO..',
-      '.OHdHHHHHHHHdHO.',
-      '.OSdHHBBBBHHdRR.',
-      '.OOdBBBBBBBBdRP.',
-      '..OOdHHHHHHdORR.',
-      '...OOOOOOOOOO...',
+      '....OKkkkKKO....',
+      '...OKkKKKKKKO...',
+      '..OKKKKKKKKKKO..',
+      '..OKKSSSSSSKKO..',
+      '..OSSkkSSkkSSO..',
+      '..OSSESSSSESSO..',
+      '..OZSSSssSSSZO..',
+      '..OZZzzzzzzZZO..',
+      '...OZZZZZZZZO...',
+      '.OTNTOZZZZOTNTO.',
+      '.OTtTNOZZONTtRR.',
+      '.OStTTNCCNTTtRP.',
+      '.OOtTTTXXTTtORR.',
       feet.replace(/c/g, 'B'),
       '...OOOOOOOOOO...',
     ];
@@ -192,19 +197,19 @@ export function drawPlayerSprite(
           : '...BBBB..BBBB...';
     grid = [
       '.....OOOOOO.....',
-      '....OHhhhhHO....',
-      '...OHhHHHHhHO...',
-      '..OHHHHHHHHHHO..',
-      '..OHHHHHhHHHHO..',
-      '..OYYYYYYYYYYO..',
-      '..OYYYYYYYYYYO..',
-      '...OOOOOOOOOO...',
-      '..OOdHHHHHHdOO..',
-      '.OHdHHHHHHHHdHO.',
-      '.OSdHHYYYYHHdSO.',
-      '.OOdBBBBBBBBdOO.',
-      '..OOdHHHHHHdOO..',
-      '...OOOOOOOOOO...',
+      '....OKkkkKKO....',
+      '...OKkKKKKKKO...',
+      '..OKKKKKKKKKKO..',
+      '..OKKKKKkKKKKO..',
+      '..OKKKKKKKKKKO..',
+      '..OKKKKKKKKKKO..',
+      '..OSKKKKKKKKSO..',
+      '...OKKKKKKKKO...',
+      '...OONSSSSNOO...',
+      '.OTTTNNNNNNTTTO.',
+      '.OTtTTTTTTTTtTO.',
+      '.OStTTTTTTTTtSO.',
+      '.OOtTTTTTTTTtOO.',
       feet,
       '...OOOOOOOOOO...',
     ];
@@ -217,19 +222,19 @@ export function drawPlayerSprite(
           : '....BBBBBBBB....';
     grid = [
       '....OOOOOOO.....',
-      '...OHhhhhHHO....',
-      '..OHhHHHHHHHO...',
-      '..OHHHHHHHHHHHO.',
-      '..OYYYYYYYYOHHO.',
-      '..OYESSSSSYO.OO.',
-      '..O.SSSSSSYO....',
-      '....OSSSSSO.....',
-      '...OOdHHHHdOO...',
-      '..ORRdHHHHHHdO..',
-      '..OPRdBBBBBBdO..',
-      '..ORRdHHHHHHdO..',
-      '...OOdHHHHHHdO..',
-      '....OOOOOOOOO...',
+      '...OKkkkKKKO....',
+      '..OKkKKKKKKKO...',
+      '..OKKKKKKKKKKO..',
+      '..OKSSSKKKKKKO..',
+      '.OkkSSSSSKKKKO..',
+      '.OSESSSSsSKKO...',
+      '.OSSSSSSsKKO....',
+      '..OzzZZZZZKO....',
+      '..OZZZZZZZO.....',
+      '...OZZZONTTO....',
+      '..ORRONTTTTtO...',
+      '..OPRNTTTTTtO...',
+      '..ORRCXTTTTtO...',
       feet,
       '...OOOOOOOOOO...',
     ];
@@ -243,19 +248,19 @@ export function drawPlayerSprite(
           : '....BBBBBBBB....';
     grid = [
       '.....OOOOOOO....',
-      '....OHHhhhhHO...',
-      '...OHHHHHHHhHO..',
-      '.OHHHHHHHHHHHHO.',
-      '.OHHOYYYYYYYYO..',
-      '.OO.OYSSSSSEYO..',
-      '....OYSSSSSS.O..',
-      '.....OSSSSSO....',
-      '...OOdHHHHdOO...',
-      '..OdHHHHHHdRRO..',
-      '..OdBBBBBBdRPO..',
-      '..OdHHHHHHdRRO..',
-      '..OdHHHHHHdOO...',
-      '...OOOOOOOOO....',
+      '....OKKKkkkKO...',
+      '...OKKKKKKKkKO..',
+      '..OKKKKKKKKKKO..',
+      '..OKKKKKKSSSKO..',
+      '..OKKKKSSSSSkkO.',
+      '...OKKSsSSSSESO.',
+      '....OKKsSSSSSSO.',
+      '....OKZZZZZzzO..',
+      '.....OZZZZZZZO..',
+      '....OTTNOZZZO...',
+      '...OtTTTTNORRO..',
+      '...OtTTTTTNRPO..',
+      '...OtTTTTXCRRO..',
       feet,
       '...OOOOOOOOOO...',
     ];
