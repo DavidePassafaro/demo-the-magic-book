@@ -48,6 +48,16 @@ export interface UiStrings {
   readonly stillStuck: string;
   readonly helpedWith: (object: string) => string;
   readonly controlsHint: string;
+  readonly statsTitle: string;
+  readonly statsCalls: string;
+  readonly statsPromptTokens: string;
+  readonly statsCompletionTokens: string;
+  readonly statsPrefill: string;
+  readonly statsDecode: string;
+  readonly statsLastAnswer: string;
+  readonly statsMaxBuffer: string;
+  readonly statsStorage: string;
+  readonly statsSource: string;
   readonly talkTo: (name: string) => string;
   readonly talkAgain: (name: string) => string;
   readonly writeIntoBook: string;

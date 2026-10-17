@@ -67,12 +67,15 @@
         (interactAction)="game.interact()"
       />
 
-      <mb-npc-panel
-        [npcs]="map.npcs"
-        [progress]="game.progress()"
-        [activeNpcId]="game.activeNpcId()"
-        (talk)="game.openEncounter($event)"
-      />
+      <div class="side">
+        <mb-npc-panel
+          [npcs]="map.npcs"
+          [progress]="game.progress()"
+          [activeNpcId]="game.activeNpcId()"
+          (talk)="game.openEncounter($event)"
+        />
+        <mb-llm-stats />
+      </div>
     </div>
 
     @if (game.activeNpc(); as npc) {

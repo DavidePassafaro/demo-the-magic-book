@@ -76,6 +76,14 @@ h1 {
   justify-content: center;
 }
 
+.side {
+  flex: 1 1 16rem;
+  max-width: 22rem;
+  min-width: 0;
+  display: grid;
+  gap: 1rem;
+}
+
 .notice {
   max-width: 34rem;
   margin: 0 auto;

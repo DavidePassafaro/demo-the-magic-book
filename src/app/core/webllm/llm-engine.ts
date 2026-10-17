@@ -16,6 +16,7 @@ import {
   isModelCached,
 } from '@core/webllm/support/model-cache';
 import { logCompletion } from '@core/webllm/support/completion-log';
+import { addUsage, EMPTY_STATS, type EngineStats } from '@core/webllm/support/engine-stats';
 import { elapsed, log, type LogSource } from '@core/logger/logger';
 
 const GENERATION_TIMEOUT_MS = 20_000;
@@ -39,6 +40,10 @@ export class LlmEngine {
   readonly progressText = signal('');
   readonly error = signal<string | null>(null);
   readonly loadedModelId = signal<string | null>(null);
+  /** Token use and speed as WebLLM measured them, for the loaded model. */
+  readonly stats = signal<EngineStats>(EMPTY_STATS);
+  /** The largest buffer this GPU lets WebLLM bind, in bytes. */
+  readonly maxBufferBytes = signal<number | null>(null);
 
   private engine: WebWorkerMLCEngine | null = null;
   private loading: Promise<boolean> | null = null;
@@ -105,6 +110,10 @@ export class LlmEngine {
     try {
       const reply = await Promise.race([request, timeout]);
       logCompletion(this.source, purpose, started, messages, reply);
+      const usage = reply.usage;
+      if (usage) {
+        this.stats.update((stats) => addUsage(stats, usage));
+      }
       return reply.choices[0]?.message?.content ?? '';
     } catch (cause) {
       // Errors from the worker arrive as plain strings.
@@ -140,6 +149,8 @@ export class LlmEngine {
       await this.loadWithCacheFallback(modelId);
       log.info(this.source, `${label} ready in ${elapsed(started)}`);
       this.loadedModelId.set(modelId);
+      this.stats.set(EMPTY_STATS);
+      void this.readGpuLimits();
       this.progress.set(1);
       this.progressText.set('');
       this.status.set('ready');
@@ -150,6 +161,18 @@ export class LlmEngine {
       this.error.set(cause instanceof Error ? cause.message : String(cause));
       this.status.set('error');
       return false;
+    }
+  }
+
+  private async readGpuLimits(): Promise<void> {
+    const engine = this.engine;
+    if (!engine) {
+      return;
+    }
+    try {
+      this.maxBufferBytes.set(await engine.getMaxStorageBufferBindingSize());
+    } catch (cause) {
+      log.warn(this.source, 'could not read the GPU limits', cause);
     }
   }
 

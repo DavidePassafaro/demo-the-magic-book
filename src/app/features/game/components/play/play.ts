@@ -21,6 +21,7 @@ import { GameMapView } from '@features/game/components/game-map/game-map';
 import { LevelComplete } from '@features/game/components/level-complete/level-complete';
 import { LoadingScreen } from '@shared/loading-screen/loading-screen';
 import { NpcPanel } from '@features/game/components/npc-panel/npc-panel';
+import { LlmStats } from '@features/game/components/llm-stats/llm-stats';
 import { SettingsBar } from '@shared/settings-bar/settings-bar';
 
 /** Arrow keys (and WASD when not writing in the book) move the player on the map. */
@@ -47,6 +48,7 @@ const MOVEMENT_KEYS: Record<string, Facing> = {
     GameMapView,
     DialogueBox,
     NpcPanel,
+    LlmStats,
     LevelComplete,
     SettingsBar,
   ],

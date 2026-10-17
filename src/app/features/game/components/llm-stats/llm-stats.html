@@ -1,0 +1,12 @@
+<section class="panel" aria-labelledby="under-the-hood">
+  <h2 id="under-the-hood">⚙️ {{ t().statsTitle }}</h2>
+  <dl>
+    @for (row of rows(); track row.label) {
+      <div class="row">
+        <dt>{{ row.label }}</dt>
+        <dd>{{ row.value }}</dd>
+      </div>
+    }
+  </dl>
+  <p class="hint">{{ t().statsSource }}</p>
+</section>
