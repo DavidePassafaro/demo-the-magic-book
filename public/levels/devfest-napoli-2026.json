@@ -20,8 +20,8 @@
       "solutionHint": "The object must be a plaything for a dog: something Cosmo can safely carry in his mouth, chew, chase or fetch. Accept a ball, a tennis ball, a bone, a chew toy, a squeaky toy, a rope toy, a frisbee, a stick, a plush toy, and obvious variants of those. Reject everything else. Reject in particular: tools, machines, vehicles and anything with a blade, a motor, a flame or sharp edges (a saw, a circular saw, a drill, a knife, an axe); anything heavy, hot, breakable or dangerous for an animal; care items such as a collar, a lead, a kennel, a bowl, water, a blanket, a brush, a bath, a vet, a walk, training or attention; and food or meals, the bone being the only exception because he can carry and chew it. If the object is not clearly a dog's toy, the answer is no."
     },
     {
-      "id": "ivano",
-      "name": "Ivano",
+      "id": "alessio",
+      "name": "Alessio",
       "temper": "An enthusiastic conference organiser running on espresso and sheer willpower. Warm, welcoming and practical, checking his badge and the room schedule every two seconds, speaking in brisk, energetic sentences.",
       "problem": {
         "en": "Every talk is overrunning and the hallway is packed with developers who cannot hear when the next session starts. I need something loud or visible enough to signal the end of a slot and call everyone back into the hall from across the venue, without losing my voice.",
