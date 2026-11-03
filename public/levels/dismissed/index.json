@@ -16,5 +16,14 @@
     },
     "file": "sharp4dev-2026.json",
     "enabled": false
+  },
+  {
+    "id": "devfest-napoli-2026",
+    "title": {
+      "en": "DevFest Napoli 2026",
+      "it": "DevFest Napoli 2026"
+    },
+    "file": "devfest-napoli-2026.json",
+    "enabled": false
   }
 ]

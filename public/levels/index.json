@@ -24,12 +24,12 @@
     "file": "level-03.json"
   },
   {
-    "id": "devfest-napoli-2026",
+    "id": "devfest-ourense-2026",
     "title": {
-      "en": "DevFest Napoli 2026",
-      "it": "DevFest Napoli 2026"
+      "en": "DevFest Ourense 2026",
+      "it": "DevFest Ourense 2026"
     },
-    "file": "devfest-napoli-2026.json",
+    "file": "devfest-ourense-2026.json",
     "enabled": true
   }
 ]
