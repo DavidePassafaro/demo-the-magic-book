@@ -13,7 +13,7 @@ import { FormField, disabled, form, maxLength, required } from '@angular/forms/s
 import { LocaleService } from '@core/i18n/locale.service';
 import { Camera } from '@features/game/components/camera/camera';
 import type { Attempt } from '@features/game/engine/game.service';
-import { OBJECT_RECOGNIZER } from '@features/game/engine/model/contracts';
+import { ObjectRecognizerService } from '@features/game/ai/object-recognizer.service';
 import { text, type NpcConfig } from '@features/game/engine/model/level';
 import { drawNpcSprite, getNpcAppearance } from '@features/game/engine/pixel-sprites';
 
@@ -36,7 +36,7 @@ export class DialogueBox {
   readonly closed = output<void>();
 
   private readonly locale = inject(LocaleService);
-  private readonly recognizer = inject(OBJECT_RECOGNIZER);
+  private readonly recognizer = inject(ObjectRecognizerService);
   private readonly wishInput = viewChild<ElementRef<HTMLInputElement>>('wishInput');
   private readonly portraitCanvas = viewChild<ElementRef<HTMLCanvasElement>>('portraitCanvas');
   private readonly draft = signal({ wish: '' });

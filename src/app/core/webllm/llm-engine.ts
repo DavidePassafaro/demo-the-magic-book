@@ -8,7 +8,7 @@ import {
   type WebWorkerMLCEngine,
 } from '@mlc-ai/web-llm';
 import { modelLabel } from '@core/webllm/data/llm-models';
-import type { EngineStatus } from '@core/webllm/model/llm-model';
+import type { ModelStatus } from '@core/llm/language-model';
 import { detectWebGpu } from '@core/webllm/support/webgpu';
 import {
   INDEXEDDB_CONFIG,
@@ -16,32 +16,25 @@ import {
   isModelCached,
 } from '@core/webllm/support/model-cache';
 import { logCompletion } from '@core/webllm/support/completion-log';
-import { addUsage, EMPTY_STATS, type EngineStats } from '@core/webllm/support/engine-stats';
+import { addUsage } from '@core/webllm/support/engine-stats';
+import { EMPTY_STATS, type ModelStats } from '@core/llm/model-stats';
+import type { QueryOptions } from '@core/llm/language-model';
 import { elapsed, log, type LogSource } from '@core/logger/logger';
 
 const GENERATION_TIMEOUT_MS = 20_000;
-
-export interface QueryOptions {
-  /** JSON schema the answer is forced into, token by token. */
-  readonly schema?: string;
-  readonly maxTokens?: number;
-  readonly temperature?: number;
-  /** What the call is for, shown in the console. */
-  readonly purpose?: string;
-}
 
 /**
  * One WebLLM engine running in its own Web Worker, with its state as signals.
  * The worker keeps inference off the main thread, so the game never freezes.
  */
 export class LlmEngine {
-  readonly status = signal<EngineStatus>('idle');
+  readonly status = signal<ModelStatus>('idle');
   readonly progress = signal(0);
   readonly progressText = signal('');
   readonly error = signal<string | null>(null);
   readonly loadedModelId = signal<string | null>(null);
   /** Token use and speed as WebLLM measured them, for the loaded model. */
-  readonly stats = signal<EngineStats>(EMPTY_STATS);
+  readonly stats = signal<ModelStats>(EMPTY_STATS);
   /** The largest buffer this GPU lets WebLLM bind, in bytes. */
   readonly maxBufferBytes = signal<number | null>(null);
 

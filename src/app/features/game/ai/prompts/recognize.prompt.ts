@@ -1,4 +1,4 @@
-import type { ChatCompletionMessageParam } from '@mlc-ai/web-llm';
+import type { ChatMessage } from '@core/llm/language-model';
 
 /**
  * Describe first, then name: asked for the name straight away, the model
@@ -45,7 +45,7 @@ function recognitionRules(): string {
  * Image and rules in a single user turn: WebLLM allows one text part per
  * message, and the vision model's template has no system turn.
  */
-export function recognitionPrompt(image: string): ChatCompletionMessageParam[] {
+export function recognitionPrompt(image: string): ChatMessage[] {
   return [
     {
       role: 'user',

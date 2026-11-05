@@ -8,14 +8,13 @@ import {
   type ElementRef,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { WebLlmService } from '@core/webllm/web-llm.service';
-import { findModel } from '@core/webllm/data/llm-models';
+import { LanguageModel } from '@core/llm/language-model';
 import { LocaleService } from '@core/i18n/locale.service';
 import { log } from '@core/logger/logger';
 import { GameService, type Facing } from '@features/game/engine/game.service';
-import { LEVEL_INVENTOR } from '@features/game/engine/model/contracts';
 import { LevelService } from '@features/game/engine/level.service';
 import { RANDOM_LEVEL_ID, text } from '@features/game/engine/model/level';
+import { LevelGeneratorService } from '@features/game/ai/level-generator.service';
 import { DialogueBox } from '@features/game/components/dialogue-box/dialogue-box';
 import { GameMapView } from '@features/game/components/game-map/game-map';
 import { LevelComplete } from '@features/game/components/level-complete/level-complete';
@@ -60,13 +59,13 @@ const MOVEMENT_KEYS: Record<string, Facing> = {
   styleUrl: './play.scss',
 })
 export class Play {
-  protected readonly llm = inject(WebLlmService);
+  protected readonly llm = inject(LanguageModel);
   protected readonly game = inject(GameService);
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly levels = inject(LevelService);
-  protected readonly generator = inject(LEVEL_INVENTOR);
+  protected readonly generator = inject(LevelGeneratorService);
   private readonly locale = inject(LocaleService);
   private readonly stage = viewChild<ElementRef<HTMLElement>>('stage');
 
@@ -96,23 +95,23 @@ export class Play {
     if (this.generator.phase() === 'working') {
       return this.t().inventing;
     }
-    return this.llm.chat.status() === 'loading'
-      ? this.t().summoning(findModel(this.llm.modelId()).label)
+    return this.llm.status() === 'loading'
+      ? this.t().summoning(this.llm.label())
       : this.t().opening;
   });
 
   /**
    * Inventing a village is the game's own errand, so the game counts it out;
-   * a download is the engine's, so the engine's own words are shown as they are.
+   * loading the model is the provider's, so its own words are shown as they are.
    */
   protected readonly loadingText = computed(() =>
     this.generator.phase() === 'working'
       ? this.t().inventingStep(this.generator.done() + 1, this.generator.total())
-      : this.llm.chat.progressText(),
+      : this.llm.progressText(),
   );
 
   protected readonly loadingProgress = computed(() =>
-    this.generator.phase() === 'working' ? this.generator.progress() : this.llm.chat.progress(),
+    this.generator.phase() === 'working' ? this.generator.progress() : this.llm.progress(),
   );
 
   constructor() {
@@ -124,10 +123,7 @@ export class Play {
      * answering has just been put away.
      */
     effect(() => {
-      if (
-        this.llm.chat.status() === 'ready' &&
-        this.llm.chat.loadedModelId() !== this.llm.modelId()
-      ) {
+      if (this.llm.outdated()) {
         log.info('game', 'another model was chosen: restarting the level on it');
         this.start();
       }
@@ -144,7 +140,7 @@ export class Play {
     const opened =
       levelId === RANDOM_LEVEL_ID
         ? // Nothing exists yet: the model has to be awake before it can invent.
-          this.llm.loadModel().then(async (ready) => {
+          this.llm.load().then(async (ready) => {
             if (!ready) {
               return null;
             }
@@ -152,7 +148,7 @@ export class Play {
           })
         : this.levels.loadLevel(levelId).then(async (level) => {
             // 👇👇👇 Game - Load model on level start
-            const ready = await this.llm.loadModel();
+            const ready = await this.llm.load();
             return ready ? level : null;
           });
 

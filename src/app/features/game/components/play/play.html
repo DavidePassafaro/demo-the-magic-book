@@ -6,7 +6,7 @@
       <a routerLink="/">{{ t().backToMenu }}</a>
     </div>
   </section>
-} @else if (llm.chat.status() === 'unsupported') {
+} @else if (llm.status() === 'unsupported') {
   <section class="notice">
     <h2>{{ t().unsupportedTitle }}</h2>
     <p>{{ t().unsupportedBody }}</p>
@@ -23,10 +23,10 @@
       <a routerLink="/">{{ t().backToMenu }}</a>
     </div>
   </section>
-} @else if (llm.chat.status() === 'error') {
+} @else if (llm.status() === 'error') {
   <section class="notice">
     <h2>{{ t().openFailedTitle }}</h2>
-    <p role="alert">{{ llm.chat.error() }}</p>
+    <p role="alert">{{ llm.error() }}</p>
     <div class="notice-actions">
       <button type="button" (click)="start()">{{ t().tryAgain }}</button>
       <a routerLink="/">{{ t().backToMenu }}</a>

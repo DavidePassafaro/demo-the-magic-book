@@ -1,4 +1,4 @@
-import type { ChatCompletionMessageParam } from '@mlc-ai/web-llm';
+import type { ChatMessage } from '@core/llm/language-model';
 import { LANGUAGE_NAMES, WRITE_IN_LANGUAGE, type Locale } from '@core/i18n/model/locale';
 import { text, type NpcConfig } from '@features/game/engine/model/level';
 
@@ -58,11 +58,7 @@ function judgeRules(locale: Locale): string {
  * model reasons best; only the villager's reply is in the player's language.
  */
 // 👇👇👇 Prompt - User message
-export function judgePrompt(
-  npc: NpcConfig,
-  object: string,
-  locale: Locale,
-): ChatCompletionMessageParam[] {
+export function judgePrompt(npc: NpcConfig, object: string, locale: Locale): ChatMessage[] {
   return [
     { role: 'system', content: judgeRules(locale) },
     {

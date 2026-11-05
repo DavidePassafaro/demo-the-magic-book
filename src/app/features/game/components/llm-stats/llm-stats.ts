@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { LocaleService } from '@core/i18n/locale.service';
-import { mergeStats } from '@core/webllm/support/engine-stats';
-import { WebLlmService } from '@core/webllm/web-llm.service';
+import { LanguageModel, VisionModel } from '@core/llm/language-model';
+import { mergeStats } from '@core/llm/model-stats';
 
 interface StatRow {
   readonly label: string;
@@ -11,8 +11,8 @@ interface StatRow {
 const MB = 1024 * 1024;
 
 /**
- * Token use and machine figures for the local models. Only numbers that
- * WebLLM or the browser actually measured are shown, never estimates.
+ * Token use and machine figures for the models. Only numbers that the
+ * provider or the browser actually measured are shown, never estimates.
  */
 @Component({
   selector: 'mb-llm-stats',
@@ -20,17 +20,21 @@ const MB = 1024 * 1024;
   styleUrl: './llm-stats.scss',
 })
 export class LlmStats {
-  private readonly llm = inject(WebLlmService);
+  private readonly chat = inject(LanguageModel);
+  private readonly vision = inject(VisionModel);
   private readonly locale = inject(LocaleService);
 
   protected readonly t = this.locale.t;
+  protected readonly providers = [...new Set([this.chat.provider, this.vision.provider])].join(
+    ' + ',
+  );
 
   /** Bytes this origin keeps on disk, model weights included. */
   private readonly storageBytes = signal<number | null>(null);
 
   protected readonly rows = computed<readonly StatRow[]>(() => {
     const t = this.t();
-    const stats = mergeStats(this.llm.chat.stats(), this.llm.vision.stats());
+    const stats = mergeStats(this.chat.stats(), this.vision.stats());
     const number = new Intl.NumberFormat(this.locale.locale());
     const decimal = new Intl.NumberFormat(this.locale.locale(), { maximumFractionDigits: 1 });
     const rate = (tokens: number, seconds: number): string =>
@@ -55,7 +59,7 @@ export class LlmStats {
             : `${decimal.format(latency)} s` +
               (firstToken === null ? '' : ` · TTFT ${decimal.format(firstToken)} s`),
       },
-      { label: t.statsMaxBuffer, value: megabytes(this.llm.chat.maxBufferBytes()) },
+      { label: t.statsMaxBuffer, value: megabytes(this.chat.gpuBufferBytes()) },
       { label: t.statsStorage, value: megabytes(this.storageBytes()) },
     ];
   });
@@ -63,8 +67,8 @@ export class LlmStats {
   constructor() {
     // The disk figure changes when a model is downloaded, so it is read again then.
     effect(() => {
-      this.llm.chat.status();
-      this.llm.vision.status();
+      this.chat.status();
+      this.vision.status();
       void this.readStorage();
     });
   }

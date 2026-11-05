@@ -1,4 +1,4 @@
-import type { ChatCompletionMessageParam } from '@mlc-ai/web-llm';
+import type { ChatMessage } from '@core/llm/language-model';
 import { LANGUAGE_NAMES, WRITE_IN_LANGUAGE, type Locale } from '@core/i18n/model/locale';
 
 export const TRANSLATION_SCHEMA = JSON.stringify({
@@ -8,7 +8,7 @@ export const TRANSLATION_SCHEMA = JSON.stringify({
 });
 
 /** The player's wish, into English, so it can be matched against SOLUTION_HINT. */
-export function wishToEnglishPrompt(object: string, locale: Locale): ChatCompletionMessageParam[] {
+export function wishToEnglishPrompt(object: string, locale: Locale): ChatMessage[] {
   return [
     {
       role: 'system',
@@ -24,7 +24,7 @@ export function wishToEnglishPrompt(object: string, locale: Locale): ChatComplet
 }
 
 /** A villager's English sentence, said again in another language. */
-export function sentencePrompt(sentence: string, locale: Locale): ChatCompletionMessageParam[] {
+export function sentencePrompt(sentence: string, locale: Locale): ChatMessage[] {
   const language = LANGUAGE_NAMES[locale];
 
   return [

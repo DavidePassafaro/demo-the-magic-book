@@ -1,10 +1,10 @@
 import { Service, inject } from '@angular/core';
 import type { Locale } from '@core/i18n/model/locale';
 import { LocaleService } from '@core/i18n/locale.service';
-import { WebLlmService } from '@core/webllm/web-llm.service';
+import { LanguageModel } from '@core/llm/language-model';
 import { log } from '@core/logger/logger';
 import type { NpcConfig } from '@features/game/engine/model/level';
-import type { Referee, Verdict } from '@features/game/engine/model/contracts';
+import type { Verdict } from '@features/game/engine/model/contracts';
 import { VERDICT_SCHEMA, judgePrompt } from '@features/game/ai/prompts/judge.prompt';
 import {
   TRANSLATION_SCHEMA,
@@ -15,10 +15,13 @@ import { parseJson, stringField } from '@features/game/ai/parse-json';
 /** A villager who says nothing is a failed answer, so it is worth asking twice. */
 const ATTEMPTS = 2;
 
-/** Turns the local model into the game's referee: one call per wish. */
-@Service()
-export class JudgeService implements Referee {
-  private readonly llm = inject(WebLlmService);
+/**
+ * Turns the language model into the game's referee: one call per wish.
+ * Provided by the game route, so it uses whichever model the route binds.
+ */
+@Service({ autoProvided: false })
+export class JudgeService {
+  private readonly llm = inject(LanguageModel);
   private readonly locale = inject(LocaleService);
 
   /** Temperature zero: the same wish twice gets the same answer twice. */
@@ -30,7 +33,7 @@ export class JudgeService implements Referee {
     for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
       try {
         // 👇👇👇 Game - Prompt meets model
-        const raw = await this.llm.queryModel(messages, {
+        const raw = await this.llm.query(messages, {
           schema: VERDICT_SCHEMA,
           maxTokens: 220,
           purpose: `judge "${object}" for ${npc.name}`,
@@ -53,7 +56,7 @@ export class JudgeService implements Referee {
       return object;
     }
     try {
-      const raw = await this.llm.queryModel(wishToEnglishPrompt(object, locale), {
+      const raw = await this.llm.query(wishToEnglishPrompt(object, locale), {
         schema: TRANSLATION_SCHEMA,
         maxTokens: 40,
         purpose: `translate wish "${object}" → en`,

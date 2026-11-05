@@ -1,4 +1,4 @@
-import type { ChatCompletionMessageParam } from '@mlc-ai/web-llm';
+import type { ChatMessage } from '@core/llm/language-model';
 
 /** The problem is written before the hint, so the hint is invented for that problem. */
 export const VILLAGER_SCHEMA = JSON.stringify({
@@ -55,10 +55,7 @@ function villagerRules(): string {
   ].join('\n');
 }
 
-export function villagerPrompt(
-  topic: string,
-  alreadyInvented: readonly string[],
-): ChatCompletionMessageParam[] {
+export function villagerPrompt(topic: string, alreadyInvented: readonly string[]): ChatMessage[] {
   const taken = alreadyInvented.join(', ');
 
   return [

@@ -1,7 +1,7 @@
 import { Service, computed, inject, signal } from '@angular/core';
 import { LocaleService } from '@core/i18n/locale.service';
 import { log } from '@core/logger/logger';
-import { REFEREE } from '@features/game/engine/model/contracts';
+import { JudgeService } from '@features/game/ai/judge.service';
 import { RetroAudioService } from '@features/game/engine/retro-audio.service';
 import {
   generateMap,
@@ -37,12 +37,12 @@ const STEPS: Record<Facing, { dx: number; dy: number }> = {
 
 /**
  * Everything that is true about the level currently being played. Provided by
- * the game route rather than the application, so it resolves the referee from
- * the same injector the route sets up.
+ * the game route rather than the application, so it resolves the judge — and
+ * through it the language model — from the same injector the route sets up.
  */
 @Service({ autoProvided: false })
 export class GameService {
-  private readonly referee = inject(REFEREE);
+  private readonly referee = inject(JudgeService);
   private readonly locale = inject(LocaleService);
   readonly audio = inject(RetroAudioService);
 

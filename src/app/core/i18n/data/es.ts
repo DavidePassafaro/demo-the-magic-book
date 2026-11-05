@@ -36,7 +36,7 @@ export const ES_STRINGS: UiStrings = {
   statsLastAnswer: 'Última respuesta',
   statsMaxBuffer: 'Búfer de GPU máximo',
   statsStorage: 'Disco usado por el sitio',
-  statsSource: 'Medido por WebLLM.',
+  statsSource: (provider) => `Medido por ${provider}.`,
   talkTo: (name) => `Hablar con ${name}`,
   talkAgain: (name) => `${name}, ya ayudado. Hablar de nuevo.`,
   writeIntoBook: 'Escribe en el libro',

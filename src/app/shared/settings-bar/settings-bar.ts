@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { MODEL_OPTIONS, findModel } from '@core/webllm/data/llm-models';
 import { LOCALES, type Locale } from '@core/i18n/model/locale';
 import { LocaleService } from '@core/i18n/locale.service';
-import { WebLlmService } from '@core/webllm/web-llm.service';
+import { WebLlmChatModel } from '@core/webllm/web-llm-chat.model';
 
 /**
  * The two controls that used to be a settings page. Both take effect at once:
@@ -15,14 +15,14 @@ import { WebLlmService } from '@core/webllm/web-llm.service';
   styleUrl: './settings-bar.scss',
 })
 export class SettingsBar {
-  private readonly llm = inject(WebLlmService);
+  private readonly model = inject(WebLlmChatModel);
   private readonly locale = inject(LocaleService);
 
   protected readonly t = this.locale.t;
   protected readonly locales = LOCALES;
   protected readonly models = MODEL_OPTIONS;
   protected readonly currentLocale = this.locale.locale;
-  protected readonly currentModel = this.llm.modelId;
+  protected readonly currentModel = this.model.modelId;
   protected readonly cached = signal<Record<string, boolean>>({});
 
   /** What this model is good and bad at, in the player's language. */
@@ -32,7 +32,7 @@ export class SettingsBar {
 
   constructor() {
     for (const model of MODEL_OPTIONS) {
-      this.llm.isCached(model.id).then((isCached) => {
+      this.model.isCached(model.id).then((isCached) => {
         this.cached.update((current) => ({ ...current, [model.id]: isCached }));
       });
     }
@@ -43,7 +43,7 @@ export class SettingsBar {
   }
 
   protected selectModel(event: Event): void {
-    this.llm.selectModel((event.target as HTMLSelectElement).value);
+    this.model.select((event.target as HTMLSelectElement).value);
   }
 
   protected modelLabel(id: string, label: string, sizeMb: number): string {

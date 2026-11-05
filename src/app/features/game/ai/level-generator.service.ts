@@ -1,6 +1,6 @@
 import { Service, computed, inject, signal } from '@angular/core';
 import { LOCALES, type Locale } from '@core/i18n/model/locale';
-import { WebLlmService } from '@core/webllm/web-llm.service';
+import { LanguageModel } from '@core/llm/language-model';
 import { elapsed, log } from '@core/logger/logger';
 import {
   RANDOM_LEVEL_ID,
@@ -10,7 +10,7 @@ import {
   type NpcConfig,
   type Theme,
 } from '@features/game/engine/model/level';
-import type { InventionPhase, LevelInventor } from '@features/game/engine/model/contracts';
+import type { InventionPhase } from '@features/game/engine/model/contracts';
 import {
   VILLAGER_SCHEMA,
   VILLAGER_TOPICS,
@@ -28,10 +28,13 @@ const TRANSLATED_INTO: readonly Locale[] = LOCALES.map((option) => option.id).fi
 );
 const STEPS_PER_VILLAGER = 1 + TRANSLATED_INTO.length;
 
-/** Invents a level with the local model, in the same shape a level file has. */
-@Service()
-export class LevelGeneratorService implements LevelInventor {
-  private readonly llm = inject(WebLlmService);
+/**
+ * Invents a level with the language model, in the same shape a level file has.
+ * Provided by the game route, so it uses whichever model the route binds.
+ */
+@Service({ autoProvided: false })
+export class LevelGeneratorService {
+  private readonly llm = inject(LanguageModel);
 
   readonly phase = signal<InventionPhase>('idle');
   readonly done = signal(0);
@@ -85,7 +88,7 @@ export class LevelGeneratorService implements LevelInventor {
 
     for (let attempt = 1; attempt <= ATTEMPTS_PER_VILLAGER; attempt++) {
       try {
-        const raw = await this.llm.queryModel(messages, {
+        const raw = await this.llm.query(messages, {
           schema: VILLAGER_SCHEMA,
           maxTokens: 420,
           purpose: `invent villager ${index + 1} of ${VILLAGERS} (${topic})`,
@@ -113,7 +116,7 @@ export class LevelGeneratorService implements LevelInventor {
 
     for (const locale of TRANSLATED_INTO) {
       try {
-        const raw = await this.llm.queryModel(sentencePrompt(npc.problem.en, locale), {
+        const raw = await this.llm.query(sentencePrompt(npc.problem.en, locale), {
           schema: TRANSLATION_SCHEMA,
           maxTokens: 260,
           purpose: `translate ${npc.name} → ${locale}`,

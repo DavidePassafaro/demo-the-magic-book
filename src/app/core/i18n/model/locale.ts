@@ -60,7 +60,7 @@ export interface UiStrings {
   readonly statsLastAnswer: string;
   readonly statsMaxBuffer: string;
   readonly statsStorage: string;
-  readonly statsSource: string;
+  readonly statsSource: (provider: string) => string;
   readonly talkTo: (name: string) => string;
   readonly talkAgain: (name: string) => string;
   readonly writeIntoBook: string;
