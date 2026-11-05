@@ -1,16 +1,17 @@
 import { Service, computed, signal } from '@angular/core';
 import { EN_STRINGS } from '@core/i18n/data/en';
+import { ES_STRINGS } from '@core/i18n/data/es';
 import { IT_STRINGS } from '@core/i18n/data/it';
-import type { Locale, UiStrings } from '@core/i18n/model/locale';
+import { LOCALES, type Locale, type UiStrings } from '@core/i18n/model/locale';
 
-const STRINGS: Record<Locale, UiStrings> = { en: EN_STRINGS, it: IT_STRINGS };
+const STRINGS: Record<Locale, UiStrings> = { en: EN_STRINGS, it: IT_STRINGS, es: ES_STRINGS };
 
 const LOCALE_KEY = 'magic-book.locale';
 
 function readStoredLocale(): Locale {
   try {
     const stored = localStorage.getItem(LOCALE_KEY);
-    return stored === 'it' || stored === 'en' ? stored : 'en';
+    return LOCALES.find((option) => option.id === stored)?.id ?? 'en';
   } catch {
     return 'en';
   }
@@ -28,7 +29,7 @@ export class LocaleService {
    * player switches, where `t()` would only ever give the language of the day.
    */
   inEveryLanguage(pick: (strings: UiStrings) => string): Record<Locale, string> {
-    return { en: pick(STRINGS.en), it: pick(STRINGS.it) };
+    return { en: pick(STRINGS.en), it: pick(STRINGS.it), es: pick(STRINGS.es) };
   }
 
   setLocale(locale: Locale): void {

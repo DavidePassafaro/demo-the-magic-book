@@ -2,7 +2,8 @@
   "id": "devfest-ourense-2026",
   "title": {
     "en": "DevFest Ourense 2026",
-    "it": "DevFest Ourense 2026"
+    "it": "DevFest Ourense 2026",
+    "es": "DevFest Ourense 2026"
   },
   "theme": "indoor",
   "seed": 20262609,
@@ -12,10 +13,11 @@
     {
       "id": "cosmo",
       "name": "Cosmo, Il Mordicchiatore di Mondi",
-      "temper": "A dog. Cosmo cannot speak and does not understand that anyone expects him to. npcReply must be barking and nothing else: 'Woff!', 'Woff woff!', 'WOFF WOFF WOFF!', possibly with a short action in brackets such as (scodinzola) or (inclina la testa). Never a word of Italian or English outside the brackets, never a sentence, never an explanation. Delighted, escalating barks when the object works; a single confused, deflating bark when it does not.",
+      "temper": "A dog. Cosmo cannot speak and does not understand that anyone expects him to. npcReply must be barking and nothing else: 'Woff!', 'Woff woff!', 'WOFF WOFF WOFF!', possibly with a short action in brackets such as (scodinzola) or (inclina la testa). Never a word of Italian, Spanish or English outside the brackets, never a sentence, never an explanation. Delighted, escalating barks when the object works; a single confused, deflating bark when it does not.",
       "problem": {
         "en": "Woff woff! (Cosmo circles you twice, drops a thoroughly destroyed sock at your feet, and stares.)",
-        "it": "Woff woff! (Cosmo ti gira intorno due volte, lascia cadere ai tuoi piedi un calzino ormai distrutto e ti fissa.)"
+        "it": "Woff woff! (Cosmo ti gira intorno due volte, lascia cadere ai tuoi piedi un calzino ormai distrutto e ti fissa.)",
+        "es": "Woff woff! (Cosmo da dos vueltas a tu alrededor, deja caer a tus pies un calcetín completamente destrozado y te mira fijamente.)"
       },
       "solutionHint": "The object must be a plaything for a dog: something Cosmo can safely carry in his mouth, chew, chase or fetch. Accept a ball, a tennis ball, a bone, a chew toy, a squeaky toy, a rope toy, a frisbee, a stick, a plush toy, and obvious variants of those. Reject everything else. Reject in particular: tools, machines, vehicles and anything with a blade, a motor, a flame or sharp edges (a saw, a circular saw, a drill, a knife, an axe); anything heavy, hot, breakable or dangerous for an animal; care items such as a collar, a lead, a kennel, a bowl, water, a blanket, a brush, a bath, a vet, a walk, training or attention; and food or meals, the bone being the only exception because he can carry and chew it. If the object is not clearly a dog's toy, the answer is no."
     },
@@ -25,7 +27,8 @@
       "temper": "Warm, quick and practical, the way someone is when they have run a hundred workshops. Thinks in facilitation terms, laughs at the situation rather than panicking about it, but is genuinely under pressure.",
       "problem": {
         "en": "The box with all the material for my serious game never made it here, and in half an hour I have forty people in that room. They have to build, move and decide something with their own hands — a talk is exactly what this session must not become.",
-        "it": "La scatola con tutto il materiale del mio serious game non è mai arrivata, e fra mezz'ora ho quaranta persone in quella sala. Devono costruire, spostare e decidere qualcosa con le loro mani: l'unica cosa che questa sessione non deve diventare è una conferenza."
+        "it": "La scatola con tutto il materiale del mio serious game non è mai arrivata, e fra mezz'ora ho quaranta persone in quella sala. Devono costruire, spostare e decidere qualcosa con le loro mani: l'unica cosa che questa sessione non deve diventare è una conferenza.",
+        "es": "La caja con todo el material de mi serious game no ha llegado nunca, y dentro de media hora tengo a cuarenta personas en esa sala. Tienen que construir, mover y decidir algo con sus propias manos: lo único en lo que esta sesión no puede convertirse es en una charla."
       },
       "solutionHint": "Anything a facilitator can put in forty pairs of hands to make a workshop work: post-it notes, sticky notes, dice, playing cards, index cards, markers, pens, flip chart paper, a whiteboard, Lego or building bricks, string, coloured tokens, counters, a timer, a bell, paper to fold, small objects to move around a table. Accept combinations of these. Do NOT accept anything that turns the session back into a talk or replaces the participants' hands: slides, a projector, a PDF, a screen, a lecture, a video, a speaker, a microphone, a laptop for her, or more chairs."
     },
@@ -35,7 +38,8 @@
       "temper": "An organiser running on coffee and adrenaline, checking the time every few seconds. Speaks in short bursts, friendly but visibly doing four things at once.",
       "problem": {
         "en": "Every talk is overrunning. From the back of the room I cannot tell a speaker their time is up without walking on stage and embarrassing them, and by the afternoon we will be forty minutes behind. I need a way to tell them how long is left, from where I am standing, while they are speaking.",
-        "it": "Ogni talk sfora. Dal fondo della sala non riesco a dire a chi parla che il tempo è finito senza salire sul palco e metterlo in imbarazzo, e di questo passo nel pomeriggio siamo indietro di quaranta minuti. Mi serve un modo per dirgli quanto tempo resta, da dove sono io, mentre sta parlando."
+        "it": "Ogni talk sfora. Dal fondo della sala non riesco a dire a chi parla che il tempo è finito senza salire sul palco e metterlo in imbarazzo, e di questo passo nel pomeriggio siamo indietro di quaranta minuti. Mi serve un modo per dirgli quanto tempo resta, da dove sono io, mentre sta parlando.",
+        "es": "Todas las charlas se alargan. Desde el fondo de la sala no puedo decirle a quien habla que se le ha acabado el tiempo sin subir al escenario y ponerle en un apuro, y a este paso por la tarde vamos cuarenta minutos tarde. Necesito una forma de decirle cuánto tiempo le queda, desde donde estoy yo, mientras habla."
       },
       "solutionHint": "Anything that silently tells a speaker on stage how much time is left, visible to them from the room: cards or signs showing the remaining minutes, a large countdown clock or timer facing the stage, a countdown on a confidence monitor or a tablet at their feet, a traffic light, a coloured lamp, a gong or a bell to mark the end, an agreed hand signal. Accept anything a speaker can see or hear from the stage. Do NOT accept anything only Maurizio can see (his own watch, his own phone, a clock at the back of the room facing the audience), anything that requires interrupting them out loud, a longer schedule, fewer talks, shorter slots, or simply asking speakers to be brief."
     }

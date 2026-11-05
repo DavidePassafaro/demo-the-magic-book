@@ -3,7 +3,8 @@
     "id": "level-01",
     "title": {
       "en": "The Village of Emberbrook",
-      "it": "Il villaggio di Emberbrook"
+      "it": "Il villaggio di Emberbrook",
+      "es": "El pueblo de Emberbrook"
     },
     "file": "level-01.json"
   },
@@ -11,7 +12,8 @@
     "id": "level-02",
     "title": {
       "en": "The Harbour at Low Tide",
-      "it": "Il porto con la bassa marea"
+      "it": "Il porto con la bassa marea",
+      "es": "El puerto con la marea baja"
     },
     "file": "level-02.json"
   },
@@ -19,7 +21,8 @@
     "id": "level-03",
     "title": {
       "en": "The Winter Road",
-      "it": "La strada d’inverno"
+      "it": "La strada d’inverno",
+      "es": "El camino de invierno"
     },
     "file": "level-03.json"
   },
@@ -27,7 +30,8 @@
     "id": "devfest-ourense-2026",
     "title": {
       "en": "DevFest Ourense 2026",
-      "it": "DevFest Ourense 2026"
+      "it": "DevFest Ourense 2026",
+      "es": "DevFest Ourense 2026"
     },
     "file": "devfest-ourense-2026.json",
     "enabled": true

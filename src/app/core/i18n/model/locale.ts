@@ -1,15 +1,17 @@
 /** The languages the game speaks, and the shape of everything it says. */
-export type Locale = 'en' | 'it';
+export type Locale = 'en' | 'it' | 'es';
 
 export const LOCALES: readonly { id: Locale; label: string }[] = [
   { id: 'en', label: 'English' },
   { id: 'it', label: 'Italiano' },
+  { id: 'es', label: 'Español' },
 ];
 
 /** The language the model is asked to speak, named in English for its rules. */
 export const LANGUAGE_NAMES: Record<Locale, string> = {
   en: 'English',
   it: 'Italian',
+  es: 'Spanish',
 };
 
 /**
@@ -20,6 +22,7 @@ export const LANGUAGE_NAMES: Record<Locale, string> = {
 export const WRITE_IN_LANGUAGE: Record<Locale, string> = {
   en: 'Write it in English.',
   it: 'Scrivi in italiano, non in inglese.',
+  es: 'Escríbelo en español, no en inglés.',
 };
 
 export interface UiStrings {

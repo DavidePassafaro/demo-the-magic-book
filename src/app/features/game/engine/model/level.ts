@@ -74,7 +74,7 @@ function asRecord(value: unknown, where: string): Record<string, unknown> {
   return value as Record<string, unknown>;
 }
 
-/** Accepts either "text" or { "en": "...", "it": "..." }. */
+/** Accepts either "text" or { "en": "...", "it": "...", "es": "..." }. */
 function asLocalized(source: Record<string, unknown>, key: string, where: string): LocalizedText {
   const value = source[key];
 

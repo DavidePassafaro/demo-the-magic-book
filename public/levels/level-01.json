@@ -2,7 +2,8 @@
   "id": "level-01",
   "title": {
     "en": "The Village of Emberbrook",
-    "it": "Il villaggio di Emberbrook"
+    "it": "Il villaggio di Emberbrook",
+    "es": "El pueblo de Emberbrook"
   },
   "theme": "village",
   "seed": 20260919,
@@ -15,7 +16,8 @@
       "temper": "Gruff and tired. Speaks in short, blunt sentences. Does not waste words on politeness, but is not cruel.",
       "problem": {
         "en": "The lamp on the old bridge has gone out, and the wind off the river kills every flame I carry up there. I need a light the wind cannot reach.",
-        "it": "Il lampione del vecchio ponte si è spento, e il vento che sale dal fiume spegne ogni fiamma che porto lassù. Mi serve una luce che il vento non riesca a spegnere."
+        "it": "Il lampione del vecchio ponte si è spento, e il vento che sale dal fiume spegne ogni fiamma che porto lassù. Mi serve una luce che il vento non riesca a spegnere.",
+        "es": "La farola del puente viejo se ha apagado, y el viento que sube del río apaga cada llama que llevo hasta allí. Necesito una luz que el viento no pueda apagar."
       },
       "solutionHint": "Anything that produces light the wind cannot blow out: an enclosed or glazed lantern, a glowing stone or crystal, a jar of fireflies, a magical everburning flame, a light that does not burn at all. A bare flame, a torch, a candle without a housing, or a bigger match does not work. Neither does anything that only shelters her rather than the light."
     },
@@ -25,7 +27,8 @@
       "temper": "Anxious and talkative. Apologises a lot, asks small nervous questions, trails off mid-thought.",
       "problem": {
         "en": "My sheep scatter across the dark hillside every night and by morning I cannot find half of them. I need some way to know where they are once the sun is down.",
-        "it": "Ogni notte le mie pecore si disperdono per la collina al buio, e al mattino non riesco a ritrovarne nemmeno la metà. Mi serve un modo per sapere dove sono quando è buio."
+        "it": "Ogni notte le mie pecore si disperdono per la collina al buio, e al mattino non riesco a ritrovarne nemmeno la metà. Mi serve un modo per sapere dove sono quando è buio.",
+        "es": "Cada noche mis ovejas se dispersan por la colina a oscuras, y por la mañana no encuentro ni la mitad. Necesito una forma de saber dónde están cuando ya es de noche."
       },
       "solutionHint": "Anything that makes the sheep findable in darkness or keeps them gathered: glowing collars or bells, a lantern the flock follows, a whistle the sheep obey, a dog that herds them, a rope fence, paint that shines at night, a map that shows where they are. A plain lamp for himself does not work, because it lights him and not them. Neither does anything that merely counts the sheep."
     },
@@ -35,7 +38,8 @@
       "temper": "Dry and sarcastic. Fond of understatement and small jabs, but warms up when genuinely impressed.",
       "problem": {
         "en": "The rope snapped and the bucket is sitting at the bottom of the well, forty feet down, in the dark. I need it back up here.",
-        "it": "La corda si è spezzata e il secchio è rimasto sul fondo del pozzo, dodici metri più in basso, al buio. Devo riportarlo su."
+        "it": "La corda si è spezzata e il secchio è rimasto sul fondo del pozzo, dodici metri più in basso, al buio. Devo riportarlo su.",
+        "es": "La cuerda se ha roto y el cubo se ha quedado en el fondo del pozo, doce metros más abajo, a oscuras. Tengo que volver a subirlo."
       },
       "solutionHint": "Anything that retrieves the bucket or replaces the need to reach down: a new rope or chain, a grappling hook, a very long pole with a hook, a magnet if the bucket is iron, a bucket that floats up, a creature that can fetch it, water rising to carry it up, a ladder into the well. A new bucket alone does not work, because she wants that bucket back and the well still has no rope."
     }

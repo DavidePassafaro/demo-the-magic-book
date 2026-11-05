@@ -12,6 +12,7 @@ export const MODEL_OPTIONS: readonly ModelOption[] = [
     note: {
       en: 'The default, and by far the fairest judge.',
       it: 'Il predefinito, di gran lunga il più equo.',
+      es: 'El predeterminado, y con diferencia el juez más justo.',
     },
   },
   {
@@ -21,6 +22,7 @@ export const MODEL_OPTIONS: readonly ModelOption[] = [
     note: {
       en: 'Google’s, and widely multilingual.',
       it: 'Di Google, addestrato su molte lingue.',
+      es: 'De Google, entrenado en muchos idiomas.',
     },
   },
   {
@@ -30,6 +32,7 @@ export const MODEL_OPTIONS: readonly ModelOption[] = [
     note: {
       en: 'Half the size, and much easier to fool.',
       it: 'Metà del peso, molto più facile da ingannare.',
+      es: 'La mitad de tamaño, y mucho más fácil de engañar.',
     },
   },
   {
@@ -39,6 +42,7 @@ export const MODEL_OPTIONS: readonly ModelOption[] = [
     note: {
       en: 'Tiny, fast, and a terrible referee.',
       it: 'Minuscolo, veloce e un pessimo arbitro.',
+      es: 'Diminuto, rápido y un árbitro pésimo.',
     },
   },
   {
@@ -48,6 +52,7 @@ export const MODEL_OPTIONS: readonly ModelOption[] = [
     note: {
       en: 'A third of a billion. Barely a judge at all.',
       it: 'Un terzo di miliardo. A malapena un arbitro.',
+      es: 'Un tercio de mil millones. Apenas un árbitro.',
     },
   },
 ];
