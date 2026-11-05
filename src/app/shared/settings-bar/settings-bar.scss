@@ -21,6 +21,13 @@
     align-items: flex-start;
     justify-content: space-between;
   }
+
+  /* On the home page the bar is a centrepiece, not a header: side by side, but
+     gathered in the middle. */
+  :host(.centred) .bar {
+    justify-content: center;
+    gap: 2rem;
+  }
 }
 
 .languages {
