@@ -101,12 +101,16 @@ export class LlmEngine {
     });
 
     try {
+      // 👇👇👇 WebLLM - Race against timeout
       const reply = await Promise.race([request, timeout]);
       logCompletion(this.source, purpose, started, messages, reply);
+
       const usage = reply.usage;
       if (usage) {
         this.stats.update((stats) => addUsage(stats, usage));
       }
+
+      // 👇👇👇 WebLLM - Read reply
       return reply.choices[0]?.message?.content ?? '';
     } catch (cause) {
       // Errors from the worker arrive as plain strings.
