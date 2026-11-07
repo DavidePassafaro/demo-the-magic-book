@@ -1,0 +1,12 @@
+{
+    "folder-customization.folders": [
+        {
+            "path": "the-magic-book/src/app/core/webllm/",
+            "badge": "⭐"
+        },
+        {
+            "path": "the-magic-book/src/app/features/game/ai/",
+            "badge": "⭐"
+        }
+    ]
+}
