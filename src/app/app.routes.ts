@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { LanguageModel, VisionModel } from '@core/llm/language-model';
 
 export const routes: Routes = [
   {
@@ -8,7 +9,25 @@ export const routes: Routes = [
   },
   {
     path: 'play',
-    loadChildren: () => import('./features/game/game.routes').then((m) => m.gameRoutes),
+    loadChildren: async () => {
+      const [{ gameRoutes }, { WebLlmChatModel }, { WebLlmVisionModel }] = await Promise.all([
+        import('@features/game/game.routes'),
+        import('@core/webllm/web-llm-chat.model'),
+        import('@core/webllm/web-llm-vision.model'),
+      ]);
+
+      return [
+        {
+          path: '',
+          providers: [
+            // 👇👇👇 Game - Contract → model
+            { provide: LanguageModel, useExisting: WebLlmChatModel },
+            { provide: VisionModel, useExisting: WebLlmVisionModel },
+          ],
+          children: gameRoutes,
+        },
+      ];
+    },
   },
   { path: '**', redirectTo: '' },
 ];

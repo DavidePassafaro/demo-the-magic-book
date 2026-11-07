@@ -134,7 +134,8 @@ src/app/
       ai/          the side that talks to a model
         data/      every prompt the game sends
       components/  play and the four pieces it draws
-      game.routes.ts   the only file naming both a port and its implementation
+      game.routes.ts   the game's pages and services, without the models
+  app.routes.ts    the only file naming both a port and its implementation
 public/levels/   the levels, read at runtime
 ```
 

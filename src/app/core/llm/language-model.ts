@@ -4,7 +4,7 @@ import type { ModelStats } from '@core/llm/model-stats';
 /**
  * What the game needs from a language model, and nothing about where it runs.
  * WebLLM in the browser is one implementation; a remote API would be another.
- * Which one the game uses is decided by the providers of the game route alone.
+ * Which one the game uses is decided by whoever mounts the game's routes.
  */
 
 export interface TextPart {
