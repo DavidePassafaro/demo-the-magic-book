@@ -24,6 +24,7 @@ export class ObjectRecognizerService {
     if (this.eye.status() === 'loading') {
       return 'loading';
     }
+
     return this.looking() ? 'looking' : 'idle';
   });
 
@@ -38,6 +39,7 @@ export class ObjectRecognizerService {
     }
 
     this.looking.set(true);
+
     try {
       // 👇👇👇 Game - Ask the vision model
       const raw = await this.eye.query(recognitionPrompt(image), {
@@ -45,8 +47,10 @@ export class ObjectRecognizerService {
         maxTokens: 100,
         purpose: 'name the object in the photo',
       });
+
       const name = parseObjectName(raw);
       log.info('eye', `it sees: "${name}"`);
+
       return name;
     } finally {
       this.looking.set(false);
@@ -62,5 +66,6 @@ function parseObjectName(raw: string): string {
   if (name === '' || name === NOTHING) {
     throw new Error('The book could not make out what you are showing it.');
   }
+
   return name;
 }

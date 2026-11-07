@@ -28,6 +28,7 @@ export class JudgeService {
   async judge(npc: NpcConfig, object: string): Promise<Verdict> {
     const locale = this.locale.locale();
     const messages = judgePrompt(npc, await this.toEnglish(object, locale), locale);
+
     let lastError: unknown = null;
 
     for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
@@ -38,8 +39,10 @@ export class JudgeService {
           maxTokens: 220,
           purpose: `judge "${object}" for ${npc.name}`,
         });
+
         const verdict = parseVerdict(raw);
         log.info('judge', `${npc.name} · "${object}" → ${verdict.solved ? 'SOLVED' : 'rejected'}`);
+
         return verdict;
       } catch (cause) {
         lastError = cause;
@@ -55,12 +58,14 @@ export class JudgeService {
     if (locale === 'en') {
       return object;
     }
+
     try {
       const raw = await this.llm.query(wishToEnglishPrompt(object, locale), {
         schema: TRANSLATION_SCHEMA,
         maxTokens: 40,
         purpose: `translate wish "${object}" → en`,
       });
+
       const english = stringField(parseJson(raw), 'translation');
       return english ? `${english} (${object})` : object;
     } catch {
@@ -72,8 +77,10 @@ export class JudgeService {
 function parseVerdict(raw: string): Verdict {
   const record = parseJson(raw);
   const npcReply = stringField(record, 'npcReply');
+
   if (npcReply === '') {
     throw new Error('The villager said nothing.');
   }
+
   return { solved: record['solved'] === true, npcReply };
 }

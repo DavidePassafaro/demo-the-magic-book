@@ -56,6 +56,7 @@ export class LevelGeneratorService {
       const seed = Math.floor(Math.random() * 2_000_000_000);
       const theme = THEMES[Math.floor(Math.random() * THEMES.length)] as Theme;
       const topics = [...VILLAGER_TOPICS].sort(() => Math.random() - 0.5).slice(0, VILLAGERS);
+
       const npcs: NpcConfig[] = [];
 
       for (const [index, topic] of topics.entries()) {
@@ -66,11 +67,14 @@ export class LevelGeneratorService {
 
       this.phase.set('idle');
       log.info('inventor', `village invented in ${elapsed(started)}`);
+
       return { id: RANDOM_LEVEL_ID, title, theme, seed, width: 24, height: 18, npcs };
     } catch (cause) {
       log.error('inventor', 'the village could not be invented', cause);
+
       this.phase.set('failed');
       this.error.set(cause instanceof Error ? cause.message : String(cause));
+
       throw cause;
     }
   }
@@ -96,8 +100,10 @@ export class LevelGeneratorService {
           // 👇👇👇 Game - Creative temperature
           temperature: 0.7,
         });
+
         const villager = parseVillager(raw, index);
         this.steps.update((step) => step + 1);
+
         return villager;
       } catch (cause) {
         lastError = cause;
@@ -121,10 +127,12 @@ export class LevelGeneratorService {
           maxTokens: 260,
           purpose: `translate ${npc.name} → ${locale}`,
         });
+
         said[locale] = requiredField(parseJson(raw), 'translation');
       } catch (cause) {
         log.warn('inventor', `${npc.name} stays in English: ${locale} translation failed`, cause);
       }
+
       this.steps.update((step) => step + 1);
     }
 
