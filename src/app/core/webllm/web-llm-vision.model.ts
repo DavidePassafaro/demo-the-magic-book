@@ -2,7 +2,7 @@ import { Service, computed, signal } from '@angular/core';
 import { VisionModel, type ChatMessage, type QueryOptions } from '@core/llm/language-model';
 import { VISION_MODEL } from '@core/webllm/data/llm-models';
 import { LlmEngine } from '@core/webllm/llm-engine';
-import { toWebLlm } from '@core/webllm/support/to-web-llm';
+import { toWebLlm } from '@core/webllm/utils/to-web-llm';
 
 /** Phi-3.5 Vision in the browser, loaded only the first time the camera is used. */
 @Service()

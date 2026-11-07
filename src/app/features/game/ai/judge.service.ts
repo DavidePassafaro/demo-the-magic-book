@@ -10,7 +10,7 @@ import {
   TRANSLATION_SCHEMA,
   wishToEnglishPrompt,
 } from '@features/game/ai/prompts/translate.prompt';
-import { parseJson, stringField } from '@features/game/ai/parse-json';
+import { parseJson, stringField } from '@features/game/ai/utils/parse-json';
 
 /** A villager who says nothing is a failed answer, so it is worth asking twice. */
 const ATTEMPTS = 2;

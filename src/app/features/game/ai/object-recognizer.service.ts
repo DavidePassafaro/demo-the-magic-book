@@ -7,7 +7,7 @@ import {
   OBJECT_SCHEMA,
   recognitionPrompt,
 } from '@features/game/ai/prompts/recognize.prompt';
-import { parseJson, stringField } from '@features/game/ai/parse-json';
+import { parseJson, stringField } from '@features/game/ai/utils/parse-json';
 
 /**
  * Lets the player show the book an object instead of typing its name.

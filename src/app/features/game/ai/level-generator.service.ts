@@ -17,7 +17,7 @@ import {
   villagerPrompt,
 } from '@features/game/ai/prompts/villager.prompt';
 import { TRANSLATION_SCHEMA, sentencePrompt } from '@features/game/ai/prompts/translate.prompt';
-import { parseJson, requiredField } from '@features/game/ai/parse-json';
+import { parseJson, requiredField } from '@features/game/ai/utils/parse-json';
 
 const VILLAGERS = 3;
 const ATTEMPTS_PER_VILLAGER = 2;

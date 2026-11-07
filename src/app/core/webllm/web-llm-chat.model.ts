@@ -2,8 +2,8 @@ import { Service, computed, signal } from '@angular/core';
 import { LanguageModel, type ChatMessage, type QueryOptions } from '@core/llm/language-model';
 import { DEFAULT_MODEL_ID, findModel } from '@core/webllm/data/llm-models';
 import { LlmEngine } from '@core/webllm/llm-engine';
-import { isModelCached } from '@core/webllm/support/model-cache';
-import { toWebLlm } from '@core/webllm/support/to-web-llm';
+import { isModelCached } from '@core/webllm/utils/model-cache';
+import { toWebLlm } from '@core/webllm/utils/to-web-llm';
 
 const MODEL_PREFERENCE_KEY = 'magic-book.model';
 

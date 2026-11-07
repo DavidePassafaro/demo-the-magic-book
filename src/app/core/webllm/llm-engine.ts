@@ -9,14 +9,14 @@ import {
 } from '@mlc-ai/web-llm';
 import { modelLabel } from '@core/webllm/data/llm-models';
 import type { ModelStatus } from '@core/llm/language-model';
-import { detectWebGpu } from '@core/webllm/support/webgpu';
+import { detectWebGpu } from '@core/webllm/utils/webgpu';
 import {
   INDEXEDDB_CONFIG,
   isCacheStorageError,
   isModelCached,
-} from '@core/webllm/support/model-cache';
-import { logCompletion } from '@core/webllm/support/completion-log';
-import { addUsage } from '@core/webllm/support/engine-stats';
+} from '@core/webllm/utils/model-cache';
+import { logCompletion } from '@core/webllm/utils/completion-log';
+import { addUsage } from '@core/webllm/utils/engine-stats';
 import { EMPTY_STATS, type ModelStats } from '@core/llm/model-stats';
 import type { QueryOptions } from '@core/llm/language-model';
 import { elapsed, log, type LogSource } from '@core/logger/logger';
