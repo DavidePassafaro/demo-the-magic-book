@@ -166,6 +166,17 @@ describe('conversation', () => {
     expect(texts(chat.messages())).toEqual(['one', 'echo: one', 'two', 'echo: two']);
   });
 
+  it('is not idle between one chain and the next', async () => {
+    const { chat } = await setup({}, undefined, 1);
+    let between: string | undefined;
+    const peek = chat.chain(step(() => (between = chat.phase())));
+
+    await Promise.all([chat.send('one'), peek(undefined)]);
+
+    expect(between).toBe('queued');
+    expect(chat.phase()).toBe('idle');
+  });
+
   it('shows the answer in draft while it streams, then clears it', async () => {
     const { chat } = await setup({}, [{ reply: 'a b c d' }], 2);
 

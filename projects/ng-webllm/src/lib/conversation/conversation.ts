@@ -352,8 +352,9 @@ class ConversationImpl<T> implements ConversationRef<T> {
           this.active = null;
         }
         this._draft.set(null);
-        this._phase.set('idle');
         this.running.update((count) => count - 1);
+        // Another chain is next in line: it waits, it is not idle.
+        this._phase.set(untracked(this.running) > 0 ? 'queued' : 'idle');
       }
     });
 
