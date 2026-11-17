@@ -130,6 +130,8 @@ class ConversationImpl<T> implements ConversationRef<T> {
   /** Chains run one at a time: this is the tail of the line. */
   private lock: Promise<unknown> = Promise.resolve();
   private active: AbortController | null = null;
+  /** How many times stop() was called: a chain queued before the last call is dropped. */
+  private stops = 0;
   private destroyed = false;
 
   private readonly all = signal<readonly Message<T>[]>([]);
@@ -229,6 +231,8 @@ class ConversationImpl<T> implements ConversationRef<T> {
 
   stop(options: { keepPartial?: boolean } = {}): void {
     const draft = untracked(this._draft);
+    // The chains waiting their turn see the count change and never start.
+    this.stops += 1;
     this.active?.abort();
 
     if (options.keepPartial && draft && draft.text) {
@@ -317,11 +321,13 @@ class ConversationImpl<T> implements ConversationRef<T> {
       this._phase.set('queued');
     }
 
+    const ticket = this.stops;
+
     const run = this.lock.then(async () => {
       const controller = new AbortController();
       const forward = () => controller.abort();
       external?.addEventListener('abort', forward, { once: true });
-      if (external?.aborted) {
+      if (external?.aborted || this.stops !== ticket) {
         controller.abort();
       }
 
@@ -329,6 +335,10 @@ class ConversationImpl<T> implements ConversationRef<T> {
       this._error.set(undefined);
 
       try {
+        // Stopped while it waited: the work does not start at all, so it changes nothing.
+        if (controller.signal.aborted) {
+          throw new LlmError('aborted', 'The chain was stopped before it started.');
+        }
         return await work(controller.signal);
       } catch (cause) {
         const error = toLlmError(cause);

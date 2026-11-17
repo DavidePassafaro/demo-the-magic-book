@@ -201,6 +201,24 @@ describe('conversation', () => {
     expect(chat.status()).not.toBe('error');
   });
 
+  it('stop also drops the chains waiting their turn', async () => {
+    const { chat, fake } = await setup({}, undefined, 5);
+
+    const first = chat.send('first');
+    const second = chat.send('second');
+    const regenerating = chat.regenerate();
+    chat.stop();
+
+    await expect(first).rejects.toMatchObject({ code: 'aborted' });
+    await expect(second).rejects.toMatchObject({ code: 'aborted' });
+    await expect(regenerating).rejects.toMatchObject({ code: 'aborted' });
+    expect(fake.requests().map((request) => lastUser(request.messages))).not.toContain('second');
+    expect(chat.isLoading()).toBe(false);
+
+    // A chain sent after stop() runs as usual.
+    expect((await chat.send('third')).content).toBe('echo: third');
+  });
+
   it('regenerate replaces the last answer', async () => {
     let count = 0;
     const { chat } = await setup({}, [{ reply: () => `answer ${++count}` }]);
