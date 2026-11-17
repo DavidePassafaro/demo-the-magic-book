@@ -57,17 +57,26 @@ export class Scheduler {
         return;
       }
 
+      // The listener goes when the job ends, however it ends: a signal that
+      // outlives its requests (a conversation's, say) must not collect them.
+      const listening = new AbortController();
       const job: Job = {
         spec: spec as JobSpec<unknown>,
-        resolve: resolve as (value: unknown) => void,
-        reject,
+        resolve: (value) => {
+          listening.abort();
+          resolve(value as T);
+        },
+        reject: (error) => {
+          listening.abort();
+          reject(error);
+        },
         cancelled: null,
         requeue: false,
       };
       spec.signal?.addEventListener(
         'abort',
         () => this.cancel(job, new LlmError('aborted', 'The request was stopped.')),
-        { once: true },
+        { once: true, signal: listening.signal },
       );
 
       this.insert(job);

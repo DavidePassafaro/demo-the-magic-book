@@ -117,6 +117,19 @@ describe('WebLlm', () => {
     await expect(ask).rejects.toMatchObject({ code: 'aborted' });
   });
 
+  it('lets go of the abort signal once the request ends', async () => {
+    const { llm } = setup({ replies: [{ reply: 'ok' }] });
+    await llm.load();
+
+    const controller = new AbortController();
+    const add = vi.spyOn(controller.signal, 'addEventListener');
+    await llm.ask(user('x'), { signal: controller.signal });
+
+    // The listener was added with a signal of its own, aborted to remove it.
+    const options = add.mock.calls[0][2] as AddEventListenerOptions;
+    expect(options.signal?.aborted).toBe(true);
+  });
+
   it('turns a lost model into an error state, and loads again', async () => {
     const { llm, fake } = setup({ replies: [{ reply: 'ok' }] });
     await llm.load();
