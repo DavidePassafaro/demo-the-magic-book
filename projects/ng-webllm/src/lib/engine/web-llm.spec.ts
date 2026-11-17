@@ -135,8 +135,9 @@ describe('WebLlm', () => {
     await llm.load();
     fake.fail('lost');
 
-    await expect(llm.ask(user('x'))).rejects.toThrow('ModelNotLoaded');
+    await expect(llm.ask(user('x'))).rejects.toMatchObject({ code: 'model-lost' });
     expect(llm.status()).toBe('error');
+    expect(llm.error()?.code).toBe('model-lost');
     expect(llm.loaded()).toBeNull();
 
     expect(await llm.load()).toBe(true);

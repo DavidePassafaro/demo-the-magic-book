@@ -191,7 +191,8 @@ export class WebLlm {
             ),
         })
         .catch((cause: unknown) => {
-          if (isModelLost(cause)) {
+          // The backend knows its engine's errors: it says when the model is gone.
+          if (cause instanceof LlmError && cause.code === 'model-lost') {
             this.lose(cause);
           }
           throw cause;
@@ -276,7 +277,7 @@ export class WebLlm {
    * after that fails. Saying so lets the app call load() again.
    */
   private lose(cause: unknown): void {
-    const error = new LlmError('load-failed', 'The model stopped working: load it again.', { cause });
+    const error = new LlmError('model-lost', 'The model stopped working: load it again.', { cause });
 
     this.scheduler.pause();
     this._error.set(error);
@@ -320,10 +321,4 @@ function logGeneration(
   }
   console.log(`%canswer%c\n${answer || '(empty)'}`, 'font-weight:700', '');
   console.groupEnd();
-}
-
-/** Errors after which WebLLM no longer has a usable model. */
-function isModelLost(cause: unknown): boolean {
-  const message = cause instanceof Error ? cause.message : String(cause);
-  return /ModelNotLoaded|BindingError|deleted object|Device was lost|GPUDevice/i.test(message);
 }

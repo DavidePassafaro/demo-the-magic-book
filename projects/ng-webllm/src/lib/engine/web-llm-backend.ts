@@ -4,6 +4,7 @@ import type {
   CompletionUsage,
   WebWorkerMLCEngine,
 } from '@mlc-ai/web-llm';
+import { LlmError } from '../errors';
 import type { ChatMessage, FinishReason, Usage } from '../types';
 import type { GenerationRequest, GenerationResult, GpuSupport, LlmBackend } from './backend';
 
@@ -84,9 +85,23 @@ export class WebLlmBackend implements LlmBackend {
   async generate(request: GenerationRequest, onText: (text: string) => void): Promise<GenerationResult> {
     const engine = this.engine;
     if (!engine) {
-      throw new Error('No model is loaded.');
+      throw new LlmError('model-lost', 'No model is loaded.');
     }
 
+    try {
+      return await this.stream(engine, request, onText);
+    } catch (cause) {
+      throw isModelLost(cause)
+        ? new LlmError('model-lost', 'The model stopped working: load it again.', { cause })
+        : cause;
+    }
+  }
+
+  private async stream(
+    engine: WebWorkerMLCEngine,
+    request: GenerationRequest,
+    onText: (text: string) => void,
+  ): Promise<GenerationResult> {
     const chunks = await engine.chat.completions.create({
       messages: request.messages.map(toWebLlm),
       stream: true,
@@ -199,6 +214,27 @@ function fromWebLlmUsage(usage: CompletionUsage): Usage {
     timeToFirstTokenS: usage.extra.time_to_first_token_s,
     latencyS: usage.extra.e2e_latency_s,
   };
+}
+
+/**
+ * The errors after which WebLLM has no usable model. From the worker they
+ * arrive as `err.toString()`, "ModelNotLoadedError: …": the class name leads,
+ * and it is part of WebLLM's API, while the words after it may change.
+ * BindingError is the one embind throws once a lost GPU has disposed the model.
+ */
+const MODEL_LOST_ERRORS = [
+  'DeviceLostError',
+  'ModelNotLoadedError',
+  'WorkerEngineModelNotLoadedError',
+  'BindingError',
+];
+
+/** @internal */
+export function isModelLost(cause: unknown): boolean {
+  const text = cause instanceof Error ? `${cause.name}: ${cause.message}` : String(cause);
+  const name = /^(?:Error: )?(\w+):/.exec(text)?.[1];
+
+  return name !== undefined && MODEL_LOST_ERRORS.includes(name);
 }
 
 function isCacheStorageError(cause: unknown): boolean {

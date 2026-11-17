@@ -194,7 +194,7 @@ Interno, ma il suo stato è visibile (`pending`, `phase`).
   - una richiesta in coda viene tolta, senza toccare l'engine;
   - una richiesta in corso viene fermata con `interruptGenerate()`.
 - **Timeout per richiesta** (default 20 s): il tempo parte dal **primo token**, non dall'inizio. WebLLM non può interrompere il prefill, e la prima richiesta dopo il caricamento compila anche shader e grammatiche (nella prova con Llama 1B oltre 30 s): un timeout lì butterebbe via solo quel lavoro. Allo scadere annulla con errore `timeout`.
-- **Modello perso.** Dopo alcuni errori interni (`ModelNotLoadedError`, `BindingError` del matcher della grammatica) WebLLM scarica il modello. L'engine passa in `status: 'error'`, `loaded()` torna `null` e un nuovo `load()` lo ricarica.
+- **Modello perso.** Dopo alcuni errori interni (`ModelNotLoadedError`, `BindingError` del matcher della grammatica) WebLLM scarica il modello. Dal worker gli errori arrivano come stringa (`"ModelNotLoadedError: …"`): il backend li riconosce dal nome della classe, non dal testo, e li trasforma in `LlmError('model-lost')`. L'engine passa in `status: 'error'` con lo stesso codice, `loaded()` torna `null` e un nuovo `load()` lo ricarica.
 - **Streaming sempre attivo**, internamente, con `stream_options.include_usage`. Serve a `draft()`/`partial()` e a sapere quando arriva il primo token. L'iteratore va sempre consumato o chiuso: se no WebLLM tiene il lock.
 
 Fasi di una richiesta (`Phase`):
@@ -648,6 +648,7 @@ export class LlmError extends Error {
     | 'unsupported'      // niente WebGPU
     | 'not-ready'        // modello non caricato
     | 'load-failed'
+    | 'model-lost'       // il modello caricato non risponde più: va ricaricato
     | 'aborted'          // stop(), cambio di params, signal
     | 'timeout'
     | 'truncated'        // finish_reason 'length'

@@ -4,6 +4,8 @@ export type LlmErrorCode =
   /** No model is loaded, and none is loading. */
   | 'not-ready'
   | 'load-failed'
+  /** The loaded model stopped working (WebLLM unloaded it, the GPU was lost): load it again. */
+  | 'model-lost'
   /** Stopped on purpose: stop(), new params, an AbortSignal. Never shown as an error state. */
   | 'aborted'
   | 'timeout'

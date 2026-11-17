@@ -6,6 +6,7 @@ import {
   type EnvironmentProviders,
 } from '@angular/core';
 import {
+  LlmError,
   WebLlm,
   type ChatMessage,
   type EngineConfig,
@@ -120,7 +121,8 @@ export class FakeWebLlm implements LlmBackend {
     }
     if (failure === 'lost') {
       this.record(request, '');
-      throw new Error('ModelNotLoadedError: Model not loaded before trying to complete ChatCompletionRequest.');
+      // What the real backend turns WebLLM's ModelNotLoadedError into.
+      throw new LlmError('model-lost', 'The model stopped working: load it again.');
     }
 
     const answer = failure === 'garbage' ? 'not json at all' : this.answerFor(request.messages);
