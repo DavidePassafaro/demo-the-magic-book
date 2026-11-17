@@ -70,6 +70,13 @@ export class DialogueBox {
   protected readonly objectWorked = computed(
     () => !this.pendingObject() && (this.attempt()?.solved ?? this.solved()),
   );
+  /** A wish still being judged is neither right nor wrong yet. */
+  protected readonly wishState = computed<'pending' | 'worked' | 'failed'>(() => {
+    if (this.pendingObject()) {
+      return 'pending';
+    }
+    return this.objectWorked() ? 'worked' : 'failed';
+  });
 
   protected readonly wishForm = form(this.draft, (path) => {
     required(path.wish);
