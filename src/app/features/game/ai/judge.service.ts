@@ -19,7 +19,7 @@ export class JudgeService {
   private readonly injector = inject(Injector);
   private readonly dialogues = new Map<string, ConversationRef<FullVerdict>>();
 
-  /** The villager's dialogue: what was wished, what they answered, and the answer being written. */
+  /** The villager's dialogue: what was wished and what they answered. */
   dialogue(npc: NpcConfig): ConversationRef<FullVerdict> {
     let chat = this.dialogues.get(npc.id);
 
@@ -28,6 +28,11 @@ export class JudgeService {
       chat = conversation<FullVerdict>({
         system: '',
         memory: 'none',
+        // The verdict arrives whole: the reply is not written word by word.
+        stream: false,
+        // Without streaming the clock includes the prefill, and the first wish
+        // after loading also compiles shaders and grammars: give it room.
+        timeoutMs: 60_000,
         injector: this.injector,
       });
       this.dialogues.set(npc.id, chat);
