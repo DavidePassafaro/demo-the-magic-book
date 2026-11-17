@@ -27,7 +27,14 @@
           <span class="wish-icon" aria-hidden="true">{{ objectWorked() ? '★' : '✦' }}</span>
           <span class="object" [class.worked]="objectWorked()">{{ object }}</span>
         </div>
-        <p class="line reply">{{ shownReply() }}</p>
+        @if (pendingObject()) {
+          <!-- Streamed word by word: hidden from screen readers, which hear the reply once it is complete. -->
+          @if (draftReply(); as draft) {
+            <p class="line reply" aria-hidden="true">{{ draft }}</p>
+          }
+        } @else {
+          <p class="line reply">{{ shownReply() }}</p>
+        }
       }
 
       @if (thinking()) {

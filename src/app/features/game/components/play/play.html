@@ -87,6 +87,8 @@
         [solvedObject]="game.progressFor(npc.id).object"
         [solvedReply]="game.progressFor(npc.id).reply"
         [error]="game.encounterError()"
+        [pendingObject]="game.pendingObject()"
+        [draftReply]="game.replyDraft()"
         (wished)="game.wish($event)"
         (closed)="leaveEncounter()"
       />

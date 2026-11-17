@@ -31,6 +31,9 @@ export class DialogueBox {
   readonly solvedObject = input<string | null>(null);
   readonly solvedReply = input<string | null>(null);
   readonly error = input<string | null>(null);
+  /** While the book writes: the wish being judged, and the reply as it arrives. */
+  readonly pendingObject = input<string | null>(null);
+  readonly draftReply = input<string | null>(null);
 
   readonly wished = output<string>();
   readonly closed = output<void>();
@@ -58,11 +61,15 @@ export class DialogueBox {
 
   protected readonly problem = computed(() => text(this.npc().problem, this.locale.locale()));
   /** The latest exchange, or — on a return visit — the one that solved it. */
-  protected readonly shownObject = computed(() => this.attempt()?.object ?? this.solvedObject());
+  protected readonly shownObject = computed(
+    () => this.pendingObject() ?? this.attempt()?.object ?? this.solvedObject(),
+  );
   protected readonly shownReply = computed(
     () => this.attempt()?.reply ?? (this.solved() ? (this.solvedReply() ?? '') : ''),
   );
-  protected readonly objectWorked = computed(() => this.attempt()?.solved ?? this.solved());
+  protected readonly objectWorked = computed(
+    () => !this.pendingObject() && (this.attempt()?.solved ?? this.solved()),
+  );
 
   protected readonly wishForm = form(this.draft, (path) => {
     required(path.wish);
