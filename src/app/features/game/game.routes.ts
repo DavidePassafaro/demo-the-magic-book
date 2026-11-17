@@ -6,9 +6,9 @@ import { LevelGeneratorService } from '@features/game/ai/level-generator.service
 import { ObjectRecognizerService } from '@features/game/ai/object-recognizer.service';
 
 /**
- * The game's pages and its own services. The models are not here: the game asks
- * for the `LanguageModel` and `VisionModel` contracts, and whoever mounts these
- * routes provides them.
+ * The game's pages and its own services. The models are not here: the engines
+ * are registered once for the whole app (`provideMagicBookModels`), because the
+ * main menu already chooses the model.
  */
 export const gameRoutes: Routes = [
   {

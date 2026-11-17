@@ -1,10 +1,6 @@
 /// <reference lib="webworker" />
-import { WebWorkerMLCEngineHandler } from '@mlc-ai/web-llm';
+import { startWebLlmWorker } from 'ng-webllm/worker';
 
-/** Inference runs here, off the main thread. The handler does all the work. */
+/** Inference runs here, off the main thread. */
 // 👇👇👇 WebLLM - Worker
-const handler = new WebWorkerMLCEngineHandler();
-
-self.onmessage = (event: MessageEvent): void => {
-  handler.onmessage(event);
-};
+startWebLlmWorker();

@@ -1,11 +1,7 @@
-import type { ChatMessage } from '@core/llm/language-model';
+import { s, type ChatMessage } from 'ng-webllm';
 import { LANGUAGE_NAMES, WRITE_IN_LANGUAGE, type Locale } from '@core/i18n/model/locale';
 
-export const TRANSLATION_SCHEMA = JSON.stringify({
-  type: 'object',
-  properties: { translation: { type: 'string' } },
-  required: ['translation'],
-});
+export const TRANSLATION = s.object({ translation: s.string() });
 
 /** The player's wish, into English, so it can be matched against SOLUTION_HINT. */
 export function wishToEnglishPrompt(object: string, locale: Locale): ChatMessage[] {

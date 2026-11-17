@@ -1,8 +1,4 @@
-/**
- * Shapes the game shares with its AI services. The services themselves no
- * longer hide behind tokens: they are model-agnostic, and the seam that can be
- * swapped is the model they talk to (`LanguageModel`, `VisionModel`).
- */
+/** Shapes the game shares with its AI services. */
 
 export interface Verdict {
   readonly solved: boolean;

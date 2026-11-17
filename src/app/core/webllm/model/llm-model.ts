@@ -7,5 +7,3 @@ export interface ModelOption {
   readonly approxSizeMb: number;
   readonly note: Record<Locale, string>;
 }
-
-export type WebGpuSupport = 'supported' | 'no-api' | 'no-adapter';

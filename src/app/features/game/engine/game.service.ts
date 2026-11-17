@@ -61,6 +61,13 @@ export class GameService {
   /** Only the most recent wish is kept: the box shows one exchange at a time. */
   readonly lastAttempt = signal<Attempt | null>(null);
   readonly thinking = signal(false);
+  /** The wish being judged right now. */
+  readonly pendingObject = signal<string | null>(null);
+  /** The villager's dialogue, while the player stands in front of them. */
+  private readonly dialogue = signal<ReturnType<JudgeService['dialogue']> | null>(null);
+  /** The villager's reply while the model is still writing it. */
+  // 👇👇👇 Game - The reply, streamed
+  readonly replyDraft = computed(() => this.dialogue()?.draft()?.partial?.npcReply ?? null);
   readonly encounterError = signal<string | null>(null);
 
   readonly activeNpc = computed<NpcConfig | null>(() => {
@@ -118,6 +125,7 @@ export class GameService {
   startLevel(level: Level): void {
     const map = generateMap(level);
     log.info('game', `level "${level.title.en}" · ${level.npcs.length} villagers`);
+    this.referee.forget();
     this.level.set(level);
     this.map.set(map);
     this.playerX.set(map.spawn.x);
@@ -200,6 +208,8 @@ export class GameService {
       this.audio.playGreet();
     }
     this.activeNpcId.set(npcId);
+    const npc = this.activeNpc();
+    this.dialogue.set(npc ? this.referee.dialogue(npc) : null);
     this.dismissed.set(null);
     this.lastAttempt.set(null);
     this.encounterError.set(null);
@@ -208,6 +218,7 @@ export class GameService {
   closeEncounter(): void {
     this.dismissed.set(this.activeNpcId());
     this.activeNpcId.set(null);
+    this.dialogue.set(null);
     this.lastAttempt.set(null);
     this.encounterError.set(null);
     this.thinking.set(false);
@@ -231,6 +242,7 @@ export class GameService {
     }
 
     this.thinking.set(true);
+    this.pendingObject.set(trimmed);
     this.encounterError.set(null);
     this.audio.playConjure();
 
@@ -262,6 +274,7 @@ export class GameService {
       this.encounterError.set(cause instanceof Error ? cause.message : this.locale.t().inkRanDry);
     } finally {
       this.thinking.set(false);
+      this.pendingObject.set(null);
     }
   }
 }

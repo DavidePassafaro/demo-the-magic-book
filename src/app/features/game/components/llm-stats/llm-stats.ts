@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { LocaleService } from '@core/i18n/locale.service';
-import { LanguageModel, VisionModel } from '@core/llm/language-model';
-import { mergeStats } from '@core/llm/model-stats';
+import { WebLlm, type ModelStats } from 'ng-webllm';
+import { VISION } from '@core/webllm/web-llm.providers';
 
 interface StatRow {
   readonly label: string;
@@ -20,14 +20,12 @@ const MB = 1024 * 1024;
   styleUrl: './llm-stats.scss',
 })
 export class LlmStats {
-  private readonly chat = inject(LanguageModel);
-  private readonly vision = inject(VisionModel);
+  private readonly chat = inject(WebLlm);
+  private readonly vision = inject(VISION);
   private readonly locale = inject(LocaleService);
 
   protected readonly t = this.locale.t;
-  protected readonly providers = [...new Set([this.chat.provider, this.vision.provider])].join(
-    ' + ',
-  );
+  protected readonly providers = 'WebLLM';
 
   /** Bytes this origin keeps on disk, model weights included. */
   private readonly storageBytes = signal<number | null>(null);
@@ -81,4 +79,18 @@ export class LlmStats {
       this.storageBytes.set(null);
     }
   }
+}
+
+/** Two models' figures as one: the panel shows the game's total use. */
+function mergeStats(a: ModelStats, b: ModelStats): ModelStats {
+  const latest = b.calls > 0 ? b : a;
+  return {
+    calls: a.calls + b.calls,
+    promptTokens: a.promptTokens + b.promptTokens,
+    completionTokens: a.completionTokens + b.completionTokens,
+    prefillSeconds: a.prefillSeconds + b.prefillSeconds,
+    decodeSeconds: a.decodeSeconds + b.decodeSeconds,
+    lastLatencyS: latest.lastLatencyS,
+    lastTimeToFirstTokenS: latest.lastTimeToFirstTokenS,
+  };
 }

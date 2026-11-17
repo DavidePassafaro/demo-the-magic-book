@@ -74,7 +74,3 @@ export const VISION_MODEL = {
 export function findModel(id: string): ModelOption {
   return MODEL_OPTIONS.find((model) => model.id === id) ?? MODEL_OPTIONS[0];
 }
-
-export function modelLabel(id: string): string {
-  return id === VISION_MODEL.id ? VISION_MODEL.label : findModel(id).label;
-}

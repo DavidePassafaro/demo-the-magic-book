@@ -1,4 +1,4 @@
-import type { ChatMessage } from '@core/llm/language-model';
+import { s, type ChatMessage } from 'ng-webllm';
 import { LANGUAGE_NAMES, WRITE_IN_LANGUAGE, type Locale } from '@core/i18n/model/locale';
 import { text, type NpcConfig } from '@features/game/engine/model/level';
 
@@ -7,15 +7,13 @@ import { text, type NpcConfig } from '@features/game/engine/model/level';
  * reasons first, then decides, then speaks in line with its decision.
  */
 // 👇👇👇 Prompt - Schema (field order matters)
-export const VERDICT_SCHEMA = JSON.stringify({
-  type: 'object',
-  properties: {
-    reasoning: { type: 'string' },
-    solved: { type: 'boolean' },
-    npcReply: { type: 'string' },
-  },
-  required: ['reasoning', 'solved', 'npcReply'],
+export const VERDICT = s.object({
+  reasoning: s.string(),
+  solved: s.boolean(),
+  npcReply: s.string(),
 });
+
+export type FullVerdict = s.Infer<typeof VERDICT>;
 
 /**
  * The language instruction belongs here, among the rules: placed in the

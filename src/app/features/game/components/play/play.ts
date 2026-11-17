@@ -8,7 +8,7 @@ import {
   type ElementRef,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { LanguageModel } from '@core/llm/language-model';
+import { WebLlm } from 'ng-webllm';
 import { LocaleService } from '@core/i18n/locale.service';
 import { log } from '@core/logger/logger';
 import { GameService, type Facing } from '@features/game/engine/game.service';
@@ -59,7 +59,7 @@ const MOVEMENT_KEYS: Record<string, Facing> = {
   styleUrl: './play.scss',
 })
 export class Play {
-  protected readonly llm = inject(LanguageModel);
+  protected readonly llm = inject(WebLlm);
   protected readonly game = inject(GameService);
 
   private readonly route = inject(ActivatedRoute);
@@ -96,7 +96,7 @@ export class Play {
       return this.t().inventing;
     }
     return this.llm.status() === 'loading'
-      ? this.t().summoning(this.llm.label())
+      ? this.t().summoning(this.llm.selected().label)
       : this.t().opening;
   });
 

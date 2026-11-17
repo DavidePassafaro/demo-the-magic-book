@@ -1,8 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { WebLlm } from 'ng-webllm';
 import { MODEL_OPTIONS, findModel } from '@core/webllm/data/llm-models';
 import { LOCALES, type Locale } from '@core/i18n/model/locale';
 import { LocaleService } from '@core/i18n/locale.service';
-import { WebLlmChatModel } from '@core/webllm/web-llm-chat.model';
 
 /**
  * The two controls that used to be a settings page. Both take effect at once:
@@ -15,14 +15,14 @@ import { WebLlmChatModel } from '@core/webllm/web-llm-chat.model';
   styleUrl: './settings-bar.scss',
 })
 export class SettingsBar {
-  private readonly model = inject(WebLlmChatModel);
+  private readonly model = inject(WebLlm);
   private readonly locale = inject(LocaleService);
 
   protected readonly t = this.locale.t;
   protected readonly locales = LOCALES;
   protected readonly models = MODEL_OPTIONS;
   protected readonly currentLocale = this.locale.locale;
-  protected readonly currentModel = this.model.modelId;
+  protected readonly currentModel = computed(() => this.model.selected().id);
   protected readonly cached = signal<Record<string, boolean>>({});
 
   /** What this model is good and bad at, in the player's language. */

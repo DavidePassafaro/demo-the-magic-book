@@ -26,7 +26,7 @@
 } @else if (llm.status() === 'error') {
   <section class="notice">
     <h2>{{ t().openFailedTitle }}</h2>
-    <p role="alert">{{ llm.error() }}</p>
+    <p role="alert">{{ llm.error()?.message }}</p>
     <div class="notice-actions">
       <button type="button" (click)="start()">{{ t().tryAgain }}</button>
       <a routerLink="/">{{ t().backToMenu }}</a>

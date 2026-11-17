@@ -1,15 +1,11 @@
-import type { ChatMessage } from '@core/llm/language-model';
+import { s, type ChatMessage } from 'ng-webllm';
 
 /** The problem is written before the hint, so the hint is invented for that problem. */
-export const VILLAGER_SCHEMA = JSON.stringify({
-  type: 'object',
-  properties: {
-    name: { type: 'string' },
-    temper: { type: 'string' },
-    problem: { type: 'string' },
-    solutionHint: { type: 'string' },
-  },
-  required: ['name', 'temper', 'problem', 'solutionHint'],
+export const VILLAGER = s.object({
+  name: s.string(),
+  temper: s.string(),
+  problem: s.string(),
+  solutionHint: s.string(),
 });
 
 /** One topic per villager, so three calls do not return three lamplighters. */

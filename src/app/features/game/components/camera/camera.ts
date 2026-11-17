@@ -10,7 +10,7 @@ import {
   type ElementRef,
 } from '@angular/core';
 import { LocaleService } from '@core/i18n/locale.service';
-import { VisionModel } from '@core/llm/language-model';
+import { VISION_MODEL } from '@core/webllm/data/llm-models';
 import { log } from '@core/logger/logger';
 
 /** A live preview and a shutter. It hands back one photo; it knows nothing about models. */
@@ -26,7 +26,7 @@ export class Camera {
 
   private readonly locale = inject(LocaleService);
   /** The shape the eye can take in one look: the vision model decides it. */
-  private readonly frame = inject(VisionModel).frame;
+  private readonly frame = VISION_MODEL.frame;
   private readonly video = viewChild.required<ElementRef<HTMLVideoElement>>('video');
   private readonly shutter = viewChild.required<ElementRef<HTMLButtonElement>>('shutter');
   private stream: MediaStream | null = null;

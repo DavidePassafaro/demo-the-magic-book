@@ -1,13 +1,12 @@
 import { Service, computed, inject, signal } from '@angular/core';
-import { VisionModel } from '@core/llm/language-model';
+import { VISION } from '@core/webllm/web-llm.providers';
 import { log } from '@core/logger/logger';
 import type { RecognitionPhase } from '@features/game/engine/model/contracts';
 import {
   NOTHING,
-  OBJECT_SCHEMA,
+  SEEN_OBJECT,
   recognitionPrompt,
 } from '@features/game/ai/prompts/recognize.prompt';
-import { parseJson, stringField } from '@features/game/ai/utils/parse-json';
 
 /**
  * Lets the player show the book an object instead of typing its name.
@@ -15,7 +14,7 @@ import { parseJson, stringField } from '@features/game/ai/utils/parse-json';
  */
 @Service({ autoProvided: false })
 export class ObjectRecognizerService {
-  private readonly eye = inject(VisionModel);
+  private readonly eye = inject(VISION);
   private readonly looking = signal(false);
 
   readonly progress = this.eye.progress;
@@ -35,20 +34,20 @@ export class ObjectRecognizerService {
 
   async recognize(image: string): Promise<string> {
     if (!(await this.eye.load())) {
-      throw new Error(this.eye.error() ?? 'The book could not open its eye.');
+      throw new Error(this.eye.error()?.message ?? 'The book could not open its eye.');
     }
 
     this.looking.set(true);
 
     try {
       // 👇👇👇 Game - Ask the vision model
-      const raw = await this.eye.query(recognitionPrompt(image), {
-        schema: OBJECT_SCHEMA,
+      const reply = await this.eye.ask(recognitionPrompt(image), {
+        schema: SEEN_OBJECT,
         maxTokens: 100,
         purpose: 'name the object in the photo',
       });
 
-      const name = parseObjectName(raw);
+      const name = parseObjectName(reply.value.object);
       log.info('eye', `it sees: "${name}"`);
 
       return name;
@@ -58,8 +57,9 @@ export class ObjectRecognizerService {
   }
 }
 
-function parseObjectName(raw: string): string {
-  const name = stringField(parseJson(raw), 'object')
+function parseObjectName(object: string): string {
+  const name = object
+    .trim()
     .toLowerCase()
     .replace(/[.!?,;:]+$/, '');
 

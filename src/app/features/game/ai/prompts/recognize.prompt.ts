@@ -1,16 +1,12 @@
-import type { ChatMessage } from '@core/llm/language-model';
+import { s, type ChatMessage } from 'ng-webllm';
 
 /**
  * Describe first, then name: asked for the name straight away, the model
  * interpreted the scene (an open hand came back as "stop").
  */
-export const OBJECT_SCHEMA = JSON.stringify({
-  type: 'object',
-  properties: {
-    seen: { type: 'string' },
-    object: { type: 'string' },
-  },
-  required: ['seen', 'object'],
+export const SEEN_OBJECT = s.object({
+  seen: s.string(),
+  object: s.string(),
 });
 
 /** What the model answers when there is nothing it can name. */

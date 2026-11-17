@@ -1,6 +1,6 @@
 import { Service, computed, inject, signal } from '@angular/core';
 import { LOCALES, type Locale } from '@core/i18n/model/locale';
-import { LanguageModel } from '@core/llm/language-model';
+import { WebLlm } from 'ng-webllm';
 import { elapsed, log } from '@core/logger/logger';
 import {
   RANDOM_LEVEL_ID,
@@ -12,12 +12,12 @@ import {
 } from '@features/game/engine/model/level';
 import type { InventionPhase } from '@features/game/engine/model/contracts';
 import {
-  VILLAGER_SCHEMA,
+  VILLAGER,
   VILLAGER_TOPICS,
   villagerPrompt,
 } from '@features/game/ai/prompts/villager.prompt';
-import { TRANSLATION_SCHEMA, sentencePrompt } from '@features/game/ai/prompts/translate.prompt';
-import { parseJson, requiredField } from '@features/game/ai/utils/parse-json';
+import { TRANSLATION, sentencePrompt } from '@features/game/ai/prompts/translate.prompt';
+import { requiredField } from '@features/game/ai/utils/fields';
 
 const VILLAGERS = 3;
 const ATTEMPTS_PER_VILLAGER = 2;
@@ -34,7 +34,7 @@ const STEPS_PER_VILLAGER = 1 + TRANSLATED_INTO.length;
  */
 @Service({ autoProvided: false })
 export class LevelGeneratorService {
-  private readonly llm = inject(LanguageModel);
+  private readonly llm = inject(WebLlm);
 
   readonly phase = signal<InventionPhase>('idle');
   readonly done = signal(0);
@@ -92,8 +92,8 @@ export class LevelGeneratorService {
 
     for (let attempt = 1; attempt <= ATTEMPTS_PER_VILLAGER; attempt++) {
       try {
-        const raw = await this.llm.query(messages, {
-          schema: VILLAGER_SCHEMA,
+        const reply = await this.llm.ask(messages, {
+          schema: VILLAGER,
           maxTokens: 420,
           purpose: `invent villager ${index + 1} of ${VILLAGERS} (${topic})`,
           // The only non-zero temperature in the game: inventing wants variety.
@@ -101,7 +101,7 @@ export class LevelGeneratorService {
           temperature: 0.7,
         });
 
-        const villager = parseVillager(raw, index);
+        const villager = parseVillager(reply.value, index);
         this.steps.update((step) => step + 1);
 
         return villager;
@@ -122,13 +122,13 @@ export class LevelGeneratorService {
 
     for (const locale of TRANSLATED_INTO) {
       try {
-        const raw = await this.llm.query(sentencePrompt(npc.problem.en, locale), {
-          schema: TRANSLATION_SCHEMA,
+        const reply = await this.llm.ask(sentencePrompt(npc.problem.en, locale), {
+          schema: TRANSLATION,
           maxTokens: 260,
           purpose: `translate ${npc.name} → ${locale}`,
         });
 
-        said[locale] = requiredField(parseJson(raw), 'translation');
+        said[locale] = requiredField(reply.value, 'translation');
       } catch (cause) {
         log.warn('inventor', `${npc.name} stays in English: ${locale} translation failed`, cause);
       }
@@ -140,8 +140,7 @@ export class LevelGeneratorService {
   }
 }
 
-function parseVillager(raw: string, index: number): NpcConfig {
-  const record = parseJson(raw);
+function parseVillager(record: Record<string, unknown>, index: number): NpcConfig {
   let solutionHint = requiredField(record, 'solutionHint').replace(/[[\]]/g, '');
 
   // A bare list from a small model: make it clear to the judge that these are valid solutions.
