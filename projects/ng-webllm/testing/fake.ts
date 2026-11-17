@@ -141,7 +141,10 @@ export class FakeWebLlm implements LlmBackend {
       }
 
       text += word;
-      onText(text);
+      // Not streamed: the words are still written one by one, but nobody hears them.
+      if (request.stream) {
+        onText(text);
+      }
     }
 
     return { text, finishReason: failure === 'truncated' ? 'length' : 'stop', usage: undefined };

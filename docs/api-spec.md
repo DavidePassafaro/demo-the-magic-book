@@ -195,7 +195,8 @@ Interno, ma il suo stato è visibile (`pending`, `phase`).
   - una richiesta in corso viene fermata con `interruptGenerate()`.
 - **Timeout per richiesta** (default 20 s): il tempo parte dal **primo token**, non dall'inizio. WebLLM non può interrompere il prefill, e la prima richiesta dopo il caricamento compila anche shader e grammatiche (nella prova con Llama 1B oltre 30 s): un timeout lì butterebbe via solo quel lavoro. Allo scadere annulla con errore `timeout`.
 - **Modello perso.** Dopo alcuni errori interni (`ModelNotLoadedError`, `BindingError` del matcher della grammatica) WebLLM scarica il modello. Dal worker gli errori arrivano come stringa (`"ModelNotLoadedError: …"`): il backend li riconosce dal nome della classe, non dal testo, e li trasforma in `LlmError('model-lost')`. L'engine passa in `status: 'error'` con lo stesso codice, `loaded()` torna `null` e un nuovo `load()` lo ricarica.
-- **Streaming sempre attivo**, internamente, con `stream_options.include_usage`. Serve a `draft()`/`partial()` e a sapere quando arriva il primo token. L'iteratore va sempre consumato o chiuso: se no WebLLM tiene il lock.
+- **Streaming attivo di default**, con `stream_options.include_usage`. Serve a `draft()`/`partial()` e a sapere quando arriva il primo token. L'iteratore va sempre consumato o chiuso: se no WebLLM tiene il lock.
+- **`stream: false`** (per richiesta, per conversazione o nei `defaults` dell'engine) chiede a WebLLM la risposta tutta insieme. Non c'è `draft()` né `onDelta`, la fase resta `prefill` fino alla fine, e non essendoci un primo token il timeout parte dall'inizio della richiesta, prefill compreso: con la prima richiesta dopo il caricamento (shader e grammatiche) serve un `timeoutMs` più largo. `interrupt()` funziona anche così: WebLLM chiude con `finish_reason: 'abort'`.
 
 Fasi di una richiesta (`Phase`):
 
@@ -213,6 +214,7 @@ export interface GenerationOptions {
   readonly temperature?: number;   // default 0
   readonly maxTokens?: number;     // default 256
   readonly timeoutMs?: number;     // default 20_000
+  readonly stream?: boolean;       // default true
   readonly priority?: 'high' | 'normal' | 'low';
   readonly signal?: AbortSignal;
   /** Etichetta per i log in console. */

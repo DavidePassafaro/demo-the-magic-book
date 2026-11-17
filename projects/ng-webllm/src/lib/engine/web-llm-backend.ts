@@ -89,7 +89,9 @@ export class WebLlmBackend implements LlmBackend {
     }
 
     try {
-      return await this.stream(engine, request, onText);
+      return request.stream
+        ? await this.streamed(engine, request, onText)
+        : await this.whole(engine, request);
     } catch (cause) {
       throw isModelLost(cause)
         ? new LlmError('model-lost', 'The model stopped working: load it again.', { cause })
@@ -97,20 +99,28 @@ export class WebLlmBackend implements LlmBackend {
     }
   }
 
-  private async stream(
+  /** The answer in one piece: WebLLM still stops it on interrupt(), with finish_reason 'abort'. */
+  private async whole(engine: WebWorkerMLCEngine, request: GenerationRequest): Promise<GenerationResult> {
+    const completion = await engine.chat.completions.create({ ...toWebLlmRequest(request), stream: false });
+    const choice = completion.choices[0];
+    const reason = choice?.finish_reason;
+
+    return {
+      text: choice?.message.content ?? '',
+      finishReason: !reason || reason === 'tool_calls' ? 'stop' : reason,
+      usage: completion.usage ? fromWebLlmUsage(completion.usage) : undefined,
+    };
+  }
+
+  private async streamed(
     engine: WebWorkerMLCEngine,
     request: GenerationRequest,
     onText: (text: string) => void,
   ): Promise<GenerationResult> {
     const chunks = await engine.chat.completions.create({
-      messages: request.messages.map(toWebLlm),
+      ...toWebLlmRequest(request),
       stream: true,
       stream_options: { include_usage: true },
-      temperature: request.temperature,
-      max_tokens: request.maxTokens,
-      ...(request.jsonSchema
-        ? { response_format: { type: 'json_object' as const, schema: request.jsonSchema } }
-        : {}),
     });
 
     let text = '';
@@ -188,6 +198,18 @@ export class WebLlmBackend implements LlmBackend {
       initProgressCallback,
     });
   }
+}
+
+/** What a streamed and a whole request share. */
+function toWebLlmRequest(request: GenerationRequest) {
+  return {
+    messages: request.messages.map(toWebLlm),
+    temperature: request.temperature,
+    max_tokens: request.maxTokens,
+    ...(request.jsonSchema
+      ? { response_format: { type: 'json_object' as const, schema: request.jsonSchema } }
+      : {}),
+  };
 }
 
 function toWebLlm(message: ChatMessage): ChatCompletionMessageParam {

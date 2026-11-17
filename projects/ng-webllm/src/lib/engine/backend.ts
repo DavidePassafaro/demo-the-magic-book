@@ -8,6 +8,8 @@ export interface GenerationRequest {
   readonly maxTokens: number;
   /** A JSON schema as a string: the grammar the answer must follow. */
   readonly jsonSchema?: string;
+  /** False: the answer comes in one piece, and `onText` is never called. */
+  readonly stream: boolean;
 }
 
 export interface GenerationResult {
@@ -25,7 +27,10 @@ export interface LlmBackend {
   /** Loads a model, or swaps the loaded one for it. */
   load(modelId: string, onProgress: (progress: number, text: string) => void): Promise<void>;
   unload(): Promise<void>;
-  /** Streams one answer. `onText` gets the whole text so far, not the delta. */
+  /**
+   * Generates one answer. Streamed, `onText` gets the whole text so far, not
+   * the delta; with `stream: false` it is not called.
+   */
   generate(request: GenerationRequest, onText: (text: string) => void): Promise<GenerationResult>;
   /** Stops the generation that is running now; it ends with finishReason 'abort'. */
   interrupt(): void;

@@ -73,6 +73,11 @@ reply.value;      // the text
 Every request goes through one queue, with `high`, `normal` and `low` priority.
 Requests made while the model loads wait for it.
 
+Answers stream by default. `stream: false`, per request, per conversation or in
+the engine's `defaults`, asks for the whole answer at once: there is no draft,
+and the timeout counts from the start of the request, prefill included, so the
+first request after loading needs a larger `timeoutMs`.
+
 ## Typed answers
 
 Describe the answer with `s`. The same description is the grammar WebLLM

@@ -197,6 +197,26 @@ describe('conversation', () => {
     expect(chat.isLoading()).toBe(false);
   });
 
+  it('has no draft when the conversation does not stream', async () => {
+    const { chat, fake } = await setup({ stream: false }, [{ reply: 'a b c d' }], 2);
+
+    const drafts: string[] = [];
+    const sending = chat.send('hi');
+    const timer = setInterval(() => {
+      const draft = chat.draft();
+      if (draft) {
+        drafts.push(draft.text);
+      }
+    }, 1);
+
+    const answer = await sending;
+    clearInterval(timer);
+
+    expect(answer.content).toBe('a b c d');
+    expect(drafts).toEqual([]);
+    expect(fake.requests()[0].stream).toBe(false);
+  });
+
   it('stop interrupts and can keep the partial answer', async () => {
     const { chat } = await setup({}, [{ reply: 'one two three four five six seven' }], 5);
 

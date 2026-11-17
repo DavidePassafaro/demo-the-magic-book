@@ -475,9 +475,9 @@ class ConversationImpl<T> implements ConversationRef<T> {
   }
 
   private generationDefaults(): GenerationOptions {
-    const { temperature, maxTokens, timeoutMs, priority, purpose } = this.options;
+    const { temperature, maxTokens, timeoutMs, stream, priority, purpose } = this.options;
     return Object.fromEntries(
-      Object.entries({ temperature, maxTokens, timeoutMs, priority, purpose }).filter(
+      Object.entries({ temperature, maxTokens, timeoutMs, stream, priority, purpose }).filter(
         ([, option]) => option !== undefined,
       ),
     );

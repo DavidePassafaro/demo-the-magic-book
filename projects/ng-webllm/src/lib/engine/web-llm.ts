@@ -22,7 +22,9 @@ export interface EngineConfig {
   /** localStorage key where the chosen model is remembered. Absent: it is not. */
   readonly rememberSelection?: string;
   /** Defaults for every request, overridable per call. */
-  readonly defaults?: Partial<Pick<AskOptions<unknown>, 'temperature' | 'maxTokens' | 'timeoutMs' | 'retry'>>;
+  readonly defaults?: Partial<
+    Pick<AskOptions<unknown>, 'temperature' | 'maxTokens' | 'timeoutMs' | 'retry' | 'stream'>
+  >;
   /** Logs every generation in the console, collapsed: prompt, answer, speed. */
   readonly debug?: boolean;
 }
@@ -32,7 +34,7 @@ export interface RequestOptions<T> extends AskOptions<T> {
   readonly onPhase?: (phase: Phase) => void;
 }
 
-const DEFAULTS = { temperature: 0, maxTokens: 256, timeoutMs: 20_000, retry: 0 };
+const DEFAULTS = { temperature: 0, maxTokens: 256, timeoutMs: 20_000, retry: 0, stream: true };
 
 /** Statuses in which a request may wait in the queue: a model is, or will soon be, there. */
 const ACCEPTING: readonly EngineStatus[] = ['checking', 'loading', 'ready'];
@@ -165,6 +167,7 @@ export class WebLlm {
     }
 
     const schema = options.schema;
+    const stream = options.stream ?? this.defaults.stream;
     const attempts = 1 + (options.retry ?? this.defaults.retry);
     let lastError: LlmError | null = null;
 
@@ -174,6 +177,8 @@ export class WebLlm {
         .enqueue({
           priority: options.priority ?? 'normal',
           timeoutMs: options.timeoutMs ?? this.defaults.timeoutMs,
+          // Without streaming no first token arrives early enough to start the clock.
+          timeoutFrom: stream ? 'first-token' : 'start',
           signal: options.signal,
           onPhase: options.onPhase,
           run: ({ backend, streaming }) =>
@@ -183,6 +188,7 @@ export class WebLlm {
                 temperature: options.temperature ?? this.defaults.temperature,
                 maxTokens: options.maxTokens ?? this.defaults.maxTokens,
                 jsonSchema: schema?.toJsonSchema(),
+                stream,
               },
               (text) => {
                 streaming();

@@ -152,6 +152,49 @@ describe('WebLlm', () => {
     expect((await llm.ask(user('x'), { timeoutMs: 15 })).value).toBe('one two');
   });
 
+  it('streams by default, and answers in one piece with stream false', async () => {
+    const { llm, fake } = setup({ replies: [{ reply: 'one two three' }], tokenDelayMs: 1 });
+    await llm.load();
+
+    const streamed: string[] = [];
+    await llm.ask(user('x'), { onDelta: (draft) => streamed.push(draft.text) });
+    expect(streamed.at(-1)).toBe('one two three');
+    expect(fake.requests()[0].stream).toBe(true);
+
+    const deltas: string[] = [];
+    const phases: Phase[] = [];
+    const reply = await llm.request(user('x'), {
+      stream: false,
+      onDelta: (draft) => deltas.push(draft.text),
+      onPhase: (phase) => phases.push(phase),
+    });
+
+    expect(reply.value).toBe('one two three');
+    expect(fake.requests()[1].stream).toBe(false);
+    expect(deltas).toEqual([]);
+    expect(phases).toEqual(['queued', 'prefill', 'idle']);
+  });
+
+  it('takes stream from the engine defaults', async () => {
+    const { llm, fake } = setup({ replies: [{ reply: 'ok' }], defaults: { stream: false } });
+    await llm.load();
+
+    await llm.ask(user('x'));
+    await llm.ask(user('x'), { stream: true });
+
+    expect(fake.requests().map((request) => request.stream)).toEqual([false, true]);
+  });
+
+  it('without streaming, counts the prefill in the timeout', async () => {
+    const { llm } = setup({ replies: [{ reply: 'one two' }], prefillDelayMs: 40 });
+    await llm.load();
+
+    // The same slow prefill that a streamed request is allowed (see above).
+    await expect(llm.ask(user('x'), { timeoutMs: 15, stream: false })).rejects.toMatchObject({
+      code: 'timeout',
+    });
+  });
+
   it('times out an answer that is written too slowly', async () => {
     const { llm } = setup({ replies: [{ reply: 'one two three four' }], tokenDelayMs: 20 });
     await llm.load();

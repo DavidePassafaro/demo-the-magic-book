@@ -12,6 +12,8 @@ export interface JobContext {
 export interface JobSpec<T> {
   readonly priority: Priority;
   readonly timeoutMs: number;
+  /** When the clock starts. Default 'first-token'. */
+  readonly timeoutFrom?: 'first-token' | 'start';
   readonly signal?: AbortSignal;
   readonly onPhase?: (phase: Phase) => void;
   /**
@@ -159,11 +161,22 @@ export class Scheduler {
 
     // The clock starts at the first token. WebLLM cannot interrupt a prefill, and
     // the first request after loading also compiles shaders and grammars: a timeout
-    // there would only throw that work away.
+    // there would only throw that work away. A job that streams nothing has no
+    // first token, so its clock starts now, prefill included.
     let timer: ReturnType<typeof setTimeout> | undefined;
     let streaming = false;
     let result: unknown;
     let failure: unknown = null;
+
+    const startClock = () => {
+      timer = setTimeout(
+        () => this.cancel(job, new LlmError('timeout', 'The model took too long to answer.')),
+        job.spec.timeoutMs,
+      );
+    };
+    if (job.spec.timeoutFrom === 'start') {
+      startClock();
+    }
 
     try {
       result = await job.spec.run({
@@ -172,10 +185,9 @@ export class Scheduler {
           if (!streaming) {
             streaming = true;
             job.spec.onPhase?.('streaming');
-            timer = setTimeout(
-              () => this.cancel(job, new LlmError('timeout', 'The model took too long to answer.')),
-              job.spec.timeoutMs,
-            );
+            if (job.spec.timeoutFrom !== 'start') {
+              startClock();
+            }
           }
         },
       });

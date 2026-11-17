@@ -60,7 +60,17 @@ export interface GenerationOptions {
   /** Defaults to 0: the same question twice gets the same answer twice. */
   readonly temperature?: number;
   readonly maxTokens?: number;
+  /**
+   * Streamed, the clock starts at the first token. Without streaming there is
+   * no first token to wait for: it starts with the request, prefill included.
+   */
   readonly timeoutMs?: number;
+  /**
+   * Defaults to true: the answer arrives token by token, in `draft()` and
+   * `onDelta`. False asks WebLLM for the whole answer at once: no draft, and
+   * the phase stays 'prefill' until it is done.
+   */
+  readonly stream?: boolean;
   readonly priority?: Priority;
   readonly signal?: AbortSignal;
   /** A label for the console, when `debug` is on. */
