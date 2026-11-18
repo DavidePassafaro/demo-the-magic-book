@@ -13,9 +13,9 @@ import {
   type ResourceStatus,
   type Signal,
 } from '@angular/core';
-import { isAborted, toLlmError, type LlmError } from './errors';
-import { WebLlm } from './engine/web-llm';
-import type { AskOptions, ChatMessage, Draft, FinishReason, Phase, Usage } from './types';
+import { isAborted, toLlmError, type LlmError } from '../errors';
+import { WebLlm } from '../engine/web-llm';
+import type { AskOptions, ChatMessage, Draft, FinishReason, Phase, Usage } from '../types';
 
 export interface CompletionOptions<P, T> extends AskOptions<T> {
   /** The question depends on these. `undefined`: no question, status 'idle'. */

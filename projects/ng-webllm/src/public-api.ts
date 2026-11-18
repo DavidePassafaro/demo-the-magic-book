@@ -6,7 +6,7 @@ export { provideWebLlm, webLlmToken, type WebLlmToken, type WebLlmConfig } from 
 export { WebLlm, type EngineConfig } from './lib/engine/web-llm';
 export type { LlmBackend, GenerationRequest, GenerationResult, GpuSupport } from './lib/engine/backend';
 
-export { completion, type CompletionOptions, type CompletionRef } from './lib/completion';
+export { completion, type CompletionOptions, type CompletionRef } from './lib/completion/completion';
 export {
   conversation,
   type AddOptions,

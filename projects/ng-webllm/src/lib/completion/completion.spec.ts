@@ -2,9 +2,9 @@ import { Injector, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FakeWebLlm, provideFakeWebLlm } from 'ng-webllm/testing';
 import { completion } from './completion';
-import { WebLlm } from './engine/web-llm';
-import { s } from './schema/schema';
-import { contentText } from './types';
+import { WebLlm } from '../engine/web-llm';
+import { s } from '../schema/schema';
+import { contentText } from '../types';
 
 /** Lets effects run and promises settle. */
 async function settle(rounds = 5): Promise<void> {
