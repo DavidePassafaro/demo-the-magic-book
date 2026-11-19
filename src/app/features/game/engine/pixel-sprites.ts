@@ -142,7 +142,7 @@ export function drawPixelGrid(
   }
 }
 
-/** Renders the player (bearded developer in a purple t-shirt with conference badge and Magic Book). */
+/** Renders the player (bearded developer with glasses, in a light blue shirt, with conference badge and Magic Book). */
 export function drawPlayerSprite(
   ctx: CanvasRenderingContext2D,
   ox: number,
@@ -160,9 +160,10 @@ export function drawPlayerSprite(
     E: '#1c1418', // eyes
     Z: '#3a2618', // beard
     z: '#20140c', // moustache shadow
-    T: '#9a48e0', // purple t-shirt
-    t: '#6428a8', // t-shirt shadow
-    N: '#f8f8ff', // conference lanyard
+    T: '#8cb4e0', // light blue button-down shirt
+    t: '#5f88b8', // shirt shadow
+    G: '#4a4a5a', // glasses frames, a shade lighter than the eyes
+    N: '#1c1c28', // conference lanyard
     C: '#f8f8f8', // badge card
     X: '#e82050', // badge band
     B: '#3a2a20', // shoes
@@ -191,12 +192,12 @@ export function drawPlayerSprite(
       '...OKkKKKKKKO...',
       '..OKKKKKKKKKKO..',
       '..OKKSSSSSSKKO..',
-      '..OSSkkSSkkSSO..',
-      '..OSSESSSSESSO..',
+      '..OSGGGSSGGGSO..',
+      '..OSGEGGGGEGSO..',
       '..OZSSSssSSSZO..',
-      '..OZZzzzzzzZZO..',
-      '...OZZZZZZZZO...',
-      '.OTNTOZZZZOTNTO.',
+      '..OZSSSSSSSSZO..',
+      '....OZZZZZZO....',
+      '.OTNTOOSSOOTNTO.',
       '.OTtTNOZZONTtRR.',
       '.OStTTNCCNTTtRP.',
       '.OOtTTTXXTTtORR.',
@@ -241,12 +242,12 @@ export function drawPlayerSprite(
       '..OKkKKKKKKKO...',
       '..OKKKKKKKKKKO..',
       '..OKSSSKKKKKKO..',
-      '.OkkSSSSSKKKKO..',
-      '.OSESSSSsSKKO...',
+      '.OGGGSSSSKKKKO..',
+      '.OGEGGGGGSKKO...',
       '.OSSSSSSsKKO....',
-      '..OzzZZZZZKO....',
-      '..OZZZZZZZO.....',
-      '...OZZZONTTO....',
+      '..OSSSSZZZKO....',
+      '...OZZZZZZO.....',
+      '....OSSONTTO....',
       '..ORRONTTTTtO...',
       '..OPRNTTTTTtO...',
       '..ORRCXTTTTtO...',
@@ -267,12 +268,12 @@ export function drawPlayerSprite(
       '...OKKKKKKKkKO..',
       '..OKKKKKKKKKKO..',
       '..OKKKKKKSSSKO..',
-      '..OKKKKSSSSSkkO.',
-      '...OKKSsSSSSESO.',
+      '..OKKKKSSSSGGGO.',
+      '...OKKSGGGGGEGO.',
       '....OKKsSSSSSSO.',
-      '....OKZZZZZzzO..',
-      '.....OZZZZZZZO..',
-      '....OTTNOZZZO...',
+      '....OKZZZSSSSO..',
+      '.....OZZZZZZO...',
+      '....OTTNOSSO....',
       '...OtTTTTNORRO..',
       '...OtTTTTTNRPO..',
       '...OtTTTTXCRRO..',
