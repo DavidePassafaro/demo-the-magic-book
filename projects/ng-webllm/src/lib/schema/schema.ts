@@ -61,6 +61,7 @@ function invalid(path: string, expected: string, value: unknown): LlmError {
   );
 }
 
+// 👇👇👇 ng-webllm - One schema, four uses
 function define<T>(jsonSchema: JsonSchema, check: (value: unknown, path: string) => T): Schema<T> & {
   readonly check: (value: unknown, path: string) => T;
 } {

@@ -48,6 +48,7 @@ export interface CompletionRef<T> extends Resource<T | undefined> {
  * A question that follows signals, like `resource()`: when the params change,
  * the previous generation is dropped from the queue or interrupted.
  */
+// 👇👇👇 ng-webllm - A new kind of resource
 export function completion<P, T = string>(options: CompletionOptions<P, T>): CompletionRef<T> {
   if (!options.injector) {
     assertInInjectionContext(completion);
@@ -98,6 +99,7 @@ class CompletionImpl<P, T> implements CompletionRef<T> {
   ) {
     this.engine = options.engine ?? injector.get(WebLlm);
 
+    // 👇👇👇 ng-webllm - Params tracked, work untracked
     this.effectRef = effect(
       () => {
         const request = this.request();
@@ -172,6 +174,7 @@ class CompletionImpl<P, T> implements CompletionRef<T> {
 
     const controller = new AbortController();
     this.current = controller;
+    // 👇👇👇 ng-webllm - Late answers are ignored
     const isCurrent = () => this.current === controller;
 
     this._status.set(status);

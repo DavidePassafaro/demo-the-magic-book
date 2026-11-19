@@ -192,6 +192,7 @@ export class WebLlm {
               },
               (text) => {
                 streaming();
+                // 👇👇👇 ng-webllm - Streaming a typed partial
                 options.onDelta?.({ text, partial: schema?.parsePartial(text) });
               },
             ),

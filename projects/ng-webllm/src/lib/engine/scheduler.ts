@@ -52,6 +52,7 @@ export class Scheduler {
 
   constructor(private readonly backend: LlmBackend) {}
 
+  // 👇👇👇 ng-webllm - One queue for one GPU
   enqueue<T>(spec: JobSpec<T>): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       if (spec.signal?.aborted) {

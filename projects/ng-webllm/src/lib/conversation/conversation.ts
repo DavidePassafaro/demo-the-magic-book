@@ -142,6 +142,7 @@ class ConversationImpl<T> implements ConversationRef<T> {
   private readonly _finishReason = signal<FinishReason | undefined>(undefined);
   private readonly _usage = signal<Usage | undefined>(undefined);
 
+  // 👇👇👇 ng-webllm - Who sees what
   readonly messages = computed(() => this.all().filter((message) => message.audience !== 'model'));
   readonly context = computed(() => this.all().filter((message) => message.audience !== 'user'));
   readonly value = this.messages;
