@@ -70,7 +70,11 @@ export interface NpcSpritePalette {
   readonly belt: string;
   readonly isDog?: boolean;
   readonly hat?: 'cap' | 'hood' | 'bandana' | 'crown' | 'none';
+  /** A hand-drawn sprite for a real person, instead of the generic villager. */
+  readonly look?: PersonLook;
 }
+
+export type PersonLook = 'giulia' | 'enrico';
 
 const NPC_PALETTES: readonly NpcSpritePalette[] = [
   { outline: '#181010', skin: '#f8c898', hair: '#c84820', tunic: '#d83828', tunicShade: '#901810', belt: '#f8d040', hat: 'hood' },
@@ -94,6 +98,13 @@ export function getNpcAppearance(id: string, name: string): NpcSpritePalette {
       belt: '#e02828', // bright red collar
       isDog: true,
     };
+  }
+  if (lowerId === 'giulia') {
+    // tunic only colours the badge in the NPC panel: a dark mustard keeps its white text readable
+    return { outline: '#181418', skin: '#f4cfb0', hair: '#8a5cc8', tunic: '#7a5800', tunicShade: '#c89810', belt: '#202020', look: 'giulia' };
+  }
+  if (lowerId === 'enrico') {
+    return { outline: '#121014', skin: '#e8b890', hair: '#2a1c14', tunic: '#34343c', tunicShade: '#1e1e24', belt: '#e0b030', look: 'enrico' };
   }
   let hash = 0;
   for (let i = 0; i < id.length; i++) {
@@ -269,6 +280,92 @@ export function drawPlayerSprite(
   drawPixelGrid(ctx, ox, oy + bobY, grid, pal, scale);
 }
 
+interface PersonSprite {
+  readonly palette: Record<string, string>;
+  readonly grid: (solved: boolean) => readonly string[];
+}
+
+const PERSON_SPRITES: Record<PersonLook, PersonSprite> = {
+  // The organiser: purple bob with dark roots, yellow hoodie, black lanyard, phone in hand.
+  giulia: {
+    palette: {
+      O: '#181418', // outline
+      H: '#9a68d8', // purple hair
+      h: '#5a3480', // dark roots and hair shade
+      S: '#f4cfb0', // skin
+      s: '#dcae8c', // skin shadow
+      E: '#201820', // eyes
+      M: '#b04858', // mouth
+      G: '#e8e8f0', // earring
+      Y: '#f4c820', // yellow hoodie
+      y: '#c89810', // hoodie shade
+      D: '#fff0a0', // hoodie drawstrings
+      L: '#202020', // black lanyard
+      P: '#3a4458', // phone
+      p: '#88b8e8', // phone screen
+      K: '#2a2a38', // dark trousers
+    },
+    grid: (solved) => [
+      '.....OOOOOO.....',
+      '....OhhhhhhO....',
+      '...OhhHHHHhhO...',
+      '..OhHHHHHHHHhO..',
+      '..OHHHHHHSSSHO..',
+      '..OHHSSSSSSSHO..',
+      '..OHSESSSSESHO..',
+      '..OHSSSSSSSShO..',
+      solved ? '..OHGSMMMMSShO..' : '..OHGSSMMSSShO..',
+      '..OhHOSSSSsOhO..',
+      '..OOYYLsSLYYOO..',
+      '.OYyYYDLLDYYyYO.',
+      '.OYyYYDYYDYYPpO.',
+      '.OSyYYYYYYYYSPO.',
+      '..OOyYYYYYYyOO..',
+      '...OKKKOOKKKO...',
+    ],
+  },
+  // The master of ceremonies: short dark hair, full beard, black t-shirt, badge, microphone, jeans.
+  enrico: {
+    palette: {
+      O: '#121014', // outline
+      K: '#2a1c14', // dark hair
+      k: '#4a3424', // hair highlight and eyebrows
+      S: '#e8b890', // skin
+      E: '#141018', // eyes
+      Z: '#3a2618', // beard
+      z: '#20140c', // moustache shadow
+      W: '#f4f4f4', // smile and sneakers
+      T: '#34343c', // black t-shirt
+      t: '#222228', // t-shirt shade
+      N: '#e8e8e8', // lanyard
+      C: '#f8f8f8', // badge card
+      X: '#e0b030', // badge band
+      M: '#202024', // microphone handle
+      m: '#a0a8b0', // microphone grille
+      J: '#4a5878', // jeans
+      j: '#34405a', // jeans shade
+    },
+    grid: (solved) => [
+      '.....OOOOOO.....',
+      '....OKkKKKKO....',
+      '...OKKKKKKKKO...',
+      '..OKKKKKKKKKKO..',
+      '..OKSSSSSSSSKO..',
+      '..OSSkkSSkkSSO..',
+      '..OSSESSSSESSO..',
+      '..OZSSSSSSSSZO..',
+      solved ? '..OZZzWWWWzZZO..' : '..OZZzzzzzzZZO..',
+      '...OZZZZZZZZOmO.',
+      '.OTNTOZZZZOTNmO.',
+      '.OTtTNOOOONTTMO.',
+      '.OStTTNCCNTTSSO.',
+      '.OOtTTTXXTTtOO..',
+      '..OJJJjOOjJJJO..',
+      '..OWWWO..OWWWO..',
+    ],
+  },
+};
+
 /** Renders an NPC villager (or Cosmo the dog) in 16x16 pixel art. */
 export function drawNpcSprite(
   ctx: CanvasRenderingContext2D,
@@ -317,6 +414,12 @@ export function drawNpcSprite(
       '................',
     ];
     drawPixelGrid(ctx, ox, oy + bobY, grid.map((r) => r.replace('c', 'C')), pal, scale);
+    return;
+  }
+
+  if (appearance.look) {
+    const person = PERSON_SPRITES[appearance.look];
+    drawPixelGrid(ctx, ox, oy + bobY, person.grid(solved), person.palette, scale);
     return;
   }
 
