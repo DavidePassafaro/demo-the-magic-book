@@ -118,7 +118,20 @@ function placeNpcs(
 ): PlacedNpc[] {
   const npcs: PlacedNpc[] = [];
 
+  const reachableSet = new Set(reachable);
+
   for (const config of level.npcs) {
+    const wanted = config.spot;
+    if (wanted) {
+      const at = wanted.y * width + wanted.x;
+      const free = npcs.every((other) => other.x !== wanted.x || other.y !== wanted.y);
+      const clearOfSpawn = wanted.x !== spawn.x || wanted.y !== spawn.y;
+      if (reachableSet.has(at) && free && clearOfSpawn) {
+        npcs.push({ config, x: wanted.x, y: wanted.y });
+        continue;
+      }
+    }
+
     const candidates = reachable
       .map((at) => ({ x: at % width, y: Math.floor(at / width) }))
       .filter((point) => {

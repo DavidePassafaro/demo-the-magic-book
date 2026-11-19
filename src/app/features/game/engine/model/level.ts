@@ -30,6 +30,8 @@ export interface NpcConfig {
   readonly problem: LocalizedText;
   /** Never shown to the player. Tells the judge what kind of object should work. */
   readonly solutionHint: string;
+  /** Where the character stands. Left out, or not walkable, and the map picks a spot. */
+  readonly spot?: { readonly x: number; readonly y: number };
 }
 
 export interface Level {
@@ -114,12 +116,20 @@ export function parseLevel(raw: unknown): Level {
   const npcs = npcsRaw.map((entry, index) => {
     const where = `level.npcs[${index}]`;
     const npc = asRecord(entry, where);
+    const spot =
+      npc['spot'] === undefined
+        ? undefined
+        : (() => {
+            const raw = asRecord(npc['spot'], `${where}.spot`);
+            return { x: asNumber(raw, 'x', `${where}.spot`), y: asNumber(raw, 'y', `${where}.spot`) };
+          })();
     return {
       id: asString(npc, 'id', where),
       name: asString(npc, 'name', where),
       temper: asString(npc, 'temper', where),
       problem: asLocalized(npc, 'problem', where),
       solutionHint: asString(npc, 'solutionHint', where),
+      ...(spot ? { spot } : {}),
     } satisfies NpcConfig;
   });
 
