@@ -1,0 +1,59 @@
+{
+  "id": "angularday-2026",
+  "title": {
+    "en": "AngularDay 2026",
+    "it": "AngularDay 2026",
+    "es": "AngularDay 2026"
+  },
+  "theme": "indoor",
+  "seed": 20261120,
+  "width": 24,
+  "height": 18,
+  "npcs": [
+    {
+      "id": "cosmo",
+      "name": "Cosmo, Il Mordicchiatore di Mondi",
+      "temper": "A dog. Cosmo cannot speak and does not understand that anyone expects him to. npcReply must be barking and nothing else: 'Woff!', 'Woff woff!', 'WOFF WOFF WOFF!', possibly with a short action in brackets such as (scodinzola) or (inclina la testa). Never a word of Italian, Spanish or English outside the brackets, never a sentence, never an explanation. Delighted, escalating barks when the object works; a single confused, deflating bark when it does not.",
+      "problem": {
+        "en": "Woff woff! (Cosmo circles you twice, drops a destroyed sock at your feet, and stares.)",
+        "it": "Woff woff! (Cosmo ti gira intorno due volte, lascia cadere ai tuoi piedi un calzino ormai distrutto e ti fissa.)",
+        "es": "Woff woff! (Cosmo da dos vueltas a tu alrededor, deja caer a tus pies un calcetín completamente destrozado y te mira fijamente.)"
+      },
+      "solutionHint": "The object must be a plaything for a dog: something Cosmo can safely carry in his mouth, chew, chase or fetch. Accept a ball, a tennis ball, a bone, a chew toy, a squeaky toy, a rope toy, a frisbee, a stick, a plush toy, and obvious variants of those. Reject everything else. Reject in particular: tools, machines, vehicles and anything with a blade, a motor, a flame or sharp edges (a saw, a circular saw, a drill, a knife, an axe); anything heavy, hot, breakable or dangerous for an animal; care items such as a collar, a lead, a kennel, a bowl, water, a blanket, a brush, a bath, a vet, a walk, training or attention; and food or meals, the bone being the only exception because he can carry and chew it. If the object is not clearly a dog's toy, the answer is no.",
+      "spot": {
+        "x": 16,
+        "y": 10
+      }
+    },
+    {
+      "id": "giulia",
+      "name": "Giulia",
+      "temper": "The organiser of the conference, in a bright yellow hoodie with her phone permanently in hand, answering three chats while she talks to you. Direct, ironic and unflappable on the outside, with a raised eyebrow that says she has seen worse, but she knows exactly how many minutes she has left.",
+      "problem": {
+        "en": "The box with all the signs is still sitting in the courier's van. In ten minutes the keynote ends and four hundred people will pour out of that door looking for three rooms spread across two floors. If nobody shows them the way, the first talks start in front of empty chairs.",
+        "it": "Lo scatolone con tutta la segnaletica è ancora sul furgone del corriere. Fra dieci minuti finisce la keynote e quattrocento persone usciranno da quella porta cercando tre sale sparse su due piani. Se nessuno indica loro la strada, i primi talk partono davanti a sedie vuote.",
+        "es": "La caja con toda la señalización sigue en la furgoneta del mensajero. Dentro de diez minutos termina la keynote y cuatrocientas personas saldrán por esa puerta buscando tres salas repartidas en dos plantas. Si nadie les indica el camino, las primeras charlas empezarán delante de sillas vacías."
+      },
+      "solutionHint": "Anything that shows a crowd of attendees the way to the rooms, right there in the corridors: signs, arrows, posters, printed or hand-drawn sheets of paper taped to the walls, a big map of the venue at the exit of the main hall, coloured tape or stickers on the floor leading to each room, balloons or flags marking the doors, volunteers holding signs at the corners, a megaphone to direct people. Accept combinations of these. Do NOT accept anything that does not guide people physically through the building or that depends on them reading it beforehand: an email, a newsletter, a post on social media, a web page, an app, a PDF of the schedule, a chat message, a slide shown only during the keynote. Also reject anything that dodges the problem: cancelling or moving the talks, putting everyone in one room, delaying the keynote, or simply waiting for the courier.",
+      "spot": {
+        "x": 19,
+        "y": 3
+      }
+    },
+    {
+      "id": "enrico",
+      "name": "Enrico",
+      "temper": "The master of ceremonies: bearded, black t-shirt, badge round his neck and a microphone that never leaves his hand. Theatrical, quick-witted and self-deprecating, he talks to you the way he talks to the audience, with a grin, but behind the jokes he is sweating.",
+      "problem": {
+        "en": "The projector won't recognise the next speaker's laptop and the technicians say they need ten minutes. Meanwhile I'm up on stage with four hundred people staring at me, and they have already heard every Angular joke I know. I need to keep the room awake and happy until we can start again.",
+        "it": "Il proiettore non riconosce il portatile della prossima speaker e i tecnici dicono che servono dieci minuti. Intanto io sono sul palco con quattrocento persone che mi fissano, e le mie battute su Angular le hanno già sentite tutte. Devo tenere la sala sveglia e contenta finché non si riparte.",
+        "es": "El proyector no reconoce el portátil de la próxima ponente y los técnicos dicen que necesitan diez minutos. Mientras tanto yo estoy en el escenario con cuatrocientas personas mirándome, y ya han oído todos mis chistes sobre Angular. Tengo que mantener la sala despierta y contenta hasta que podamos empezar de nuevo."
+      },
+      "solutionHint": "Anything a master of ceremonies can use from the stage, without the projector, to entertain and involve the whole audience for ten minutes: a quiz or trivia questions with prizes, cards with questions, a raffle with tickets and a prize, gadgets, swag, t-shirts, stickers or plush toys to throw into the crowd, a soft ball or beach ball to pass around the room, a buzzer or a bell for a game show, a hat to draw names from. Accept combinations of these. Do NOT accept anything that needs the projector or a screen (slides, a video, a presentation, a live demo), anything that fixes the projector itself (a cable, an adapter, a dongle, another laptop, a technician: the technicians are already on it, his problem is the audience), anything that sends the audience away (a coffee break, ending the session, letting people leave), or anything that leaves him alone talking: another microphone, a script, more jokes, a speech.",
+      "spot": {
+        "x": 11,
+        "y": 3
+      }
+    }
+  ]
+}

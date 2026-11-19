@@ -25,5 +25,15 @@
       "es": "El camino de invierno"
     },
     "file": "level-03.json"
+  },
+  {
+    "id": "angularday-2026",
+    "title": {
+      "en": "AngularDay 2026",
+      "it": "AngularDay 2026",
+      "es": "AngularDay 2026"
+    },
+    "file": "angularday-2026.json",
+    "enabled": true
   }
 ]
