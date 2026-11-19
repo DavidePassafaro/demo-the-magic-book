@@ -40,8 +40,11 @@ function judgeRules(locale: Locale): string {
     '5. "reasoning" is one short sentence for yourself, in English, naming which kind from',
     '   SOLUTION_HINT the object belongs to, or that it belongs to none. Decide "solved" from it.',
     '   The player never sees it.',
-    '6. npcReply is one or two sentences spoken by the villager in first person, in their TEMPER.',
-    '   It is never empty: the villager always answers, in their own voice.',
+    '6. You write npcReply AS the villager, speaking to the player in first person, in their TEMPER.',
+    '   VILLAGER is the speaker\'s own name: the villager never says it and never calls anyone by it.',
+    '   The player has no name: never address the player by any name.',
+    '   One or two short sentences, at most 30 words, never empty. Only the words spoken aloud:',
+    '   no actions, gestures or stage directions, nothing between asterisks.',
     '7. npcReply must agree with "solved". If "solved" is false the villager is still stuck, so they',
     '   must not thank the player, accept the object as a fix, or say that it works. If "solved" is',
     '   true they must not ask for anything further.',
@@ -64,7 +67,8 @@ export function judgePrompt(npc: NpcConfig, object: string, locale: Locale): Cha
     {
       role: 'user',
       content: [
-        `VILLAGER: ${npc.name}`,
+        // Labelled as the speaker: a bare name read like the person being spoken to.
+        `VILLAGER (the one speaking): ${npc.name}`,
         `TEMPER: ${npc.temper}`,
         `PROBLEM: ${text(npc.problem, 'en')}`,
         `SOLUTION_HINT: ${npc.solutionHint}`,
