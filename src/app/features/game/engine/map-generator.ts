@@ -26,7 +26,16 @@ export type TileDeco =
   | 'signpost'
   | 'crate'
   | 'chest'
-  | 'bridge';
+  | 'bridge'
+  | 'stage'
+  | 'screen-left'
+  | 'screen'
+  | 'screen-right'
+  | 'chair'
+  | 'lectern'
+  | 'banner-yellow'
+  | 'banner-purple'
+  | 'plant';
 
 export interface GameMap {
   readonly width: number;
@@ -288,7 +297,7 @@ function buildDecorations(
 
       if (kind === 'grass') {
         if (theme === 'indoor') {
-          if (r < 0.08) decos[idx] = 'pebble';
+          // a clean conference carpet: nothing lying about
         } else if (theme === 'harbour') {
           if (r < 0.14) decos[idx] = 'pebble';
           else if (r < 0.22) decos[idx] = 'tuft';
@@ -305,7 +314,7 @@ function buildDecorations(
         }
       } else if (kind === 'rock') {
         if (theme === 'indoor') {
-          decos[idx] = r < 0.35 ? 'chest' : 'crate';
+          // generateIndoor dresses its own furniture
         } else if (theme === 'harbour') {
           decos[idx] = 'crate';
         } else if (theme === 'village') {
@@ -349,17 +358,21 @@ function buildDecorations(
 }
 
 /**
- * A building, but not a warren: one open hall inside thick walls, with pillars
- * holding up the roof, aisles crossing at the middle, and tables scattered
- * about. Nothing here is a corridor — you can see across the whole room.
+ * A conference room: the stage with its projection screen along the top wall,
+ * roll-up banners at its sides, and rows of chairs facing it, split by a
+ * central aisle and two side aisles. The player walks in from the back.
  */
 function generateIndoor(level: Level, random: () => number): GameMap {
   const { width, height } = level;
   const tiles: TileKind[] = new Array<TileKind>(width * height).fill('tree');
+  const furniture = new Map<number, TileDeco>();
 
-  const set = (x: number, y: number, tile: TileKind): void => {
+  const set = (x: number, y: number, tile: TileKind, deco?: TileDeco): void => {
     if (x >= 0 && y >= 0 && x < width && y < height) {
       tiles[y * width + x] = tile;
+      if (deco) {
+        furniture.set(y * width + x, deco);
+      }
     }
   };
 
@@ -368,6 +381,7 @@ function generateIndoor(level: Level, random: () => number): GameMap {
   const right = width - MARGIN - 1;
   const top = MARGIN;
   const bottom = height - MARGIN - 1;
+  const centre = Math.floor((left + right) / 2);
 
   for (let y = top; y <= bottom; y++) {
     for (let x = left; x <= right; x++) {
@@ -375,51 +389,48 @@ function generateIndoor(level: Level, random: () => number): GameMap {
     }
   }
 
-  const spawn: Point = {
-    x: Math.floor((left + right) / 2),
-    y: Math.floor((top + bottom) / 2),
-  };
-
-  // Two aisles crossing at the centre, so the hall has a sense of direction.
-  for (let x = left; x <= right; x++) {
-    set(x, spawn.y, 'path');
-  }
-  for (let y = top; y <= bottom; y++) {
-    set(spawn.x, y, 'path');
+  // The projection screen hangs on the top wall, centred over the stage.
+  const screenLeft = centre - 3;
+  const screenRight = centre + 4;
+  for (let x = screenLeft; x <= screenRight; x++) {
+    set(x, top - 1, 'tree', x === screenLeft ? 'screen-left' : x === screenRight ? 'screen-right' : 'screen');
   }
 
-  // Pillars on a regular grid, well clear of each other and of the aisles.
-  for (let y = top + 2; y <= bottom - 2; y += 4) {
-    for (let x = left + 3; x <= right - 3; x += 5) {
-      if (x !== spawn.x && y !== spawn.y) {
-        set(x, y, 'tree');
+  // A two-row wooden stage, with banners at its corners and the lectern on one side.
+  const stageLeft = left + 3;
+  const stageRight = right - 3;
+  for (let y = top; y <= top + 1; y++) {
+    for (let x = stageLeft; x <= stageRight; x++) {
+      set(x, y, 'path', 'stage');
+    }
+  }
+  set(stageLeft, top, 'rock', 'banner-yellow');
+  set(stageLeft + 1, top, 'rock', 'banner-purple');
+  set(stageRight - 1, top, 'rock', 'banner-purple');
+  set(stageRight, top, 'rock', 'banner-yellow');
+  set(screenRight + 1, top, 'rock', 'lectern');
+  set(left, top, 'rock', 'plant');
+  set(right, top, 'rock', 'plant');
+
+  // Rows of chairs facing the stage, with a free row between them to walk along.
+  const firstRow = top + 3;
+  for (let y = firstRow; y <= bottom - 2; y += 2) {
+    for (let x = left + 1; x <= right - 1; x++) {
+      if (x !== centre && x !== centre + 1) {
+        set(x, y, 'rock', 'chair');
       }
     }
   }
 
-  // Tables: small clusters, never on an aisle and never blocking the spawn.
-  for (let cluster = 0; cluster < 10; cluster++) {
-    const w = 1 + Math.floor(random() * 2);
-    const h = 1 + Math.floor(random() * 2);
-    const x0 = left + 1 + Math.floor(random() * Math.max(1, right - left - w - 1));
-    const y0 = top + 1 + Math.floor(random() * Math.max(1, bottom - top - h - 1));
-
-    for (let y = y0; y < y0 + h; y++) {
-      for (let x = x0; x < x0 + w; x++) {
-        const onAisle = x === spawn.x || y === spawn.y;
-        const nearSpawn = Math.abs(x - spawn.x) <= 1 && Math.abs(y - spawn.y) <= 1;
-        if (!onAisle && !nearSpawn && tiles[y * width + x] === 'grass') {
-          set(x, y, 'rock');
-        }
-      }
-    }
-  }
-
-  set(spawn.x, spawn.y, 'path');
+  // The player comes in at the back of the room, at the end of the central aisle.
+  const spawn: Point = { x: centre, y: bottom };
 
   const reachable = [...reachableFrom(tiles, width, height, spawn)];
   const npcs = placeNpcs(level, tiles, width, spawn, reachable, random);
   const decos = buildDecorations(tiles, width, height, 'indoor', spawn, npcs, random);
+  for (const [at, deco] of furniture) {
+    decos[at] = deco;
+  }
 
   return { width, height, theme: 'indoor', tiles, decos, spawn, npcs };
 }

@@ -50,11 +50,15 @@ export const THEME_PALETTES: Record<Theme, ThemePalette> = {
     weather: 'snow',
   },
   indoor: {
-    grass: ['#604868', '#785880', '#483050', '#907098'],
-    path: ['#a83848', '#c85060', '#782030', '#f0c860'],
+    // light blue conference carpet
+    grass: ['#8ea2c4', '#9cb0d0', '#8094b8', '#aabcd8'],
+    // the stage's wooden boards
+    path: ['#c89050', '#dca464', '#a87238', '#6a4424'],
     water: ['#305070', '#487898', '#183048', '#88b8d8'],
-    tree: ['#181024', '#382c48', '#584868', '#786888'],
-    rock: ['#684020', '#986030', '#c08848', '#381808'],
+    // light grey wall panels: outline, shade, panel, highlight
+    tree: ['#4a4650', '#bcb6aa', '#e6e0d4', '#f8f4ec'],
+    // beige fabric chairs: shade, seat, highlight, outline
+    rock: ['#a09078', '#ccbc9c', '#e4d8bc', '#3a3228'],
     houseRoof: ['#784890', '#9868b0', '#482860'],
     houseWall: ['#c8b8d0', '#9888a0', '#382840'],
     weather: 'dust',
@@ -599,6 +603,11 @@ export function drawTerrainTile(
     return;
   }
 
+  if (kind === 'path' && deco === 'stage') {
+    drawStageTile(ctx, ox, oy, p, neighbors.s !== 'path' && neighbors.s !== 'rock', s);
+    return;
+  }
+
   if (kind === 'path') {
     ctx.fillStyle = p.path[0];
     ctx.fillRect(ox, oy, tileSize, tileSize);
@@ -695,7 +704,7 @@ export function drawTerrainTile(
 
   if (kind === 'tree') {
     if (theme === 'indoor') {
-      // Ornate stone wall / pillar in indoor halls
+      // Conference room wall: light panels with a seam
       const wallPal: Record<string, string> = {
         O: p.tree[0],
         D: p.tree[1],
@@ -703,24 +712,27 @@ export function drawTerrainTile(
         L: p.tree[3],
       };
       const wallGrid = [
-        'OOOOOOOOOOOOOOOO',
-        'OLLLLLLLLLLLLLLO',
-        'OLMMMMMMOMMMMMMO',
-        'OLDDDDDDODDDDDDO',
-        'OOOOOOOOOOOOOOOO',
-        'OMMMOMMMMMMOMMMO',
-        'ODDDODDDDDDODDDO',
-        'OOOOOOOOOOOOOOOO',
-        'OLLLLLLLOLLLLLLO',
-        'OLMMMMMMOLMMMMMO',
-        'OLDDDDDDOLDDDDDO',
-        'OOOOOOOOOOOOOOOO',
-        'OMMMMMOMMMMMMMMO',
-        'ODDDDDODDDDDDDDO',
+        'LLLLLLLLLLLLLLLL',
+        'MMMMMMMLMMMMMMMM',
+        'MMMMMMMLMMMMMMMM',
+        'MMMMMMMLMMMMMMMM',
+        'MMMMMMMLMMMMMMMM',
+        'MMMMMMMLMMMMMMMM',
+        'MMMMMMMLMMMMMMMM',
+        'MMMMMMMLMMMMMMMM',
+        'MMMMMMMLMMMMMMMM',
+        'MMMMMMMLMMMMMMMM',
+        'MMMMMMMLMMMMMMMM',
+        'MMMMMMMLMMMMMMMM',
+        'MMMMMMMLMMMMMMMM',
+        'MMMMMMMLMMMMMMMM',
+        'MMMMMMMLMMMMMMMM',
         'DDDDDDDDDDDDDDDD',
-        'OOOOOOOOOOOOOOOO',
       ];
       drawPixelGrid(ctx, ox, oy, wallGrid, wallPal, s);
+      if (deco === 'screen-left' || deco === 'screen' || deco === 'screen-right') {
+        drawScreenTile(ctx, ox, oy, deco, s);
+      }
       return;
     }
 
@@ -787,6 +799,18 @@ export function drawTerrainTile(
   }
 
   if (kind === 'rock') {
+    if (deco === 'chair' || deco === 'lectern' || deco === 'banner-yellow' || deco === 'banner-purple') {
+      if (deco !== 'chair') {
+        drawStageTile(ctx, ox, oy, p, false, s);
+      }
+      drawConferenceProp(ctx, ox, oy, deco, p, s);
+      return;
+    }
+    if (deco === 'plant') {
+      drawConferenceProp(ctx, ox, oy, deco, p, s);
+      return;
+    }
+
     if (deco === 'house') {
       // Miniature GBC house façade tile
       const housePal: Record<string, string> = {
@@ -939,4 +963,240 @@ export function drawTerrainTile(
     ];
     drawPixelGrid(ctx, ox, oy, rockGrid, rockPal, s);
   }
+}
+
+/** Wooden stage boards; the front edge drops into a dark lip. */
+function drawStageTile(
+  ctx: CanvasRenderingContext2D,
+  ox: number,
+  oy: number,
+  p: ThemePalette,
+  frontEdge: boolean,
+  s: number,
+): void {
+  ctx.fillStyle = p.path[0];
+  ctx.fillRect(ox, oy, 16 * s, 16 * s);
+  ctx.fillStyle = p.path[1];
+  for (let y = 0; y < 16; y += 4) {
+    ctx.fillRect(ox, oy + y * s, 16 * s, s);
+  }
+  ctx.fillStyle = p.path[2];
+  for (let y = 3; y < 16; y += 4) {
+    ctx.fillRect(ox, oy + y * s, 16 * s, s);
+    ctx.fillRect(ox + ((y * 5) % 16) * s, oy + (y - 3) * s, s, 3 * s);
+  }
+  if (frontEdge) {
+    ctx.fillStyle = p.path[3];
+    ctx.fillRect(ox, oy + 12 * s, 16 * s, 4 * s);
+    ctx.fillStyle = '#2c1c10';
+    ctx.fillRect(ox, oy + 15 * s, 16 * s, s);
+  }
+}
+
+/** One slice of the projection screen on the wall, with a slide on it. */
+function drawScreenTile(
+  ctx: CanvasRenderingContext2D,
+  ox: number,
+  oy: number,
+  deco: 'screen-left' | 'screen' | 'screen-right',
+  s: number,
+): void {
+  const pal: Record<string, string> = {
+    F: '#1c1c24', // frame
+    W: '#eef2fa', // screen
+    w: '#d4dcec', // screen shade
+    B: '#3858c8', // slide title
+    b: '#9aa8c8', // slide text
+    A: '#dd0031', // Angular red
+  };
+  const middle = [
+    'FFFFFFFFFFFFFFFF',
+    'WWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWW',
+    'BBBBBBBBBBBBWWWW',
+    'BBBBBBBBBBBBWWWW',
+    'WWWWWWWWWWWWWWWW',
+    'bbbbbbbbbWWWWWWW',
+    'WWWWWWWWWWWWWWWW',
+    'bbbbbbbbbbbbbWWW',
+    'WWWWWWWWWWWWWWWW',
+    'bbbbbbWWWWWWWWWW',
+    'wwwwwwwwwwwwwwww',
+    'FFFFFFFFFFFFFFFF',
+    '................',
+    '................',
+    '................',
+  ];
+  const edgeLeft = [
+    'FFFFFFFFFFFFFFFF',
+    'FWWWWWWWWWWWWWWW',
+    'FWWWWWWWWWWWWWWW',
+    'FWWWBBBBBBBBBBBB',
+    'FWWWBBBBBBBBBBBB',
+    'FWWWWWWWWWWWWWWW',
+    'FWWWbbbbbbbbbbbb',
+    'FWWWWWWWWWWWWWWW',
+    'FWWWbbbbbbbbbbbb',
+    'FWWWWWWWWWWWWWWW',
+    'FWWWbbbbbbbbbbbb',
+    'Fwwwwwwwwwwwwwww',
+    'FFFFFFFFFFFFFFFF',
+    '................',
+    '................',
+    '................',
+  ];
+  const edgeRight = [
+    'FFFFFFFFFFFFFFFF',
+    'WWWWWWWWWWWWWWWF',
+    'WWWWWWWWWAAAWWWF',
+    'WWWWWWWWAAAAAWWF',
+    'WWWWWWWWAAWAAWWF',
+    'WWWWWWWWAAAAAWWF',
+    'WWWWWWWWWAAAWWWF',
+    'WWWWWWWWWWWWWWWF',
+    'WWWWWWWWWWWWWWWF',
+    'WWWWWWWWWWWWWWWF',
+    'WWWWWWWWWWWWWWWF',
+    'wwwwwwwwwwwwwwwF',
+    'FFFFFFFFFFFFFFFF',
+    '................',
+    '................',
+    '................',
+  ];
+  const grid = deco === 'screen-left' ? edgeLeft : deco === 'screen-right' ? edgeRight : middle;
+  drawPixelGrid(ctx, ox, oy, grid, pal, s);
+}
+
+/** Chairs, the lectern, roll-up banners and potted plants. */
+function drawConferenceProp(
+  ctx: CanvasRenderingContext2D,
+  ox: number,
+  oy: number,
+  deco: 'chair' | 'lectern' | 'banner-yellow' | 'banner-purple' | 'plant',
+  p: ThemePalette,
+  s: number,
+): void {
+  if (deco === 'chair') {
+    // Seen from above and behind: the seat, then the backrest towards the viewer.
+    const pal: Record<string, string> = {
+      O: p.rock[3],
+      D: p.rock[0],
+      M: p.rock[1],
+      L: p.rock[2],
+      A: '#5c5650',
+    };
+    const grid = [
+      '................',
+      '.OOOOOOOOOOOOOO.',
+      '.OAMMMMMMMMMMAO.',
+      '.OAMLLLLLLLLMAO.',
+      '.OAMMMMMMMMMMAO.',
+      '.OADDDDDDDDDDAO.',
+      '.OOOOOOOOOOOOOO.',
+      '..OLLLLLLLLLLO..',
+      '..OLMMMMMMMMLO..',
+      '..OMMMMMMMMMMO..',
+      '..OMMMMMMMMMMO..',
+      '..ODDDDDDDDDDO..',
+      '..OOOOOOOOOOOO..',
+      '...OA......AO...',
+      '...OO......OO...',
+      '................',
+    ];
+    drawPixelGrid(ctx, ox, oy, grid, pal, s);
+    return;
+  }
+
+  if (deco === 'lectern') {
+    const pal: Record<string, string> = {
+      O: '#181410',
+      D: '#3a2a1c',
+      M: '#5c4430',
+      L: '#7c5c40',
+      K: '#202428', // laptop
+      k: '#8898b0', // laptop screen glow
+      A: '#dd0031', // Angular sticker
+    };
+    const grid = [
+      '................',
+      '...OOOOOOOOOO...',
+      '...OKKKKKKKKO...',
+      '...OKkkkkkkKO...',
+      '..OOOOOOOOOOOO..',
+      '..OLLLLLLLLLLO..',
+      '..OMMMMMMMMMMO..',
+      '...OMMMAAMMMO...',
+      '...OMMMAAMMMO...',
+      '...OMMMMMMMMO...',
+      '...OMMMMMMMMO...',
+      '...ODDDDDDDDO...',
+      '...ODDDDDDDDO...',
+      '..OOOOOOOOOOOO..',
+      '................',
+      '................',
+    ];
+    drawPixelGrid(ctx, ox, oy, grid, pal, s);
+    return;
+  }
+
+  if (deco === 'banner-yellow' || deco === 'banner-purple') {
+    const yellow = deco === 'banner-yellow';
+    const pal: Record<string, string> = {
+      O: '#181418',
+      B: yellow ? '#f4cc20' : '#6a3ec8',
+      b: yellow ? '#d0a810' : '#4e2aa0',
+      L: yellow ? '#181418' : '#f8f8ff',
+      F: '#8890a0', // stand
+    };
+    const grid = [
+      '....OOOOOOOO....',
+      '....OBBBBBBO....',
+      '....OBLLLLBO....',
+      '....OBLBBLBO....',
+      '....OBLLLLBO....',
+      '....OBBBBBBO....',
+      '....OBLLLBBO....',
+      '....OBBBBBBO....',
+      '....OBLLLLBO....',
+      '....OBBBBBBO....',
+      '....ObbbbbbO....',
+      '....ObbbbbbO....',
+      '....OOOOOOOO....',
+      '...OFFFFFFFFO...',
+      '...OOOOOOOOOO...',
+      '................',
+    ];
+    drawPixelGrid(ctx, ox, oy, grid, pal, s);
+    return;
+  }
+
+  // plant
+  ctx.fillStyle = p.grass[0];
+  ctx.fillRect(ox, oy, 16 * s, 16 * s);
+  const pal: Record<string, string> = {
+    O: '#10200c',
+    G: '#2e7a30',
+    g: '#4aa848',
+    P: '#6c6460',
+    p: '#4c4642',
+  };
+  const grid = [
+    '.....O...O......',
+    '....OgO.OgO..O..',
+    '..O.OGgOgGO.OgO.',
+    '.OgOOGGgGGOOgGO.',
+    '.OGgOGgGgGOgGGO.',
+    '..OGGgGGGgGGGO..',
+    '...OGGgGgGGgO...',
+    '..OgGGGgGGGGgO..',
+    '...OOGGGGGGOO...',
+    '....OOOOOOOO....',
+    '....OPPPPPPO....',
+    '....OPPPPPPO....',
+    '....OpPPPPpO....',
+    '.....OppppO.....',
+    '.....OOOOOO.....',
+    '................',
+  ];
+  drawPixelGrid(ctx, ox, oy, grid, pal, s);
 }
