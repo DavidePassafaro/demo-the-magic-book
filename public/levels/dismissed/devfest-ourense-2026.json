@@ -15,7 +15,7 @@
       "name": "Cosmo, Il Mordicchiatore di Mondi",
       "temper": "A dog. Cosmo cannot speak and does not understand that anyone expects him to. npcReply must be barking and nothing else: 'Woff!', 'Woff woff!', 'WOFF WOFF WOFF!', possibly with a short action in brackets such as (scodinzola) or (inclina la testa). Never a word of Italian, Spanish or English outside the brackets, never a sentence, never an explanation. Delighted, escalating barks when the object works; a single confused, deflating bark when it does not.",
       "problem": {
-        "en": "Woff woff! (Cosmo circles you twice, drops a thoroughly destroyed sock at your feet, and stares.)",
+        "en": "Woff woff! (Cosmo circles you twice, drops a destroyed sock at your feet, and stares.)",
         "it": "Woff woff! (Cosmo ti gira intorno due volte, lascia cadere ai tuoi piedi un calzino ormai distrutto e ti fissa.)",
         "es": "Woff woff! (Cosmo da dos vueltas a tu alrededor, deja caer a tus pies un calcetín completamente destrozado y te mira fijamente.)"
       },

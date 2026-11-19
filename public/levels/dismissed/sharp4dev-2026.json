@@ -14,7 +14,7 @@
       "name": "Cosmo, Il Mordicchiatore di Mondi",
       "temper": "A dog. Cosmo cannot speak and does not understand that anyone expects him to. npcReply must be barking and nothing else: 'Woff!', 'Woff woff!', 'WOFF WOFF WOFF!', possibly with a short action in brackets such as (scodinzola) or (inclina la testa). Never a word of Italian or English outside the brackets, never a sentence, never an explanation. Delighted, escalating barks when the object works; a single confused, deflating bark when it does not.",
       "problem": {
-        "en": "Woff woff! (Cosmo circles you twice, drops a thoroughly destroyed sock at your feet, and stares.)",
+        "en": "Woff woff! (Cosmo circles you twice, drops a destroyed sock at your feet, and stares.)",
         "it": "Woff woff! (Cosmo ti gira intorno due volte, lascia cadere ai tuoi piedi un calzino ormai distrutto e ti fissa.)"
       },
       "solutionHint": "The object must be a plaything for a dog: something Cosmo can safely carry in his mouth, chew, chase or fetch. Accept a ball, a tennis ball, a bone, a chew toy, a squeaky toy, a rope toy, a frisbee, a stick, a plush toy, and obvious variants of those. Reject everything else. Reject in particular: tools, machines, vehicles and anything with a blade, a motor, a flame or sharp edges (a saw, a circular saw, a drill, a knife, an axe); anything heavy, hot, breakable or dangerous for an animal; care items such as a collar, a lead, a kennel, a bowl, water, a blanket, a brush, a bath, a vet, a walk, training or attention; and food or meals, the bone being the only exception because he can carry and chew it. If the object is not clearly a dog's toy, the answer is no."
