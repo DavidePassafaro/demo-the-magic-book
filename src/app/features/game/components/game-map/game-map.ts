@@ -22,6 +22,7 @@ import {
   drawEmoteBubble,
   drawNpcSprite,
   drawPlayerSprite,
+  drawPixelText,
   drawTerrainTile,
   getNpcAppearance,
 } from '@features/game/engine/pixel-sprites';
@@ -202,6 +203,10 @@ export class GameMapView {
           TILE,
         );
       }
+    }
+    if (map.label) {
+      const { text, x, y, width } = map.label;
+      drawPixelText(ctx, text, (x + width / 2) * TILE, (y + 0.5) * TILE, width * TILE);
     }
     return offscreen;
   }

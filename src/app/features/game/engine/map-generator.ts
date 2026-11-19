@@ -47,6 +47,8 @@ export interface GameMap {
   readonly decos: readonly TileDeco[];
   readonly spawn: Point;
   readonly npcs: readonly PlacedNpc[];
+  /** Text painted on the map, in tiles: centred in a box `width` tiles wide from (x, y). */
+  readonly label?: { readonly text: string; readonly x: number; readonly y: number; readonly width: number };
 }
 
 /** Small deterministic PRNG, so a seed always yields the same map. */
@@ -432,7 +434,15 @@ function generateIndoor(level: Level, random: () => number): GameMap {
     decos[at] = deco;
   }
 
-  return { width, height, theme: 'indoor', tiles, decos, spawn, npcs };
+  // The event's name on the wall above the screen.
+  const label = {
+    text: level.title.en.toUpperCase(),
+    x: stageLeft + 1,
+    y: top - 2,
+    width: stageRight - stageLeft - 1,
+  };
+
+  return { width, height, theme: 'indoor', tiles, decos, spawn, npcs, label };
 }
 
 /** Builds the level's map from its seed and its theme. */
