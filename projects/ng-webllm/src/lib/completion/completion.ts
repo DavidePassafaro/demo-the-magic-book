@@ -17,6 +17,7 @@ import { isAborted, toLlmError, type LlmError } from '../errors';
 import { WebLlm } from '../engine/web-llm';
 import type { AskOptions, ChatMessage, Draft, FinishReason, Phase, Usage } from '../types';
 
+// 👇👇👇 ng-webllm - Params and messages, like a loader
 export interface CompletionOptions<P, T> extends AskOptions<T> {
   /** The question depends on these. `undefined`: no question, status 'idle'. */
   readonly params: () => P | undefined;
@@ -32,21 +33,58 @@ export interface CompletionOptions<P, T> extends AskOptions<T> {
   readonly injector?: Injector;
 }
 
+// 👇👇👇 ng-webllm - The same face as a resource
 export interface CompletionRef<T> extends Resource<T | undefined> {
+  /** Where the current request is: `queued`, `prefill`, `streaming`, or `idle`. */
   readonly phase: Signal<Phase>;
-  /** The answer while the model writes it. */
+  /** The answer while the model writes it; `null` when nothing is being written. */
   readonly draft: Signal<Draft<T> | null>;
+  /** Why the last answer ended: `stop`, `length` (out of tokens) or `abort`. */
   readonly finishReason: Signal<FinishReason | undefined>;
+  /** What WebLLM measured for the last answer: tokens, speed, latency. */
   readonly usage: Signal<Usage | undefined>;
-  /** Asks the same question again. False when there is no question to ask. */
+
+  /**
+   * Asks the same question again, with the current params, even if they did not
+   * change. A generation still running is interrupted first. While it runs,
+   * `status()` is `'reloading'` and `value()` keeps the previous answer.
+   *
+   * @returns `false` when there is nothing to ask: the params are `undefined`
+   * or the model is not loaded yet. `true` otherwise.
+   */
   reload(): boolean;
+
+  /**
+   * Interrupts the current generation, or drops it from the queue if it has not
+   * started. The last complete answer stays in `value()`, and `status()` goes
+   * back to `'resolved'` (or `'idle'` if there was none). It is not an error.
+   *
+   * The completion keeps following its params: the next change asks again.
+   */
   stop(): void;
+
+  /**
+   * Stops following the params and interrupts the current generation, for good.
+   * Called automatically when the injector that created the completion is destroyed.
+   */
   destroy(): void;
 }
 
 /**
  * A question that follows signals, like `resource()`: when the params change,
  * the previous generation is dropped from the queue or interrupted.
+ *
+ * @example
+ * ```ts
+ * readonly text = signal('');
+ * readonly summary = completion({
+ *   params: () => this.text() || undefined,
+ *   messages: (text) => [{ role: 'user', content: `Summarize: ${text}` }],
+ *   debounce: 500,
+ * });
+ * ```
+ *
+ * Must be called in an injection context, or with `options.injector`.
  */
 // 👇👇👇 ng-webllm - A new kind of resource
 export function completion<P, T = string>(options: CompletionOptions<P, T>): CompletionRef<T> {

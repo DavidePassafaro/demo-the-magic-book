@@ -84,36 +84,134 @@ export interface ForkOptions {
   readonly at?: string;
 }
 
+// 👇👇👇 ng-webllm - A resource written by actions
 export interface ConversationRef<T = string> extends Resource<readonly Message<T>[]> {
   /** What the user sees; the same as value(). */
   readonly messages: Signal<readonly Message<T>[]>;
   /** What the model receives. */
   readonly context: Signal<readonly Message<T>[]>;
-  /** The answer being written, when it is meant for the user. */
+  /** The answer being written, when it is meant for the user; `null` otherwise. */
   readonly draft: Signal<Draft<T> | null>;
+  /** Where the conversation is: `queued`, `prefill`, `streaming`, or `idle`. */
   readonly phase: Signal<Phase>;
+  /** The last answer the user can see. */
   readonly lastReply: Signal<Message<T> | undefined>;
+  /** Why the last generation ended: `stop`, `length` (out of tokens) or `abort`. */
   readonly finishReason: Signal<FinishReason | undefined>;
+  /** What WebLLM measured for the last generation: tokens, speed, latency. */
   readonly usage: Signal<Usage | undefined>;
 
-  /** Writes a message. Calls nothing. */
+  /**
+   * Writes a message into the history, right away. The model is not called.
+   * Useful to restore a greeting, or to note something only the model should know.
+   *
+   * @param content Text, or text and images.
+   * @param options `role` (default `'user'`) and `audience` (default `'both'`).
+   * @returns The message written.
+   */
   add(content: Content, options?: AddOptions): Message<T>;
-  /** Writes a message, then writes the model's answer. */
+
+  /**
+   * Writes a message, then asks the model and writes its answer, visible to both.
+   * It waits for the chains already running or queued: one at a time.
+   *
+   * @param content What the user says: text, or text and images.
+   * @param options Generation options for this call (temperature, maxTokens, signal...),
+   * and `audience: 'model'` to hide the message from the user.
+   * @returns The answer, once it is written in the history. With a schema it carries `value`.
+   * @throws {LlmError} `aborted` if stopped or destroyed; any other error is also in `error()`.
+   */
   send(content: Content, options?: SendOptions<T>): Promise<Message<T>>;
-  /** Asks the model about the conversation. Never writes. */
+
+  /**
+   * Asks the model a question about the conversation, without writing anything:
+   * not in the history, not in `draft()`, not in `phase()`. It does not wait for
+   * the chains and goes first in the engine's queue (`priority: 'high'`).
+   *
+   * @param prompt The question, or a function that builds it from the context.
+   * @param options `context` (default `'all'`), `system` (default: the conversation's,
+   * `false` for none), `schema` and the usual generation options.
+   * @returns The model's reply: `value` is the text, or the object with a schema.
+   * @throws {LlmError} On failure. It does not change `error()`, and `stop()` does not stop it.
+   */
   aside<R = string>(prompt: StepPrompt<undefined>, options?: AsideOptions<R>): Promise<Reply<R>>;
-  /** Defines a chain of generate and save steps, callable like a function. */
+
+  /**
+   * Defines a chain of steps (`generate`, `save`, `step`) and returns it as an async
+   * function: each step receives what the previous one hands on. Calling it runs the
+   * whole chain as a single turn, one chain at a time.
+   *
+   * @example
+   * ```ts
+   * const judge = chat.chain(
+   *   save.forUser((wish: string) => wish),
+   *   generate((wish) => judgePrompt(wish), { schema: VERDICT }),
+   *   save.forUser((verdict) => verdict.npcReply),
+   * );
+   * const verdict = await judge('a lantern');
+   * ```
+   */
   readonly chain: ChainBuilder;
 
+  /**
+   * Interrupts the running chain and drops the ones waiting their turn: their
+   * promises reject with `aborted`. An `aside` already running is not stopped.
+   *
+   * @param options `keepPartial: true` saves what was written so far as an
+   * `'interrupted'` message.
+   */
   stop(options?: { keepPartial?: boolean }): void;
-  /** Drops the last answer and asks again. */
+
+  /**
+   * Drops the last answer, and anything written after it, then asks the model
+   * again. It waits its turn like `send`.
+   *
+   * @returns The new answer, once it is written in the history.
+   * @throws {LlmError} Like `send`.
+   */
   regenerate(): Promise<Message<T>>;
+
+  /**
+   * Stops the chains (like `stop()`), clears the error and the stats, and replaces
+   * the history.
+   *
+   * @param messages The new history. Default: empty.
+   */
   reset(messages?: readonly Message<T>[]): void;
+
+  /**
+   * Creates a new, independent conversation that starts from a copy of this history,
+   * on the same engine. What happens in one does not change the other.
+   * The fork is destroyed together with this conversation.
+   *
+   * @param options `at`: copy up to this message id (included); default: all of it.
+   * `system` and `memory`: default to this conversation's.
+   */
   fork(options?: ForkOptions): ConversationRef<T>;
+
+  /**
+   * Stops everything and destroys the forks. From then on `send`, `chain` and
+   * `regenerate` reject with `aborted`. Called automatically when the injector
+   * that created the conversation is destroyed; calling it twice is harmless.
+   */
   destroy(): void;
 }
 
-/** A conversation: a history, and the chains that write in it. */
+/**
+ * A conversation: a history, and the chains that write in it. It is a resource
+ * whose `value()` is the history the user sees.
+ *
+ * @example
+ * ```ts
+ * readonly chat = conversation({ system: 'You are a helpful librarian.' });
+ *
+ * async ask(question: string) {
+ *   await this.chat.send(question);
+ * }
+ * ```
+ *
+ * Must be called in an injection context, or with `options.injector`.
+ */
 export function conversation<T = string>(options: ConversationOptions<T>): ConversationRef<T> {
   if (!options.injector) {
     assertInInjectionContext(conversation);

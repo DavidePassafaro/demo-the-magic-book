@@ -7,6 +7,10 @@
         {
             "path": "the-magic-book/src/app/features/game/ai/",
             "badge": "⭐"
+        },
+        {
+            "path": "the-magic-book-lib/projects/ng-webllm/src/lib/",
+            "badge": "⭐"
         }
     ]
 }
