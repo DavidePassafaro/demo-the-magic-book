@@ -11,6 +11,14 @@
         {
             "path": "the-magic-book-lib/projects/ng-webllm/src/lib/",
             "badge": "⭐"
+        },
+        {
+            "path": "the-magic-book-lib/src/app/core/webllm/",
+            "badge": "⭐"
+        },
+        {
+            "path": "the-magic-book-lib/src/app/features/game/ai/",
+            "badge": "⭐"
         }
     ]
 }
